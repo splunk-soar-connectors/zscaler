@@ -155,7 +155,7 @@ class ZscalerConnector(BaseConnector):
         return self._process_response(r, action_result)
 
     def _parse_retry_time(self, retry_time):
-        # Instead of just giving a second value, "retry-time" will return a string likje "0 seconds"
+        # Instead of just giving a second value, "retry-time" will return a string like "0 seconds"
         # I don't know if the second unit can be not seconds
         parts = retry_time.split()
         if parts[1].lower() == "seconds":
