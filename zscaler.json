@@ -1252,7 +1252,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.*.url",
+                    "data_path": "action_result.data.*.url",
                     "data_type": "string",
                     "example_values": [
                         "208.67.222.222"
@@ -1263,7 +1263,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.*.urlClassifications",
+                    "data_path": "action_result.data.*.urlClassifications",
                     "data_type": "string",
                     "example_values": [
                         "WEB_SEARCH"
@@ -1375,21 +1375,21 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.*.url",
+                    "data_path": "action_result.data.*.url",
                     "data_type": "string",
                     "example_values": [
                         "bbc.com"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.*.urlClassifications",
+                    "data_path": "action_result.data.*.urlClassifications",
                     "data_type": "string",
                     "example_values": [
                         "NEWS_AND_MEDIA"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.*.urlClassificationsWithSecurityAlert",
+                    "data_path": "action_result.data.*.urlClassificationsWithSecurityAlert",
                     "data_type": "string"
                 }
             ],

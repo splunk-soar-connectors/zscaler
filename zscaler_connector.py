@@ -451,7 +451,7 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return ret_val
 
-        action_result.add_data({'data': response})
+        action_result.update_data(response)
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_lookup_ip(self, param):
