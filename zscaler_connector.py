@@ -252,7 +252,7 @@ class ZscalerConnector(BaseConnector):
         if not endpoints:
             summary = action_result.set_summary({})
             summary['updated'] = []
-            summary['ignored'] = endpoints
+            summary['ignored'] = to_add
             return RetVal(action_result.set_status(phantom.APP_SUCCESS, msg), None)
         return RetVal(phantom.APP_SUCCESS, endpoints)
 
@@ -303,7 +303,7 @@ class ZscalerConnector(BaseConnector):
 
     def _amend_whitelist(self, action_result, endpoints, action):
         ret_val, filtered_endpoints = self._check_whitelist(action_result, endpoints, action)
-        if phantom.is_fail(ret_val):
+        if phantom.is_fail(ret_val) or filtered_endpoints is None:
             return ret_val
 
         if action == "ADD_TO_LIST":
@@ -496,8 +496,8 @@ class ZscalerConnector(BaseConnector):
         elif action_id == 'unwhitelist_ip':
             ret_val = self._handle_unwhitelist_ip(param)
 
-        elif action_id == 'unwhitelist_ip':
-            ret_val = self._handle_unwhitelist_ip(param)
+        elif action_id == 'unwhitelist_url':
+            ret_val = self._handle_unwhitelist_url(param)
 
         elif action_id == "lookup_ip":
             ret_val = self._handle_lookup_ip(param)
