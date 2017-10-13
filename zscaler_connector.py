@@ -172,7 +172,7 @@ class ZscalerConnector(BaseConnector):
         # Regardless, the response will include a try-after value, which we can use to sleep
         ret_val, response = self._make_rest_call(*args, **kwargs)
         if phantom.is_fail(ret_val):
-            if self._response.status_code == 429:  # Rate limit exceeded
+            if self._response and self._response.status_code == 429:  # Rate limit exceeded
                 try:
                     retry_time = self._response.json()['Retry-After']
                 except KeyError:
@@ -203,7 +203,13 @@ class ZscalerConnector(BaseConnector):
         username = config['username']
         password = config['password']
         api_key = config['api_key']
-        timestamp, obf_api_key = self._obfuscate_api_key(api_key)
+        try:
+            timestamp, obf_api_key = self._obfuscate_api_key(api_key)
+        except:
+            return self.set_status(
+                phantom.APP_ERROR,
+                "Error obfuscating API key"
+            )
 
         body = {
             'apiKey': obf_api_key,
@@ -299,7 +305,7 @@ class ZscalerConnector(BaseConnector):
         whitelist = response.get('whitelistUrls', [])
         self._whitelist = whitelist
 
-        return self._filter_endpoints(action_result, endpoints, whitelist, action_result, 'Whitelist')
+        return self._filter_endpoints(action_result, endpoints, whitelist, action, 'Whitelist')
 
     def _amend_whitelist(self, action_result, endpoints, action):
         ret_val, filtered_endpoints = self._check_whitelist(action_result, endpoints, action)
