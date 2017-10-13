@@ -299,7 +299,7 @@ class ZscalerConnector(BaseConnector):
         whitelist = response.get('whitelistUrls', [])
         self._whitelist = whitelist
 
-        return self._filter_endpoints(action_result, endpoints, whitelist, action_result, 'Whitelist')
+        return self._filter_endpoints(action_result, endpoints, whitelist, action, 'Whitelist')
 
     def _amend_whitelist(self, action_result, endpoints, action):
         ret_val, filtered_endpoints = self._check_whitelist(action_result, endpoints, action)
