@@ -753,6 +753,10 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.whitelistUrls",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.val",
                     "data_type": "numeric",
                     "example_values": [
@@ -895,6 +899,10 @@
                 },
                 {
                     "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.whitelistUrls",
                     "data_type": "string"
                 },
                 {
@@ -1043,6 +1051,10 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.whitelistUrls",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.val",
                     "data_type": "numeric",
                     "example_values": [
@@ -1188,6 +1200,10 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.whitelistUrls",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.val",
                     "data_type": "numeric",
                     "example_values": [
@@ -1268,6 +1284,10 @@
                     "example_values": [
                         "WEB_SEARCH"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.urlClassificationsWithSecurityAlert",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.message",
