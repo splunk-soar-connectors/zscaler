@@ -172,11 +172,21 @@ class ZscalerConnector(BaseConnector):
         # Regardless, the response will include a try-after value, which we can use to sleep
         ret_val, response = self._make_rest_call(*args, **kwargs)
         if phantom.is_fail(ret_val):
-            if self._response and self._response.status_code == 429:  # Rate limit exceeded
+            if self._response is None:
+                return ret_val, response
+            if self._response.status_code == 409:  # Lock not available
+                # This basically just means we need to try again
+                self.debug_print("Error 409: Lock not available")
+                self.send_progress("Error 409: Lock not available: Retrying in 1 second")
+                time.sleep(1)
+                return self._make_rest_call_helper(*args, **kwargs)
+            if self._response.status_code == 429:  # Rate limit exceeded
                 try:
                     retry_time = self._response.json()['Retry-After']
                 except KeyError:
+                    self.debug_print("KeyError")
                     return ret_val, response
+                self.debug_print("Retry Time: {}".format(retry_time))
                 seconds_to_wait = self._parse_retry_time(retry_time)
                 if seconds_to_wait is None:
                     return retry_time, response
