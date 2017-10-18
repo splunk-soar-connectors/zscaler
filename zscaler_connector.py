@@ -468,7 +468,7 @@ class ZscalerConnector(BaseConnector):
             return ret_val
 
         action_result.update_data(response)
-        return action_result.set_status(phantom.APP_SUCCESS)
+        return action_result.set_status(phantom.APP_SUCCESS, "Successfully completed lookup")
 
     def _handle_lookup_ip(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
