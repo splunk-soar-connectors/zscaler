@@ -254,7 +254,7 @@ class ZscalerConnector(BaseConnector):
 
     def _handle_test_connectivity(self, param):
         # If we are here we have successfully initialized a session
-        self.save_progress(phantom.APP_SUCC_CONN_RUN)
+        self.save_progress("Connectivity test passed")
         return self.set_status(phantom.APP_SUCCESS)
 
     def _filter_endpoints(self, action_result, to_add, existing, action, name):
@@ -468,7 +468,7 @@ class ZscalerConnector(BaseConnector):
             return ret_val
 
         action_result.update_data(response)
-        return action_result.set_status(phantom.APP_SUCCESS)
+        return action_result.set_status(phantom.APP_SUCCESS, "Successfully completed lookup")
 
     def _handle_lookup_ip(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
