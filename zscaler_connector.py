@@ -254,7 +254,7 @@ class ZscalerConnector(BaseConnector):
 
     def _handle_test_connectivity(self, param):
         # If we are here we have successfully initialized a session
-        self.save_progress(phantom.APP_SUCC_CONN_RUN)
+        self.save_progress("Connectivity test passed")
         return self.set_status(phantom.APP_SUCCESS)
 
     def _filter_endpoints(self, action_result, to_add, existing, action, name):
