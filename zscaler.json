@@ -28,8 +28,6 @@
             "description": "API Key",
             "data_type": "password",
             "required": true,
-            "value_list": [],
-            "default": "",
             "order": 1
         },
         "username": {
@@ -44,8 +42,6 @@
             "description": "Password",
             "data_type": "password",
             "required": true,
-            "value_list": [],
-            "default": "",
             "order": 3
         }
     },
