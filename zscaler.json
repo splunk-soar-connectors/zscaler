@@ -9,11 +9,11 @@
     "product_version_regex": ".*",
     "publisher": "Phantom",
     "license": "Copyright Phantom 2017",
-    "app_version": "1.0.4",
-    "utctime_updated": "2017-10-17T19:41:33.000000Z",
+    "app_version": "1.0.7",
+    "utctime_updated": "2017-11-01T20:08:00.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.pyc",
-    "min_phantom_version": "3.0.251",
+    "min_phantom_version": "3.0.264",
     "app_wizard_version": "1.0.0",
     "configuration": {
         "base_url": {
@@ -28,8 +28,6 @@
             "description": "API Key",
             "data_type": "password",
             "required": true,
-            "value_list": [],
-            "default": "",
             "order": 1
         },
         "username": {
@@ -44,8 +42,6 @@
             "description": "Password",
             "data_type": "password",
             "required": true,
-            "value_list": [],
-            "default": "",
             "order": 3
         }
     },
