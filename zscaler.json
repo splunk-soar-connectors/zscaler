@@ -58,7 +58,7 @@
         },
         {
             "action": "block ip",
-            "identifier": "block_ip",
+            "identifier": "block_ip2",
             "description": "Block an IP",
             "verbose": "Alias for <b>blacklist ip</b>",
             "type": "contain",
@@ -354,7 +354,7 @@
         },
         {
             "action": "block url",
-            "identifier": "block_url",
+            "identifier": "block_url2",
             "description": "Block a URL",
             "verbose": "Alias for <b>blacklist url</b>",
             "type": "contain",
@@ -644,7 +644,7 @@
         },
         {
             "action": "unblock ip",
-            "identifier": "unblock_ip",
+            "identifier": "unblock_ip2",
             "description": "Unblock an IP",
             "verbose": "Alias for <b>unblacklist ip</b>",
             "type": "correct",
@@ -789,7 +789,7 @@
         },
         {
             "action": "unblock url",
-            "identifier": "unblock_url",
+            "identifier": "unblock_url2",
             "description": "Unblock a URL",
             "verbose": "Alias for <b>unblacklist url</b>",
             "type": "correct",
