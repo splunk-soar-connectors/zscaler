@@ -503,6 +503,18 @@ class ZscalerConnector(BaseConnector):
         elif action_id == 'unblock_url':
             ret_val = self._handle_unblock_url(param)
 
+        elif action_id == 'block_ip2':
+            ret_val = self._handle_block_ip(param)
+
+        elif action_id == 'block_url2':
+            ret_val = self._handle_block_url(param)
+
+        elif action_id == 'unblock_ip2':
+            ret_val = self._handle_unblock_ip(param)
+
+        elif action_id == 'unblock_url2':
+            ret_val = self._handle_unblock_url(param)
+
         elif action_id == 'whitelist_ip':
             ret_val = self._handle_whitelist_ip(param)
 
