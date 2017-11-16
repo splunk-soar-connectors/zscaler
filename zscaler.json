@@ -96,7 +96,7 @@
                         "ip",
                         "ip list"
                     ],
-                    "column_name": "url",
+                    "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
                         "8.8.8.8",
@@ -244,7 +244,7 @@
                         "ip",
                         "ip list"
                     ],
-                    "column_name": "url",
+                    "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
                         "8.8.8.8",
@@ -392,7 +392,7 @@
                         "url",
                         "url list"
                     ],
-                    "column_name": "url",
+                    "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
                         "www.facebook.com",
@@ -537,7 +537,7 @@
                         "url",
                         "url list"
                     ],
-                    "column_name": "url",
+                    "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
                         "www.facebook.com",
@@ -682,7 +682,7 @@
                         "ip",
                         "ip list"
                     ],
-                    "column_name": "url",
+                    "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
                         "8.8.8.8",
@@ -827,7 +827,7 @@
                         "url",
                         "url list"
                     ],
-                    "column_name": "url",
+                    "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
                         "www.facebook.com",
@@ -972,7 +972,7 @@
                         "ip",
                         "ip list"
                     ],
-                    "column_name": "url",
+                    "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
                         "8.8.8.8",
@@ -1117,7 +1117,7 @@
                         "url",
                         "url list"
                     ],
-                    "column_name": "url",
+                    "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
                         "www.facebook.com",
@@ -1266,7 +1266,7 @@
                         "ip",
                         "ip list"
                     ],
-                    "column_name": "url",
+                    "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
                         "8.8.8.8",
@@ -1415,7 +1415,7 @@
                         "url",
                         "url list"
                     ],
-                    "column_name": "url",
+                    "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
                         "www.facebook.com",
@@ -1564,7 +1564,7 @@
                         "ip",
                         "ip list"
                     ],
-                    "column_name": "url",
+                    "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
                         "8.8.8.8",
@@ -1713,7 +1713,7 @@
                         "url",
                         "url list"
                     ],
-                    "column_name": "url",
+                    "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
                         "www.facebook.com",
@@ -1856,7 +1856,7 @@
                         "ip",
                         "ip list"
                     ],
-                    "column_name": "IP",
+                    "column_name": "ip/url",
                     "column_order": 0
                 },
                 {
@@ -1981,7 +1981,7 @@
                     "example_values": [
                         "bbc.com"
                     ],
-                    "column_name": "URL",
+                    "column_name": "ip/url",
                     "column_order": 0
                 },
                 {
