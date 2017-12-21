@@ -4,14 +4,13 @@
     "description": "This app implements containment and investigative actions on Zscaler",
     "type": "network security",
     "product_vendor": "Zscaler",
-    "logo": "logo_zscaler.svg",
-    "logo_dark": "logo_zscaler_dark.svg",
+    "logo": "zscaler.png",
     "product_name": "Zscaler",
     "product_version_regex": ".*",
     "publisher": "Phantom",
     "license": "Copyright Phantom 2017",
-    "app_version": "1.0.11",
-    "utctime_updated": "2017-12-21T03:24:34.000000Z",
+    "app_version": "1.0.9",
+    "utctime_updated": "2017-11-16T02:33:44.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.pyc",
     "min_phantom_version": "3.0.264",
@@ -91,15 +90,6 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
@@ -124,57 +114,12 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.configuredName",
+                    "data_path": "action_result.status",
                     "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1,
                     "example_values": [
-                        "Phantom-Block"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customCategory",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.dbCategorizedUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.val",
-                    "data_type": "numeric",
-                    "example_values": [
-                        128
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.ignored",
-                    "data_type": "string",
-                    "example_values": [
-                        "8.8.8.8"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.updated",
-                    "data_type": "string",
-                    "example_values": [
-                        "208.67.222.222"
-                    ],
-                    "contains": [
-                        "ip"
+                        "success"
                     ]
                 },
                 {
@@ -196,6 +141,60 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.ignored",
+                    "data_type": "string",
+                    "example_values": [
+                        "8.8.8.8"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.updated",
+                    "data_type": "string",
+                    "example_values": [
+                        "208.67.222.222"
+                    ],
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        128
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Phantom-Block"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "CUSTOM_01"
                     ]
                 }
             ],
@@ -239,15 +238,6 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
@@ -272,57 +262,12 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.configuredName",
+                    "data_path": "action_result.status",
                     "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1,
                     "example_values": [
-                        "Phantom-Block"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customCategory",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.dbCategorizedUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.val",
-                    "data_type": "numeric",
-                    "example_values": [
-                        128
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.ignored",
-                    "data_type": "string",
-                    "example_values": [
-                        "8.8.8.8"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.updated",
-                    "data_type": "string",
-                    "example_values": [
-                        "208.67.222.222"
-                    ],
-                    "contains": [
-                        "ip"
+                        "success"
                     ]
                 },
                 {
@@ -344,6 +289,60 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.ignored",
+                    "data_type": "string",
+                    "example_values": [
+                        "8.8.8.8"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.updated",
+                    "data_type": "string",
+                    "example_values": [
+                        "208.67.222.222"
+                    ],
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        128
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Phantom-Block"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "CUSTOM_01"
                     ]
                 }
             ],
@@ -387,15 +386,6 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
@@ -420,54 +410,12 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.configuredName",
+                    "data_path": "action_result.status",
                     "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1,
                     "example_values": [
-                        "Phantom-Block"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customCategory",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.dbCategorizedUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.val",
-                    "data_type": "numeric",
-                    "example_values": [
-                        128
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.ignored",
-                    "data_type": "string",
-                    "example_values": [
-                        "www.facebook.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.updated",
-                    "data_type": "string",
-                    "example_values": [
-                        "www.myspace.com"
+                        "success"
                     ]
                 },
                 {
@@ -489,6 +437,57 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.ignored",
+                    "data_type": "string",
+                    "example_values": [
+                        "www.facebook.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.updated",
+                    "data_type": "string",
+                    "example_values": [
+                        "www.myspace.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        128
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Phantom-Block"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "CUSTOM_01"
                     ]
                 }
             ],
@@ -532,15 +531,6 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
@@ -565,54 +555,12 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.configuredName",
+                    "data_path": "action_result.status",
                     "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1,
                     "example_values": [
-                        "Phantom-Block"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customCategory",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.dbCategorizedUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.val",
-                    "data_type": "numeric",
-                    "example_values": [
-                        128
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.ignored",
-                    "data_type": "string",
-                    "example_values": [
-                        "www.facebook.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.updated",
-                    "data_type": "string",
-                    "example_values": [
-                        "www.myspace.com"
+                        "success"
                     ]
                 },
                 {
@@ -634,6 +582,57 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.ignored",
+                    "data_type": "string",
+                    "example_values": [
+                        "www.facebook.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.updated",
+                    "data_type": "string",
+                    "example_values": [
+                        "www.myspace.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        128
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Phantom-Block"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "CUSTOM_01"
                     ]
                 }
             ],
@@ -677,15 +676,6 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
@@ -710,54 +700,12 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.configuredName",
+                    "data_path": "action_result.status",
                     "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1,
                     "example_values": [
-                        "Phantom-Block"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customCategory",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.dbCategorizedUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.val",
-                    "data_type": "numeric",
-                    "example_values": [
-                        128
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.ignored",
-                    "data_type": "string",
-                    "example_values": [
-                        "8.8.8.8"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.updated",
-                    "data_type": "string",
-                    "example_values": [
-                        "208.67.222.222"
+                        "success"
                     ]
                 },
                 {
@@ -779,6 +727,57 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.ignored",
+                    "data_type": "string",
+                    "example_values": [
+                        "8.8.8.8"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.updated",
+                    "data_type": "string",
+                    "example_values": [
+                        "208.67.222.222"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        128
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Phantom-Block"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "CUSTOM_01"
                     ]
                 }
             ],
@@ -822,15 +821,6 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
@@ -855,54 +845,12 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.configuredName",
+                    "data_path": "action_result.status",
                     "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1,
                     "example_values": [
-                        "Phantom-Block"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customCategory",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.dbCategorizedUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.val",
-                    "data_type": "numeric",
-                    "example_values": [
-                        128
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.ignored",
-                    "data_type": "string",
-                    "example_values": [
-                        "www.facebook.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.updated",
-                    "data_type": "string",
-                    "example_values": [
-                        "www.myspace.com"
+                        "success"
                     ]
                 },
                 {
@@ -924,6 +872,57 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.ignored",
+                    "data_type": "string",
+                    "example_values": [
+                        "www.facebook.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.updated",
+                    "data_type": "string",
+                    "example_values": [
+                        "www.myspace.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        128
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Phantom-Block"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "CUSTOM_01"
                     ]
                 }
             ],
@@ -967,15 +966,6 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
@@ -1000,54 +990,12 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.configuredName",
+                    "data_path": "action_result.status",
                     "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1,
                     "example_values": [
-                        "Phantom-Block"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customCategory",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.dbCategorizedUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.val",
-                    "data_type": "numeric",
-                    "example_values": [
-                        128
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.ignored",
-                    "data_type": "string",
-                    "example_values": [
-                        "8.8.8.8"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.updated",
-                    "data_type": "string",
-                    "example_values": [
-                        "208.67.222.222"
+                        "success"
                     ]
                 },
                 {
@@ -1069,6 +1017,57 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.ignored",
+                    "data_type": "string",
+                    "example_values": [
+                        "8.8.8.8"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.updated",
+                    "data_type": "string",
+                    "example_values": [
+                        "208.67.222.222"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        128
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Phantom-Block"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "CUSTOM_01"
                     ]
                 }
             ],
@@ -1112,15 +1111,6 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
@@ -1145,54 +1135,12 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.configuredName",
+                    "data_path": "action_result.status",
                     "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1,
                     "example_values": [
-                        "Phantom-Block"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customCategory",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.dbCategorizedUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.val",
-                    "data_type": "numeric",
-                    "example_values": [
-                        128
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.ignored",
-                    "data_type": "string",
-                    "example_values": [
-                        "www.facebook.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.updated",
-                    "data_type": "string",
-                    "example_values": [
-                        "www.myspace.com"
+                        "success"
                     ]
                 },
                 {
@@ -1214,6 +1162,57 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.ignored",
+                    "data_type": "string",
+                    "example_values": [
+                        "www.facebook.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.updated",
+                    "data_type": "string",
+                    "example_values": [
+                        "www.myspace.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        128
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Phantom-Block"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "CUSTOM_01"
                     ]
                 }
             ],
@@ -1261,15 +1260,6 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
@@ -1294,58 +1284,12 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.configuredName",
+                    "data_path": "action_result.status",
                     "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1,
                     "example_values": [
-                        "Phantom-Whitelist"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customCategory",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.dbCategorizedUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.val",
-                    "data_type": "numeric",
-                    "example_values": [
-                        128
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.whitelistUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary.ignored",
-                    "data_type": "string",
-                    "example_values": [
-                        "8.8.8.8"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.updated",
-                    "data_type": "string",
-                    "example_values": [
-                        "208.67.222.222"
+                        "success"
                     ]
                 },
                 {
@@ -1367,6 +1311,61 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.ignored",
+                    "data_type": "string",
+                    "example_values": [
+                        "8.8.8.8"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.updated",
+                    "data_type": "string",
+                    "example_values": [
+                        "208.67.222.222"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.whitelistUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        128
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Phantom-Whitelist"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "CUSTOM_01"
                     ]
                 }
             ],
@@ -1410,15 +1409,6 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
@@ -1443,58 +1433,12 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.configuredName",
+                    "data_path": "action_result.status",
                     "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1,
                     "example_values": [
-                        "Phantom-Whitelist"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customCategory",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.dbCategorizedUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.val",
-                    "data_type": "numeric",
-                    "example_values": [
-                        128
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.whitelistUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary.ignored",
-                    "data_type": "string",
-                    "example_values": [
-                        "www.facebook.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.updated",
-                    "data_type": "string",
-                    "example_values": [
-                        "www.myspace.com"
+                        "success"
                     ]
                 },
                 {
@@ -1516,6 +1460,61 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.ignored",
+                    "data_type": "string",
+                    "example_values": [
+                        "www.facebook.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.updated",
+                    "data_type": "string",
+                    "example_values": [
+                        "www.myspace.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.whitelistUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        128
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Phantom-Whitelist"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "CUSTOM_01"
                     ]
                 }
             ],
@@ -1559,15 +1558,6 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
@@ -1592,58 +1582,12 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.configuredName",
+                    "data_path": "action_result.status",
                     "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1,
                     "example_values": [
-                        "Phantom-Whitelist"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customCategory",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.dbCategorizedUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.val",
-                    "data_type": "numeric",
-                    "example_values": [
-                        128
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.whitelistUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary.ignored",
-                    "data_type": "string",
-                    "example_values": [
-                        "8.8.8.8"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.updated",
-                    "data_type": "string",
-                    "example_values": [
-                        "208.67.222.222"
+                        "success"
                     ]
                 },
                 {
@@ -1665,6 +1609,61 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.ignored",
+                    "data_type": "string",
+                    "example_values": [
+                        "8.8.8.8"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.updated",
+                    "data_type": "string",
+                    "example_values": [
+                        "208.67.222.222"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.whitelistUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        128
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Phantom-Whitelist"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "CUSTOM_01"
                     ]
                 }
             ],
@@ -1708,15 +1707,6 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
@@ -1741,58 +1731,12 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.configuredName",
+                    "data_path": "action_result.status",
                     "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1,
                     "example_values": [
-                        "Phantom-Whitelist"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customCategory",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.dbCategorizedUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.val",
-                    "data_type": "numeric",
-                    "example_values": [
-                        128
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.whitelistUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary.ignored",
-                    "data_type": "string",
-                    "example_values": [
-                        "www.facebook.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.updated",
-                    "data_type": "string",
-                    "example_values": [
-                        "www.myspace.com"
+                        "success"
                     ]
                 },
                 {
@@ -1814,6 +1758,61 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.ignored",
+                    "data_type": "string",
+                    "example_values": [
+                        "www.facebook.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.updated",
+                    "data_type": "string",
+                    "example_values": [
+                        "www.myspace.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.whitelistUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        128
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Phantom-Whitelist"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "CUSTOM_01"
                     ]
                 }
             ],
@@ -1845,18 +1844,6 @@
                     "data_type": "string",
                     "example_values": [
                         "success"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.ip",
-                    "data_type": "string",
-                    "contains": [
-                        "ip",
-                        "ip list"
-                    ],
-                    "example_values": [
-                        "8.8.8.8",
-                        "208.67.222.222, 8.8.8.8"
                     ]
                 },
                 {
@@ -1892,6 +1879,18 @@
                     "data_type": "string",
                     "example_values": [
                         ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip",
+                        "ip list"
+                    ],
+                    "example_values": [
+                        "8.8.8.8",
+                        "208.67.222.222, 8.8.8.8"
                     ]
                 },
                 {
@@ -1937,13 +1936,6 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
@@ -1953,6 +1945,34 @@
                     "example_values": [
                         "facebook.com",
                         "facebook.com, bbc.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
                     ]
                 },
                 {
@@ -1978,27 +1998,6 @@
                     "data_type": "string",
                     "column_name": "Security Alerts",
                     "column_order": 2
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
                 }
             ],
             "render": {
