@@ -230,7 +230,7 @@ class ZscalerConnector(BaseConnector):
 
         action_result = ActionResult()
         ret_val, response = self._make_rest_call_helper(
-            '/zsapi/v1/authenticatedSession',
+            '/api/v1/authenticatedSession',
             action_result, data=body,
             method='post'
         )
@@ -249,7 +249,7 @@ class ZscalerConnector(BaseConnector):
 
     def _deinit_session(self):
         action_result = ActionResult()
-        ret_val, response = self._make_rest_call_helper('/zsapi/v1/authenticatedSession', action_result, method='delete')  # noqa
+        ret_val, response = self._make_rest_call_helper('/api/v1/authenticatedSession', action_result, method='delete')  # noqa
         return phantom.APP_SUCCESS
 
     def _handle_test_connectivity(self, param):
