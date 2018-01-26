@@ -11,7 +11,7 @@
     "publisher": "Phantom",
     "license": "Copyright (c) Phantom Cyber Corporation, 2017-2018",
     "app_version": "1.0.14",
-    "utctime_updated": "2018-01-25T03:06:37.000000Z",
+    "utctime_updated": "2018-01-26T00:50:15.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.pyc",
     "min_phantom_version": "3.0.264",
