@@ -9,12 +9,12 @@
     "product_name": "Zscaler",
     "product_version_regex": ".*",
     "publisher": "Phantom",
-    "license": "Copyright Phantom 2017",
+    "license": "Copyright (c) 2017-2018 Splunk Inc.",
     "app_version": "1.0.13",
     "utctime_updated": "2017-12-26T19:49:55.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.pyc",
-    "min_phantom_version": "3.0.264",
+    "min_phantom_version": "3.5.180",
     "app_wizard_version": "1.0.0",
     "configuration": {
         "base_url": {
@@ -1952,14 +1952,16 @@
                     ],
                     "example_values": [
                         "facebook.com",
-                        "facebook.com, bbc.com"
+                        "facebook.com, bbc.com",
+                        "www.google.com, www.yahoo.com, example.tv"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.url",
                     "data_type": "string",
                     "example_values": [
-                        "bbc.com"
+                        "bbc.com",
+                        "www.google.com"
                     ],
                     "column_name": "ip/url",
                     "column_order": 0
@@ -1968,7 +1970,8 @@
                     "data_path": "action_result.data.*.urlClassifications",
                     "data_type": "string",
                     "example_values": [
-                        "NEWS_AND_MEDIA"
+                        "NEWS_AND_MEDIA",
+                        "MISCELLANEOUS_OR_UNKNOWN"
                     ],
                     "column_name": "Classifications",
                     "column_order": 1
@@ -1983,7 +1986,8 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        ""
+                        "",
+                        "Successfully completed lookup"
                     ]
                 },
                 {
@@ -1999,6 +2003,16 @@
                     "example_values": [
                         1
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.blacklisted",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ],
+                    "column_name": "Blacklisted",
+                    "column_order": 3
                 }
             ],
             "render": {
