@@ -1,16 +1,8 @@
-# --
 # File: zscaler_connector.py
+# Copyright (c) 2017-2018 Splunk Inc.
 #
-# Copyright (c) Phantom Cyber Corporation, 2017
-#
-# This unpublished material is proprietary to Phantom Cyber.
-# All rights reserved. The methods and
-# techniques described herein are considered trade secrets
-# and/or confidential. Reproduction or distribution, in whole
-# or in part, is forbidden except by express written permission
-# of Phantom Cyber Corporation.
-#
-# --
+# SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
+# without a valid written license from Splunk Inc. is PROHIBITED.
 
 # Phantom App imports
 import phantom.app as phantom
@@ -467,7 +459,21 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return ret_val
 
+        ret_val, blacklist_response = self._make_rest_call_helper(
+            '/api/v1/security/advanced', action_result,
+            data=endpoints, method='get'
+        )
+        if phantom.is_fail(ret_val):
+            return ret_val
+
+        for e in endpoints:
+            if e in blacklist_response['blacklistUrls']:
+                [response[i].update({"blacklisted": True}) for i, item in enumerate(response) if item['url'] == e]
+            else:
+                [response[i].update({"blacklisted": False}) for i, item in enumerate(response) if item['url'] == e]
+
         action_result.update_data(response)
+
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully completed lookup")
 
     def _handle_lookup_ip(self, param):
