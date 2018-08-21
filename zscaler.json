@@ -1863,7 +1863,8 @@
                     "data_path": "action_result.data.*.url",
                     "data_type": "string",
                     "example_values": [
-                        "208.67.222.222"
+                        "208.67.222.222",
+                        "8.8.8.8"
                     ],
                     "contains": [
                         "ip",
@@ -1891,7 +1892,8 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        ""
+                        "",
+                        "Successfully completed lookup"
                     ]
                 },
                 {
@@ -1907,6 +1909,20 @@
                     "example_values": [
                         1
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.blacklisted",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ],
+                    "column_name": "Blacklisted",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
                 }
             ],
             "render": {
@@ -2013,6 +2029,10 @@
                     ],
                     "column_name": "Blacklisted",
                     "column_order": 3
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
                 }
             ],
             "render": {
