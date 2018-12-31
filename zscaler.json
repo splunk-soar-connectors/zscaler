@@ -70,8 +70,7 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "md5",
-                        "hash"
+                        "md5"
                     ],
                     "order": 0
                 }
