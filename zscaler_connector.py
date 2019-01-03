@@ -1,5 +1,5 @@
 # File: zscaler_connector.py
-# Copyright (c) 2017-2018 Splunk Inc.
+# Copyright (c) 2017-2019 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
@@ -506,7 +506,7 @@ class ZscalerConnector(BaseConnector):
 
         file_hash = param['file_hash']
 
-        ret_val, sandbox_report = self._make_rest_call_helper('/api/v1/sandbox/report/{0}?details=full'.format(file_hash), action_result, method='get')
+        ret_val, sandbox_report = self._make_rest_call_helper('/api/v1/sandbox/report/{0}?details=full'.format(file_hash), action_result)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -527,7 +527,7 @@ class ZscalerConnector(BaseConnector):
         """
 
         action_result = self.add_action_result(ActionResult(dict(param)))
-        ret_val, list_url_categories = self._make_rest_call_helper('/api/v1/urlCategories', action_result, method='get')
+        ret_val, list_url_categories = self._make_rest_call_helper('/api/v1/urlCategories', action_result)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
