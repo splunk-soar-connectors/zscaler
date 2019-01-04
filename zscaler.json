@@ -9,12 +9,12 @@
     "product_name": "Zscaler",
     "product_version_regex": ".*",
     "publisher": "Phantom",
-    "license": "Copyright (c) 2017-2018 Splunk Inc.",
+    "license": "Copyright (c) 2017-2019 Splunk Inc.",
     "app_version": "1.0.18",
     "utctime_updated": "2018-12-07T01:03:58.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.pyc",
-    "min_phantom_version": "3.5.180",
+    "min_phantom_version": "3.5.210",
     "app_wizard_version": "1.0.0",
     "configuration": {
         "base_url": {
@@ -58,6 +58,372 @@
             "versions": "EQ(*)"
         },
         {
+            "action": "get report",
+            "identifier": "get_report",
+            "description": "Fetch sandbox report for provided md5 file hash",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "file_hash": {
+                    "description": "md5 file hash",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "md5"
+                    ],
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.file_hash",
+                    "data_type": "string",
+                    "column_name": "File Hash",
+                    "column_order": 0,
+                    "example_values": [
+                        "1043ca3fc2e83f0c6f100e46d2ea16be"
+                    ],
+                    "contains": [
+                        "md5"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.Classification.Category",
+                    "data_type": "string",
+                    "column_name": "Category",
+                    "column_order": 1,
+                    "example_values": [
+                        "BENIGN"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.Classification.DetectedMalware",
+                    "data_type": "string",
+                    "column_name": "Detected Malware",
+                    "column_order": 2,
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.Classification.Score",
+                    "data_type": "numeric",
+                    "column_name": "Score",
+                    "column_order": 3,
+                    "example_values": [
+                        10
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.Classification.Type",
+                    "data_type": "string",
+                    "example_values": [
+                        "BENIGN"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.FileProperties.DigitalCerificate",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.FileProperties.FileSize",
+                    "data_type": "numeric",
+                    "example_values": [
+                        350084
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.FileProperties.FileType",
+                    "data_type": "string",
+                    "example_values": [
+                        "EXE"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.FileProperties.Issuer",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.FileProperties.MD5",
+                    "data_type": "string",
+                    "example_values": [
+                        "1043ca3fc2e83f0c6f100e46d2ea16be"
+                    ],
+                    "contains": [
+                        "md5"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.FileProperties.RootCA",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.FileProperties.SHA1",
+                    "data_type": "string",
+                    "example_values": [
+                        "efbd493b33543341d43df6db4c92de2473cf49f3"
+                    ],
+                    "contains": [
+                        "sha1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.FileProperties.SSDeep",
+                    "data_type": "string",
+                    "example_values": [
+                        "6144:IFkS+8dpN9EtEnROO4T0LbTbHiXuFW0XPBGunX9v62HCTAA1PSahJj3zDbSJ8:CkMy4TGWXuFR5JAxS6Lnbu8"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.FileProperties.Sha256",
+                    "data_type": "string",
+                    "example_values": [
+                        "0e7fd4dde827a7f0bda82bbfbce4b92a551d0cd296f72e936b8968310d2181cd"
+                    ],
+                    "contains": [
+                        "sha256"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.Origin.Country",
+                    "data_type": "string",
+                    "example_values": [
+                        "United States"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.Origin.Language",
+                    "data_type": "string",
+                    "example_values": [
+                        "English"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.Origin.Risk",
+                    "data_type": "string",
+                    "example_values": [
+                        "LOW"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.Summary.Category",
+                    "data_type": "string",
+                    "example_values": [
+                        "EXECS"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.Summary.Duration",
+                    "data_type": "numeric",
+                    "example_values": [
+                        524114
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.Summary.FileType",
+                    "data_type": "string",
+                    "example_values": [
+                        "EXE"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.Summary.StartTime",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1520334357
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.Summary.Status",
+                    "data_type": "string",
+                    "example_values": [
+                        "COMPLETED"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.SystemSummary.*.Risk",
+                    "data_type": "string",
+                    "example_values": [
+                        "LOW"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.SystemSummary.*.Signature",
+                    "data_type": "string",
+                    "example_values": [
+                        "Binary contains paths to development resources"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Full Details.SystemSummary.*.SignatureSources",
+                    "data_type": "string",
+                    "example_values": [
+                        "no activity detected"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Sandbox report successfully fetched for the provided md5 hash"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "title": "Get Report",
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "list url categories",
+            "identifier": "list_url_categories",
+            "description": "List all URL categories",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {},
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Test-Caution"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "column_name": "Is Custom Category",
+                    "column_order": 2,
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string",
+                    "example_values": [
+                        "6.5.3.2.4"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string",
+                    "column_name": "Description",
+                    "column_order": 1,
+                    "example_values": [
+                        "OTHER_RESTRICTED_WEBSITE_DESC"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.editable",
+                    "data_type": "boolean",
+                    "column_name": "Editable",
+                    "column_order": 3,
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "column_name": "Category ID",
+                    "column_order": 0,
+                    "contains": [
+                        "zscaler url category"
+                    ],
+                    "example_values": [
+                        "OTHER_RESTRICTED_WEBSITE"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.total_url_categories",
+                    "data_type": "numeric",
+                    "example_values": [
+                        97
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Total url categories: 97"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "title": "List URL Categories",
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
             "action": "block ip",
             "identifier": "block_ip2",
             "description": "Block an IP",
@@ -67,13 +433,13 @@
             "undo": "unblock ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma seperated list of IPs",
+                    "description": "A comma separated list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
                     "contains": [
                         "ip",
-                        "ip list"
+                        "ipv6"
                     ],
                     "order": 0,
                     "allow_list": true
@@ -82,7 +448,7 @@
                     "description": "Add to this category",
                     "data_type": "string",
                     "required": false,
-                    "primary": false,
+                    "primary": true,
                     "contains": [
                         "zscaler url category"
                     ],
@@ -104,7 +470,7 @@
                     "data_type": "string",
                     "contains": [
                         "ip",
-                        "ip list"
+                        "ipv6"
                     ],
                     "column_name": "ip/url",
                     "column_order": 0,
@@ -221,7 +587,7 @@
                     "primary": true,
                     "contains": [
                         "ip",
-                        "ip list"
+                        "ipv6"
                     ],
                     "order": 0,
                     "allow_list": true
@@ -230,7 +596,7 @@
                     "description": "Add to this category",
                     "data_type": "string",
                     "required": false,
-                    "primary": false,
+                    "primary": true,
                     "contains": [
                         "zscaler url category"
                     ],
@@ -252,7 +618,7 @@
                     "data_type": "string",
                     "contains": [
                         "ip",
-                        "ip list"
+                        "ipv6"
                     ],
                     "column_name": "ip/url",
                     "column_order": 0,
@@ -363,12 +729,13 @@
             "undo": "unblacklist url",
             "parameters": {
                 "url": {
-                    "description": "A comma seperated list of URLs",
+                    "description": "A comma separated list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
                     "contains": [
                         "url",
+                        "domain",
                         "url list"
                     ],
                     "order": 0,
@@ -378,7 +745,7 @@
                     "description": "Add to this category",
                     "data_type": "string",
                     "required": false,
-                    "primary": false,
+                    "primary": true,
                     "contains": [
                         "zscaler url category"
                     ],
@@ -400,13 +767,14 @@
                     "data_type": "string",
                     "contains": [
                         "url",
+                        "domain",
                         "url list"
                     ],
                     "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
-                        "www.facebook.com",
-                        "www.facebook.com, www.myspace.com"
+                        "www.test.com",
+                        "www.test.com, www.myspace.com"
                     ]
                 },
                 {
@@ -460,7 +828,7 @@
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
                     "example_values": [
-                        "www.facebook.com"
+                        "www.test.com"
                     ]
                 },
                 {
@@ -474,7 +842,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Ignored: ['www.facebook.com'], Updated: ['www.myspace.com']"
+                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
                     ]
                 },
                 {
@@ -514,6 +882,7 @@
                     "primary": true,
                     "contains": [
                         "url",
+                        "domain",
                         "url list"
                     ],
                     "order": 0,
@@ -523,7 +892,7 @@
                     "description": "Add to this category",
                     "data_type": "string",
                     "required": false,
-                    "primary": false,
+                    "primary": true,
                     "contains": [
                         "zscaler url category"
                     ],
@@ -545,13 +914,14 @@
                     "data_type": "string",
                     "contains": [
                         "url",
+                        "domain",
                         "url list"
                     ],
                     "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
-                        "www.facebook.com",
-                        "www.facebook.com, www.myspace.com"
+                        "www.test.com",
+                        "www.test.com, www.myspace.com"
                     ]
                 },
                 {
@@ -605,7 +975,7 @@
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
                     "example_values": [
-                        "www.facebook.com"
+                        "www.test.com"
                     ]
                 },
                 {
@@ -619,7 +989,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Ignored: ['www.facebook.com'], Updated: ['www.myspace.com']"
+                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
                     ]
                 },
                 {
@@ -659,7 +1029,7 @@
                     "primary": true,
                     "contains": [
                         "ip",
-                        "ip list"
+                        "ipv6"
                     ],
                     "order": 0,
                     "allow_list": true
@@ -668,7 +1038,7 @@
                     "description": "Remove from this category",
                     "data_type": "string",
                     "required": false,
-                    "primary": false,
+                    "primary": true,
                     "contains": [
                         "zscaler url category"
                     ],
@@ -690,7 +1060,7 @@
                     "data_type": "string",
                     "contains": [
                         "ip",
-                        "ip list"
+                        "ipv6"
                     ],
                     "column_name": "ip/url",
                     "column_order": 0,
@@ -804,6 +1174,7 @@
                     "primary": true,
                     "contains": [
                         "url",
+                        "domain",
                         "url list"
                     ],
                     "order": 0,
@@ -813,7 +1184,7 @@
                     "description": "Remove from this category",
                     "data_type": "string",
                     "required": false,
-                    "primary": false,
+                    "primary": true,
                     "contains": [
                         "zscaler url category"
                     ],
@@ -835,13 +1206,14 @@
                     "data_type": "string",
                     "contains": [
                         "url",
+                        "domain",
                         "url list"
                     ],
                     "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
-                        "www.facebook.com",
-                        "www.facebook.com, www.myspace.com"
+                        "www.test.com",
+                        "www.test.com, www.myspace.com"
                     ]
                 },
                 {
@@ -895,7 +1267,7 @@
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
                     "example_values": [
-                        "www.facebook.com"
+                        "www.test.com"
                     ]
                 },
                 {
@@ -909,7 +1281,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Ignored: ['www.facebook.com'], Updated: ['www.myspace.com']"
+                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
                     ]
                 },
                 {
@@ -949,7 +1321,7 @@
                     "primary": true,
                     "contains": [
                         "ip",
-                        "ip list"
+                        "ipv6"
                     ],
                     "order": 0,
                     "allow_list": true
@@ -958,7 +1330,7 @@
                     "description": "Remove from this category",
                     "data_type": "string",
                     "required": false,
-                    "primary": false,
+                    "primary": true,
                     "contains": [
                         "zscaler url category"
                     ],
@@ -980,7 +1352,7 @@
                     "data_type": "string",
                     "contains": [
                         "ip",
-                        "ip list"
+                        "ipv6"
                     ],
                     "column_name": "ip/url",
                     "column_order": 0,
@@ -1094,6 +1466,7 @@
                     "primary": true,
                     "contains": [
                         "url",
+                        "domain",
                         "url list"
                     ],
                     "order": 0,
@@ -1103,7 +1476,7 @@
                     "description": "Remove from this category",
                     "data_type": "string",
                     "required": false,
-                    "primary": false,
+                    "primary": true,
                     "contains": [
                         "zscaler url category"
                     ],
@@ -1125,13 +1498,14 @@
                     "data_type": "string",
                     "contains": [
                         "url",
+                        "domain",
                         "url list"
                     ],
                     "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
-                        "www.facebook.com",
-                        "www.facebook.com, www.myspace.com"
+                        "www.test.com",
+                        "www.test.com, www.myspace.com"
                     ]
                 },
                 {
@@ -1185,7 +1559,7 @@
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
                     "example_values": [
-                        "www.facebook.com"
+                        "www.test.com"
                     ]
                 },
                 {
@@ -1199,7 +1573,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Ignored: ['www.facebook.com'], Updated: ['www.myspace.com']"
+                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
                     ]
                 },
                 {
@@ -1239,7 +1613,7 @@
                     "primary": true,
                     "contains": [
                         "ip",
-                        "ip list"
+                        "ipv6"
                     ],
                     "order": 0,
                     "allow_list": true
@@ -1248,7 +1622,7 @@
                     "description": "Add to this category",
                     "data_type": "string",
                     "required": false,
-                    "primary": false,
+                    "primary": true,
                     "contains": [
                         "zscaler url category"
                     ],
@@ -1274,7 +1648,7 @@
                     "data_type": "string",
                     "contains": [
                         "ip",
-                        "ip list"
+                        "ipv6"
                     ],
                     "column_name": "ip/url",
                     "column_order": 0,
@@ -1388,6 +1762,7 @@
                     "primary": true,
                     "contains": [
                         "url",
+                        "domain",
                         "url list"
                     ],
                     "order": 0,
@@ -1397,7 +1772,7 @@
                     "description": "Add to this category",
                     "data_type": "string",
                     "required": false,
-                    "primary": false,
+                    "primary": true,
                     "contains": [
                         "zscaler url category"
                     ],
@@ -1423,13 +1798,14 @@
                     "data_type": "string",
                     "contains": [
                         "url",
+                        "domain",
                         "url list"
                     ],
                     "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
-                        "www.facebook.com",
-                        "www.facebook.com, www.myspace.com"
+                        "www.test.com",
+                        "www.test.com, www.myspace.com"
                     ]
                 },
                 {
@@ -1487,7 +1863,7 @@
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
                     "example_values": [
-                        "www.facebook.com"
+                        "www.test.com"
                     ]
                 },
                 {
@@ -1501,7 +1877,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Ignored: ['www.facebook.com'], Updated: ['www.myspace.com']"
+                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
                     ]
                 },
                 {
@@ -1537,7 +1913,7 @@
                     "primary": true,
                     "contains": [
                         "ip",
-                        "ip list"
+                        "ipv6"
                     ],
                     "order": 0,
                     "allow_list": true
@@ -1546,7 +1922,7 @@
                     "description": "Add to this category",
                     "data_type": "string",
                     "required": false,
-                    "primary": false,
+                    "primary": true,
                     "contains": [
                         "zscaler url category"
                     ],
@@ -1572,7 +1948,7 @@
                     "data_type": "string",
                     "contains": [
                         "ip",
-                        "ip list"
+                        "ipv6"
                     ],
                     "column_name": "ip/url",
                     "column_order": 0,
@@ -1686,6 +2062,7 @@
                     "primary": true,
                     "contains": [
                         "url",
+                        "domain",
                         "url list"
                     ],
                     "order": 0,
@@ -1695,7 +2072,7 @@
                     "description": "Add to this category",
                     "data_type": "string",
                     "required": false,
-                    "primary": false,
+                    "primary": true,
                     "contains": [
                         "zscaler url category"
                     ],
@@ -1721,13 +2098,14 @@
                     "data_type": "string",
                     "contains": [
                         "url",
+                        "domain",
                         "url list"
                     ],
                     "column_name": "ip/url",
                     "column_order": 0,
                     "example_values": [
-                        "www.facebook.com",
-                        "www.facebook.com, www.myspace.com"
+                        "www.test.com",
+                        "www.test.com, www.myspace.com"
                     ]
                 },
                 {
@@ -1785,7 +2163,7 @@
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
                     "example_values": [
-                        "www.facebook.com"
+                        "www.test.com"
                     ]
                 },
                 {
@@ -1799,7 +2177,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Ignored: ['www.facebook.com'], Updated: ['www.myspace.com']"
+                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
                     ]
                 },
                 {
@@ -1833,7 +2211,7 @@
                     "primary": true,
                     "contains": [
                         "ip",
-                        "ip list"
+                        "ipv6"
                     ],
                     "order": 0,
                     "allow_list": true
@@ -1852,12 +2230,22 @@
                     "data_type": "string",
                     "contains": [
                         "ip",
-                        "ip list"
+                        "ipv6"
                     ],
                     "example_values": [
                         "8.8.8.8",
                         "208.67.222.222, 8.8.8.8"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.blacklisted",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ],
+                    "column_name": "Blacklisted",
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.url",
@@ -1868,7 +2256,7 @@
                     ],
                     "contains": [
                         "ip",
-                        "ip list"
+                        "ipv6"
                     ],
                     "column_name": "ip/url",
                     "column_order": 0
@@ -1887,6 +2275,10 @@
                     "data_type": "string",
                     "column_name": "Security Alerts",
                     "column_order": 2
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.message",
@@ -1909,20 +2301,6 @@
                     "example_values": [
                         1
                     ]
-                },
-                {
-                    "data_path": "action_result.data.*.blacklisted",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ],
-                    "column_name": "Blacklisted",
-                    "column_order": 3
-                },
-                {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
                 }
             ],
             "render": {
@@ -1945,6 +2323,7 @@
                     "primary": true,
                     "contains": [
                         "url",
+                        "domain",
                         "url list"
                     ],
                     "order": 0,
@@ -1964,22 +2343,37 @@
                     "data_type": "string",
                     "contains": [
                         "url",
+                        "domain",
                         "url list"
                     ],
                     "example_values": [
-                        "facebook.com",
-                        "facebook.com, bbc.com",
-                        "www.google.com, www.yahoo.com, example.tv"
+                        "test.com",
+                        "test.com, test1.com",
+                        "www.test.com, www.test3.com, test2.tv"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.blacklisted",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ],
+                    "column_name": "Blacklisted",
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.url",
                     "data_type": "string",
-                    "example_values": [
-                        "bbc.com",
-                        "www.google.com"
+                    "contains": [
+                        "url",
+                        "domain"
                     ],
-                    "column_name": "ip/url",
+                    "example_values": [
+                        "test1.com",
+                        "www.test.com"
+                    ],
+                    "column_name": "URL",
                     "column_order": 0
                 },
                 {
@@ -1997,6 +2391,10 @@
                     "data_type": "string",
                     "column_name": "Security Alerts",
                     "column_order": 2
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.message",
@@ -2019,20 +2417,6 @@
                     "example_values": [
                         1
                     ]
-                },
-                {
-                    "data_path": "action_result.data.*.blacklisted",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ],
-                    "column_name": "Blacklisted",
-                    "column_order": 3
-                },
-                {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
                 }
             ],
             "render": {
