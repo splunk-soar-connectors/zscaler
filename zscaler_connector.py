@@ -1,15 +1,10 @@
 # --
 # File: zscaler_connector.py
 #
-# Copyright (c) Phantom Cyber Corporation, 2017-2018
+# Copyright (c) 2017-2019 Splunk Inc.
 #
-# This unpublished material is proprietary to Phantom Cyber.
-# All rights reserved. The methods and
-# techniques described herein are considered trade secrets
-# and/or confidential. Reproduction or distribution, in whole
-# or in part, is forbidden except by express written permission
-# of Phantom Cyber Corporation.
-#
+# SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
+# without a valid written license from Splunk Inc. is PROHIBITED.
 # --
 
 # Phantom App imports
@@ -19,7 +14,9 @@ from phantom.action_result import ActionResult
 
 import requests
 import json
+import ipaddress
 from bs4 import BeautifulSoup
+from zscaler_consts import *
 
 import time
 
@@ -122,6 +119,22 @@ class ZscalerConnector(BaseConnector):
         )
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
+
+    def _is_ip(self, input_ip_address):
+        """ Function that checks given address and return True if address is valid IPv4 or IPV6 address.
+
+        :param input_ip_address: IP address
+        :return: status (success/failure)
+        """
+
+        ip_address_input = input_ip_address
+
+        try:
+            ipaddress.ip_address(unicode(ip_address_input))
+        except:
+            return False
+
+        return True
 
     def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get"):
 
@@ -230,7 +243,7 @@ class ZscalerConnector(BaseConnector):
 
         action_result = ActionResult()
         ret_val, response = self._make_rest_call_helper(
-            '/zsapi/v1/authenticatedSession',
+            '/api/v1/authenticatedSession',
             action_result, data=body,
             method='post'
         )
@@ -249,7 +262,7 @@ class ZscalerConnector(BaseConnector):
 
     def _deinit_session(self):
         action_result = ActionResult()
-        ret_val, response = self._make_rest_call_helper('/zsapi/v1/authenticatedSession', action_result, method='delete')  # noqa
+        ret_val, response = self._make_rest_call_helper('/api/v1/authenticatedSession', action_result, method='delete')  # noqa
         return phantom.APP_SUCCESS
 
     def _handle_test_connectivity(self, param):
@@ -467,8 +480,68 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return ret_val
 
+        ret_val, blacklist_response = self._make_rest_call_helper(
+            '/api/v1/security/advanced', action_result,
+            data=endpoints, method='get'
+        )
+
+        if phantom.is_fail(ret_val):
+            return ret_val
+
+        for e in endpoints:
+            if e in blacklist_response.get('blacklistUrls', []):
+                [response[i].update({"blacklisted": True}) for i, item in enumerate(response) if item['url'] == e]
+            else:
+                [response[i].update({"blacklisted": False}) for i, item in enumerate(response) if item['url'] == e]
+
         action_result.update_data(response)
+
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully completed lookup")
+
+    def _handle_get_report(self, param):
+        """
+        This action is used to retrieve a sandbox report of provided md5 file hash
+        :param file_hash: md5Hash of file
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        file_hash = param['file_hash']
+
+        ret_val, sandbox_report = self._make_rest_call_helper('/api/v1/sandbox/report/{0}?details=full'.format(file_hash), action_result)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if sandbox_report.get(ZSCALER_JSON_FULL_DETAILS) and ZSCLAER_ERR_MD5_UNKNOWN_MSG in sandbox_report.get(
+                                                                        ZSCALER_JSON_FULL_DETAILS):
+            return action_result.set_status(phantom.APP_ERROR, sandbox_report.get(ZSCALER_JSON_FULL_DETAILS))
+
+        action_result.add_data(sandbox_report)
+
+        return action_result.set_status(phantom.APP_SUCCESS, ZSCALER_SANDBOX_GET_REPORT_MSG)
+
+    def _handle_list_url_categories(self, param):
+        """
+        This action is used to fetch all the URL categories
+        :param: No parameters
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        ret_val, list_url_categories = self._make_rest_call_helper('/api/v1/urlCategories', action_result)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        for url_category in list_url_categories:
+            action_result.add_data(url_category)
+
+        summary = action_result.update_summary({})
+        summary['total_url_categories'] = action_result.get_data_size()
+
+        return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_lookup_ip(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -490,6 +563,12 @@ class ZscalerConnector(BaseConnector):
 
         if action_id == 'test_connectivity':
             ret_val = self._handle_test_connectivity(param)
+
+        elif action_id == 'list_url_categories':
+            ret_val = self._handle_list_url_categories(param)
+
+        elif action_id == 'get_report':
+            ret_val = self._handle_get_report(param)
 
         elif action_id == 'block_ip':
             ret_val = self._handle_block_ip(param)
@@ -545,6 +624,9 @@ class ZscalerConnector(BaseConnector):
         self._username = config['username']
         self._password = config['password']
         self._headers = {}
+
+        self.set_validator('ipv6', self._is_ip)
+
         return self._init_session()
 
     def finalize(self):
