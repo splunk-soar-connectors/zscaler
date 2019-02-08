@@ -459,8 +459,6 @@
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
                     "example_values": [
                         "success"
                     ]
@@ -472,7 +470,7 @@
                         "ip",
                         "ipv6"
                     ],
-                    "column_name": "ip/url",
+                    "column_name": "IP",
                     "column_order": 0,
                     "example_values": [
                         "8.8.8.8",
@@ -529,13 +527,20 @@
                 {
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
+                    "column_name": "Ignored",
+                    "column_order": 2,
                     "example_values": [
                         "8.8.8.8"
+                    ],
+                    "contains": [
+                        "ip"
                     ]
                 },
                 {
                     "data_path": "action_result.summary.updated",
                     "data_type": "string",
+                    "column_name": "Updated",
+                    "column_order": 1,
                     "example_values": [
                         "208.67.222.222"
                     ],
@@ -607,8 +612,6 @@
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
                     "example_values": [
                         "success"
                     ]
@@ -620,7 +623,7 @@
                         "ip",
                         "ipv6"
                     ],
-                    "column_name": "ip/url",
+                    "column_name": "IP",
                     "column_order": 0,
                     "example_values": [
                         "8.8.8.8",
@@ -677,13 +680,20 @@
                 {
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
+                    "column_name": "Ignored",
+                    "column_order": 2,
                     "example_values": [
                         "8.8.8.8"
+                    ],
+                    "contains": [
+                        "ip"
                     ]
                 },
                 {
                     "data_path": "action_result.summary.updated",
                     "data_type": "string",
+                    "column_name": "Updated",
+                    "column_order": 1,
                     "example_values": [
                         "208.67.222.222"
                     ],
@@ -756,8 +766,6 @@
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
                     "example_values": [
                         "success"
                     ]
@@ -770,7 +778,7 @@
                         "domain",
                         "url list"
                     ],
-                    "column_name": "ip/url",
+                    "column_name": "URL",
                     "column_order": 0,
                     "example_values": [
                         "www.test.com",
@@ -827,15 +835,25 @@
                 {
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
+                    "column_name": "Ignored",
+                    "column_order": 2,
                     "example_values": [
                         "www.test.com"
+                    ],
+                    "contains": [
+                        "url"
                     ]
                 },
                 {
                     "data_path": "action_result.summary.updated",
                     "data_type": "string",
+                    "column_name": "Updated",
+                    "column_order": 1,
                     "example_values": [
                         "www.myspace.com"
+                    ],
+                    "contains": [
+                        "url"
                     ]
                 },
                 {
@@ -903,8 +921,6 @@
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
                     "example_values": [
                         "success"
                     ]
@@ -917,7 +933,7 @@
                         "domain",
                         "url list"
                     ],
-                    "column_name": "ip/url",
+                    "column_name": "URL",
                     "column_order": 0,
                     "example_values": [
                         "www.test.com",
@@ -974,15 +990,25 @@
                 {
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
+                    "column_name": "Ignored",
+                    "column_order": 2,
                     "example_values": [
                         "www.test.com"
+                    ],
+                    "contains": [
+                        "url"
                     ]
                 },
                 {
                     "data_path": "action_result.summary.updated",
                     "data_type": "string",
+                    "column_name": "Updated",
+                    "column_order": 1,
                     "example_values": [
                         "www.myspace.com"
+                    ],
+                    "contains": [
+                        "url"
                     ]
                 },
                 {
@@ -1049,8 +1075,6 @@
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
                     "example_values": [
                         "success"
                     ]
@@ -1062,7 +1086,7 @@
                         "ip",
                         "ipv6"
                     ],
-                    "column_name": "ip/url",
+                    "column_name": "IP",
                     "column_order": 0,
                     "example_values": [
                         "8.8.8.8",
@@ -1119,15 +1143,25 @@
                 {
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
+                    "column_name": "Ignored",
+                    "column_order": 2,
                     "example_values": [
                         "8.8.8.8"
+                    ],
+                    "contains": [
+                        "ip"
                     ]
                 },
                 {
                     "data_path": "action_result.summary.updated",
                     "data_type": "string",
+                    "column_name": "Updated",
+                    "column_order": 1,
                     "example_values": [
                         "208.67.222.222"
+                    ],
+                    "contains": [
+                        "ip"
                     ]
                 },
                 {
@@ -1195,8 +1229,6 @@
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
                     "example_values": [
                         "success"
                     ]
@@ -1209,7 +1241,7 @@
                         "domain",
                         "url list"
                     ],
-                    "column_name": "ip/url",
+                    "column_name": "URL",
                     "column_order": 0,
                     "example_values": [
                         "www.test.com",
@@ -1266,15 +1298,25 @@
                 {
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
+                    "column_name": "Ignored",
+                    "column_order": 2,
                     "example_values": [
                         "www.test.com"
+                    ],
+                    "contains": [
+                        "url"
                     ]
                 },
                 {
                     "data_path": "action_result.summary.updated",
                     "data_type": "string",
+                    "column_name": "Updated",
+                    "column_order": 1,
                     "example_values": [
                         "www.myspace.com"
+                    ],
+                    "contains": [
+                        "url"
                     ]
                 },
                 {
@@ -1341,8 +1383,6 @@
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
                     "example_values": [
                         "success"
                     ]
@@ -1354,7 +1394,7 @@
                         "ip",
                         "ipv6"
                     ],
-                    "column_name": "ip/url",
+                    "column_name": "IP",
                     "column_order": 0,
                     "example_values": [
                         "8.8.8.8",
@@ -1411,15 +1451,25 @@
                 {
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
+                    "column_name": "Ignored",
+                    "column_order": 2,
                     "example_values": [
                         "8.8.8.8"
+                    ],
+                    "contains": [
+                        "ip"
                     ]
                 },
                 {
                     "data_path": "action_result.summary.updated",
                     "data_type": "string",
+                    "column_name": "Updated",
+                    "column_order": 1,
                     "example_values": [
                         "208.67.222.222"
+                    ],
+                    "contains": [
+                        "ip"
                     ]
                 },
                 {
@@ -1487,8 +1537,6 @@
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
                     "example_values": [
                         "success"
                     ]
@@ -1501,7 +1549,7 @@
                         "domain",
                         "url list"
                     ],
-                    "column_name": "ip/url",
+                    "column_name": "URL",
                     "column_order": 0,
                     "example_values": [
                         "www.test.com",
@@ -1558,15 +1606,25 @@
                 {
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
+                    "column_name": "Ignored",
+                    "column_order": 2,
                     "example_values": [
                         "www.test.com"
+                    ],
+                    "contains": [
+                        "url"
                     ]
                 },
                 {
                     "data_path": "action_result.summary.updated",
                     "data_type": "string",
+                    "column_name": "Updated",
+                    "column_order": 1,
                     "example_values": [
                         "www.myspace.com"
+                    ],
+                    "contains": [
+                        "url"
                     ]
                 },
                 {
@@ -1637,8 +1695,6 @@
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
                     "example_values": [
                         "success"
                     ]
@@ -1650,7 +1706,7 @@
                         "ip",
                         "ipv6"
                     ],
-                    "column_name": "ip/url",
+                    "column_name": "IP",
                     "column_order": 0,
                     "example_values": [
                         "8.8.8.8",
@@ -1711,15 +1767,25 @@
                 {
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
+                    "column_name": "Ignored",
+                    "column_order": 2,
                     "example_values": [
                         "8.8.8.8"
+                    ],
+                    "contains": [
+                        "ip"
                     ]
                 },
                 {
                     "data_path": "action_result.summary.updated",
                     "data_type": "string",
+                    "column_name": "Updated",
+                    "column_order": 1,
                     "example_values": [
                         "208.67.222.222"
+                    ],
+                    "contains": [
+                        "ip"
                     ]
                 },
                 {
@@ -1787,8 +1853,6 @@
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
                     "example_values": [
                         "success"
                     ]
@@ -1801,7 +1865,7 @@
                         "domain",
                         "url list"
                     ],
-                    "column_name": "ip/url",
+                    "column_name": "URL",
                     "column_order": 0,
                     "example_values": [
                         "www.test.com",
@@ -1862,15 +1926,25 @@
                 {
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
+                    "column_name": "Ignored",
+                    "column_order": 2,
                     "example_values": [
                         "www.test.com"
+                    ],
+                    "contains": [
+                        "url"
                     ]
                 },
                 {
                     "data_path": "action_result.summary.updated",
                     "data_type": "string",
+                    "column_name": "Updated",
+                    "column_order": 1,
                     "example_values": [
                         "www.myspace.com"
+                    ],
+                    "contains": [
+                        "url"
                     ]
                 },
                 {
@@ -1937,8 +2011,6 @@
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
                     "example_values": [
                         "success"
                     ]
@@ -1950,7 +2022,7 @@
                         "ip",
                         "ipv6"
                     ],
-                    "column_name": "ip/url",
+                    "column_name": "IP",
                     "column_order": 0,
                     "example_values": [
                         "8.8.8.8",
@@ -2011,15 +2083,25 @@
                 {
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
+                    "column_name": "Ignored",
+                    "column_order": 2,
                     "example_values": [
                         "8.8.8.8"
+                    ],
+                    "contains": [
+                        "ip"
                     ]
                 },
                 {
                     "data_path": "action_result.summary.updated",
                     "data_type": "string",
+                    "column_name": "Updated",
+                    "column_order": 1,
                     "example_values": [
                         "208.67.222.222"
+                    ],
+                    "contains": [
+                        "ip"
                     ]
                 },
                 {
@@ -2087,8 +2169,6 @@
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
                     "example_values": [
                         "success"
                     ]
@@ -2101,7 +2181,7 @@
                         "domain",
                         "url list"
                     ],
-                    "column_name": "ip/url",
+                    "column_name": "URL",
                     "column_order": 0,
                     "example_values": [
                         "www.test.com",
@@ -2162,15 +2242,25 @@
                 {
                     "data_path": "action_result.summary.ignored",
                     "data_type": "string",
+                    "column_name": "Ignored",
+                    "column_order": 2,
                     "example_values": [
                         "www.test.com"
+                    ],
+                    "contains": [
+                        "url"
                     ]
                 },
                 {
                     "data_path": "action_result.summary.updated",
                     "data_type": "string",
+                    "column_name": "Updated",
+                    "column_order": 1,
                     "example_values": [
                         "www.myspace.com"
+                    ],
+                    "contains": [
+                        "url"
                     ]
                 },
                 {

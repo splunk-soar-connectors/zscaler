@@ -5,7 +5,16 @@
   without a valid written license from Splunk Inc. is PROHIBITED.
 -->
 
-<p>When you specify a <b>url_category</b>, you can give it either the name you created, or the ID which is assigned to it from Zscaler.
+<p>Below points are considered for providing the <b>URL Category</b> parameter value.
+  <ul>
+    <li>Entire URL category string has to be mentioned in block letters</li>
+    <li>The most child category on UI has to be passed as the URL category parameter value to the action</li>
+    <li>From the URL category value on UI, every space has to be replaced by an underscore '_' before passing it in the action's parameter value</li>
+    <ul>
+      <li>For example, <b>Alternate Lifestyle</b> on UI becomes <b>ALTERNATE_LIFESTYLE</b></li>
+    </ul>
+    <li>When you specify a <b>url_category</b>, you can give it either the name you created, or the ID which is assigned to it from Zscaler.
    The search will first search for the name, as opposed to the ID. So if you create a category <b>phantom-block</b>, you could
-   use either <b>phantom-block</b> or <b>CUSTOM_**</b>. The name for these is case sensitive.
+   use either <b>phantom-block</b> or <b>CUSTOM_**</b>. The name for these is case sensitive.</li>
+  </ul>
 </p>
