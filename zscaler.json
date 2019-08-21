@@ -18,7 +18,7 @@
     "app_wizard_version": "1.0.0",
     "configuration": {
         "base_url": {
-            "description": "Base URL",
+            "description": "Base URL (It should not end with /api/v1 e.g. https://zscaler_instance.net)",
             "data_type": "string",
             "required": true,
             "value_list": [],
