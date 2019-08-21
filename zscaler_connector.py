@@ -56,7 +56,7 @@ class ZscalerConnector(BaseConnector):
         except:
             error_text = "Cannot parse error details"
 
-        message = u"Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
+        message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text.encode('utf-8'))
 
         message = message.replace('{', '{{').replace('}', '}}')
 
@@ -244,7 +244,7 @@ class ZscalerConnector(BaseConnector):
             method='post'
         )
         if phantom.is_fail(ret_val):
-            self.save_progress('Error starting Zscaler session: {}'.format(action_result.get_message()))
+            self.debug_print('Error starting Zscaler session: {}'.format(action_result.get_message()))
             return self.set_status(
                 phantom.APP_ERROR,
                 'Error starting Zscaler session: {}'.format(action_result.get_message())
