@@ -56,7 +56,7 @@ class ZscalerConnector(BaseConnector):
         except:
             error_text = "Cannot parse error details"
 
-        message = "Please check the asset configuration parameters (The base_url should not end with /api/v1 e.g. https://zscaler_instance.net). "
+        message = "Please check the asset configuration parameters (The base_url should not end with /api/v1 e.g. https://admin.zscaler_instance.net)."
         message += "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text.encode('utf-8'))
 
         message = message.replace('{', '{{').replace('}', '}}')
