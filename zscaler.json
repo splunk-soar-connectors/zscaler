@@ -8,21 +8,19 @@
     "logo_dark": "logo_zscaler_dark.svg",
     "product_name": "Zscaler",
     "product_version_regex": ".*",
-    "publisher": "Phantom",
+    "publisher": "Splunk",
     "license": "Copyright (c) 2017-2019 Splunk Inc.",
     "app_version": "1.0.21",
     "utctime_updated": "2019-08-16T19:23:11.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.pyc",
-    "min_phantom_version": "3.5.210",
+    "min_phantom_version": "4.2.7532",
     "app_wizard_version": "1.0.0",
     "configuration": {
         "base_url": {
             "description": "Base URL (e.g. https://admin.zscaler_instance.net)",
             "data_type": "string",
             "required": true,
-            "value_list": [],
-            "default": "",
             "order": 0
         },
         "api_key": {
@@ -35,8 +33,6 @@
             "description": "Username",
             "data_type": "string",
             "required": true,
-            "value_list": [],
-            "default": "",
             "order": 2
         },
         "password": {
@@ -80,7 +76,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -108,10 +105,7 @@
                     "data_path": "action_result.data.*.Full Details.Classification.DetectedMalware",
                     "data_type": "string",
                     "column_name": "Detected Malware",
-                    "column_order": 2,
-                    "example_values": [
-                        ""
-                    ]
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.Full Details.Classification.Score",
@@ -131,10 +125,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.Full Details.FileProperties.DigitalCerificate",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.Full Details.FileProperties.FileSize",
@@ -152,10 +143,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.Full Details.FileProperties.Issuer",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.Full Details.FileProperties.MD5",
@@ -169,10 +157,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.Full Details.FileProperties.RootCA",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.Full Details.FileProperties.SHA1",
@@ -460,7 +445,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -613,7 +599,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -626,7 +613,6 @@
                     "column_name": "IP",
                     "column_order": 0,
                     "example_values": [
-                        "8.8.8.8",
                         "8.8.8.8, 208.67.222.222"
                     ]
                 },
@@ -736,7 +722,7 @@
             "verbose": "Alias for <b>blacklist url</b>",
             "type": "contain",
             "read_only": false,
-            "undo": "unblacklist url",
+            "undo": "unblock url",
             "parameters": {
                 "url": {
                     "description": "A comma separated list of URLs",
@@ -2425,7 +2411,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -2433,12 +2420,9 @@
                     "data_type": "string",
                     "contains": [
                         "url",
-                        "domain",
-                        "url list"
+                        "domain"
                     ],
                     "example_values": [
-                        "test.com",
-                        "test.com, test1.com",
                         "www.test.com, www.test3.com, test2.tv"
                     ]
                 },
@@ -2460,7 +2444,6 @@
                         "domain"
                     ],
                     "example_values": [
-                        "test1.com",
                         "www.test.com"
                     ],
                     "column_name": "URL",
@@ -2470,7 +2453,6 @@
                     "data_path": "action_result.data.*.urlClassifications",
                     "data_type": "string",
                     "example_values": [
-                        "NEWS_AND_MEDIA",
                         "MISCELLANEOUS_OR_UNKNOWN"
                     ],
                     "column_name": "Classifications",
@@ -2490,7 +2472,6 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "",
                         "Successfully completed lookup"
                     ]
                 },

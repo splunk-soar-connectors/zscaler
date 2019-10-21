@@ -36,10 +36,8 @@ class ZscalerConnector(BaseConnector):
         self._category = None
 
     def _process_empty_reponse(self, response, action_result):
-
         if response.status_code == 200 or response.status_code == 204:
             return RetVal(phantom.APP_SUCCESS, {})
-
         return RetVal(action_result.set_status(phantom.APP_ERROR, "Empty response and no information in the header"), None)
 
     def _process_html_response(self, response, action_result):
@@ -55,12 +53,11 @@ class ZscalerConnector(BaseConnector):
             error_text = '\n'.join(split_lines)
         except:
             error_text = "Cannot parse error details"
-
         message = "Please check the asset configuration parameters (the base_url should not end with /api/v1 e.g. https://admin.zscaler_instance.net)."
-        message += "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text.encode('utf-8'))
+        if len(error_text) <= 500:
+            message += "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text.encode('utf-8'))
 
         message = message.replace('{', '{{').replace('}', '}}')
-
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
     def _process_json_response(self, r, action_result):
@@ -82,7 +79,6 @@ class ZscalerConnector(BaseConnector):
             message = "Error from server. Status Code: {0} Data from server: {1}".format(
                 r.status_code, r.text.replace('{', '{{').replace('}', '}}')
             )
-
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
     def _process_response(self, r, action_result):
@@ -203,7 +199,6 @@ class ZscalerConnector(BaseConnector):
                 self.send_progress("Exceeded rate limit: Retrying after {}".format(retry_time))
                 time.sleep(seconds_to_wait)
                 return self._make_rest_call_helper(*args, **kwargs)
-
         return ret_val, response
 
     def _obfuscate_api_key(self, api_key):
@@ -478,7 +473,10 @@ class ZscalerConnector(BaseConnector):
         return self._unwhitelist_endpoint(action_result, param['url'], param.get('url_category'))
 
     def _lookup_endpoint(self, action_result, endpoints):
-        endpoints = [x.strip() for x in endpoints.split(',')]
+
+        if not endpoints:
+            action_result.set_status(phantom.APP_ERROR, "Please provide valid list of URL(s)")
+
         ret_val, response = self._make_rest_call_helper(
             '/api/v1/urlLookup', action_result,
             data=endpoints, method='post'
@@ -556,7 +554,12 @@ class ZscalerConnector(BaseConnector):
     def _handle_lookup_url(self, param):
 
         action_result = self.add_action_result(ActionResult(dict(param)))
-        return self._lookup_endpoint(action_result, param['url'])
+
+        list_endpoints = list()
+        list_endpoints = [x.strip() for x in param['url'].split(',')]
+        endpoints = list(filter(None, list_endpoints))
+
+        return self._lookup_endpoint(action_result, endpoints)
 
     def handle_action(self, param):
 
