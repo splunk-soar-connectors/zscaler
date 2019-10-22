@@ -2429,7 +2429,8 @@
                     "data_type": "string",
                     "contains": [
                         "url",
-                        "domain"
+                        "domain",
+                        "url list"
                     ],
                     "example_values": [
                         "www.test.com, www.test3.com, test2.tv"
