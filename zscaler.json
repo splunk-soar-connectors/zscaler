@@ -418,7 +418,7 @@
             "undo": "unblock ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma separated list of IPs",
+                    "description": "A comma-separated list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -572,7 +572,7 @@
             "undo": "unblacklist ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma seperated list of IPs",
+                    "description": "A comma-seperated list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -725,7 +725,7 @@
             "undo": "unblock url",
             "parameters": {
                 "url": {
-                    "description": "A comma separated list of URLs",
+                    "description": "A comma-separated list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -881,7 +881,7 @@
             "undo": "unblacklist url",
             "parameters": {
                 "url": {
-                    "description": "A comma seperated list of URLs",
+                    "description": "A comma-seperated list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1037,7 +1037,7 @@
             "undo": "block ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma seperated list of IPs",
+                    "description": "A comma-seperated list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1191,7 +1191,7 @@
             "undo": "block url",
             "parameters": {
                 "url": {
-                    "description": "A comma seperated list of URLs",
+                    "description": "A comma-seperated list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1347,7 +1347,7 @@
             "undo": "blacklist ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma seperated list of IPs",
+                    "description": "A comma-seperated list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1501,7 +1501,7 @@
             "undo": "blacklist url",
             "parameters": {
                 "url": {
-                    "description": "A comma seperated list of URLs",
+                    "description": "A comma-seperated list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1657,7 +1657,7 @@
             "undo": "unwhitelist ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma seperated list of IPs",
+                    "description": "A comma-seperated list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1814,7 +1814,7 @@
             "undo": "unwhitelist url",
             "parameters": {
                 "url": {
-                    "description": "A comma seperated list of URLs",
+                    "description": "A comma-seperated list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1974,7 +1974,7 @@
             "undo": "whitelist ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma seperated list of IPs",
+                    "description": "A comma-seperated list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -2132,7 +2132,7 @@
             "undo": "whitelist url",
             "parameters": {
                 "url": {
-                    "description": "A comma seperated list of URLs",
+                    "description": "A comma-seperated list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -2290,7 +2290,7 @@
             "read_only": true,
             "parameters": {
                 "ip": {
-                    "description": "A comma seperated list of IPs",
+                    "description": "A comma-seperated list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -2402,7 +2402,7 @@
             "read_only": true,
             "parameters": {
                 "url": {
-                    "description": "A comma seperated list of URLs",
+                    "description": "A comma-seperated list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
