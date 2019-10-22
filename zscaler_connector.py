@@ -9,13 +9,12 @@ import phantom.app as phantom
 from phantom.base_connector import BaseConnector
 from phantom.action_result import ActionResult
 
-import requests
+import time
 import json
+import requests
 import ipaddress
 from bs4 import BeautifulSoup
 from zscaler_consts import *
-
-import time
 
 
 class RetVal(tuple):
@@ -53,6 +52,7 @@ class ZscalerConnector(BaseConnector):
             error_text = '\n'.join(split_lines)
         except:
             error_text = "Cannot parse error details"
+
         message = "Please check the asset configuration parameters (the base_url should not end with /api/v1 e.g. https://admin.zscaler_instance.net)."
         if len(error_text) <= 500:
             message += "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text.encode('utf-8'))
