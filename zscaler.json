@@ -14,7 +14,7 @@
     "utctime_updated": "2019-08-16T19:23:11.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.pyc",
-    "min_phantom_version": "4.2.7532",
+    "min_phantom_version": "4.5.15922",
     "app_wizard_version": "1.0.0",
     "configuration": {
         "base_url": {
