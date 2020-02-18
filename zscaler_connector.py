@@ -680,7 +680,7 @@ if __name__ == '__main__':
     with open(sys.argv[1]) as f:
         in_json = f.read()
         in_json = json.loads(in_json)
-        print((json.dumps(in_json, indent=4)))
+        print(json.dumps(in_json, indent=4))
 
         connector = ZscalerConnector()
         connector.print_progress_message = True
@@ -689,6 +689,6 @@ if __name__ == '__main__':
             in_json['user_session_token'] = session_id
 
         ret_val = connector._handle_action(json.dumps(in_json), None)
-        print((json.dumps(json.loads(ret_val), indent=4)))
+        print(json.dumps(json.loads(ret_val), indent=4))
 
     exit(0)
