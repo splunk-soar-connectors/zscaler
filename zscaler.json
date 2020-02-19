@@ -8,13 +8,17 @@
     "logo_dark": "logo_zscaler_dark.svg",
     "product_name": "Zscaler",
     "product_version_regex": ".*",
-    "publisher": "Phantom",
-    "license": "Copyright (c) 2017-2019 Splunk Inc.",
+    "publisher": "Splunk",
+    "license": "Copyright (c) 2017-2020 Splunk Inc.",
     "app_version": "1.0.21",
     "utctime_updated": "2019-08-16T19:23:11.000000Z",
     "package_name": "phantom_zscaler",
-    "main_module": "zscaler_connector.pyc",
-    "min_phantom_version": "3.5.210",
+    "main_module": "zscaler_connector.py",
+    "python_version": "3",
+    "min_phantom_version": "4.6.19142",
+    "latest_tested_versions": [
+        "Cloud v6.0 tested 2/14/2020"
+    ],
     "app_wizard_version": "1.0.0",
     "configuration": {
         "base_url": {
@@ -49,9 +53,9 @@
     "actions": [
         {
             "action": "test connectivity",
-            "identifier": "test_connectivity",
             "description": "Validate the asset configuration for connectivity using supplied configuration",
             "type": "test",
+            "identifier": "test_connectivity",
             "read_only": true,
             "parameters": {},
             "output": [],
@@ -59,9 +63,9 @@
         },
         {
             "action": "get report",
-            "identifier": "get_report",
             "description": "Fetch sandbox report for provided md5 file hash",
             "type": "investigate",
+            "identifier": "get_report",
             "read_only": true,
             "parameters": {
                 "file_hash": {
@@ -312,9 +316,9 @@
         },
         {
             "action": "list url categories",
-            "identifier": "list_url_categories",
             "description": "List all URL categories",
             "type": "investigate",
+            "identifier": "list_url_categories",
             "read_only": true,
             "parameters": {},
             "output": [
@@ -425,12 +429,11 @@
         },
         {
             "action": "block ip",
-            "identifier": "block_ip2",
             "description": "Block an IP",
             "verbose": "Alias for <b>blacklist ip</b>",
             "type": "contain",
+            "identifier": "block_ip2",
             "read_only": false,
-            "undo": "unblock ip",
             "parameters": {
                 "ip": {
                     "description": "A comma separated list of IPs",
@@ -578,12 +581,11 @@
         },
         {
             "action": "blacklist ip",
-            "identifier": "block_ip",
             "description": "Block an IP",
             "verbose": "If a <b>url_category</b> is specified, it will add the IP(s) as a rule to that category. If it is left blank, it will instead add the IP(s) to the global blacklist.",
             "type": "contain",
+            "identifier": "block_ip",
             "read_only": false,
-            "undo": "unblacklist ip",
             "parameters": {
                 "ip": {
                     "description": "A comma seperated list of IPs",
@@ -731,12 +733,11 @@
         },
         {
             "action": "block url",
-            "identifier": "block_url2",
             "description": "Block a URL",
             "verbose": "Alias for <b>blacklist url</b>",
             "type": "contain",
+            "identifier": "block_url2",
             "read_only": false,
-            "undo": "unblacklist url",
             "parameters": {
                 "url": {
                     "description": "A comma separated list of URLs",
@@ -886,12 +887,11 @@
         },
         {
             "action": "blacklist url",
-            "identifier": "block_url",
             "description": "Block a URL",
             "verbose": "If a <b>url_category</b> is specified, it will add the URL(s) as a rule to that category. If it is left blank, it will instead add the URL(s) to the global blacklist.",
             "type": "contain",
+            "identifier": "block_url",
             "read_only": false,
-            "undo": "unblacklist url",
             "parameters": {
                 "url": {
                     "description": "A comma seperated list of URLs",
@@ -1041,12 +1041,11 @@
         },
         {
             "action": "unblock ip",
-            "identifier": "unblock_ip2",
             "description": "Unblock an IP",
             "verbose": "Alias for <b>unblacklist ip</b>",
             "type": "correct",
+            "identifier": "unblock_ip2",
             "read_only": false,
-            "undo": "block ip",
             "parameters": {
                 "ip": {
                     "description": "A comma seperated list of IPs",
@@ -1194,12 +1193,11 @@
         },
         {
             "action": "unblock url",
-            "identifier": "unblock_url2",
             "description": "Unblock a URL",
             "verbose": "Alias for <b>unblacklist url</b>",
             "type": "correct",
+            "identifier": "unblock_url2",
             "read_only": false,
-            "undo": "block url",
             "parameters": {
                 "url": {
                     "description": "A comma seperated list of URLs",
@@ -1349,12 +1347,11 @@
         },
         {
             "action": "unblacklist ip",
-            "identifier": "unblock_ip",
             "description": "Unblock an IP",
             "verbose": "If a <b>url_category</b> is specified, it will remove the IP(s) from that category. If it is left blank, it will instead remove the IP(s) from the global blacklist.",
             "type": "correct",
+            "identifier": "unblock_ip",
             "read_only": false,
-            "undo": "blacklist ip",
             "parameters": {
                 "ip": {
                     "description": "A comma seperated list of IPs",
@@ -1502,12 +1499,11 @@
         },
         {
             "action": "unblacklist url",
-            "identifier": "unblock_url",
             "description": "Unblock a URL",
             "verbose": "If a <b>url_category</b> is specified, it will remove the URL(s) from that category. If it is left blank, it will instead remove the URL(s) from the global blacklist.",
             "type": "correct",
+            "identifier": "unblock_url",
             "read_only": false,
-            "undo": "blacklist url",
             "parameters": {
                 "url": {
                     "description": "A comma seperated list of URLs",
@@ -1657,12 +1653,11 @@
         },
         {
             "action": "whitelist ip",
-            "identifier": "whitelist_ip",
             "description": "Add an IP address to the whitelist",
             "verbose": "If a <b>url_category</b> is specified, it will add the IP(s) as a rule to that category. If it is left blank, it will instead add this IP(s) to the global blacklist.",
             "type": "contain",
+            "identifier": "whitelist_ip",
             "read_only": false,
-            "undo": "unwhitelist ip",
             "parameters": {
                 "ip": {
                     "description": "A comma seperated list of IPs",
@@ -1687,139 +1682,138 @@
                     "order": 1
                 }
             },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip",
+                        "ipv6"
+                    ],
+                    "column_name": "IP",
+                    "column_order": 0,
+                    "example_values": [
+                        "8.8.8.8",
+                        "8.8.8.8, 208.67.222.222"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.url_category",
+                    "data_type": "string",
+                    "contains": [
+                        "zscaler url category"
+                    ],
+                    "example_values": [
+                        "CUSTOM_01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Phantom-Whitelist"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "CUSTOM_01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        128
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.whitelistUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.ignored",
+                    "data_type": "string",
+                    "column_name": "Ignored",
+                    "column_order": 2,
+                    "example_values": [
+                        "8.8.8.8"
+                    ],
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.updated",
+                    "data_type": "string",
+                    "column_name": "Updated",
+                    "column_order": 1,
+                    "example_values": [
+                        "208.67.222.222"
+                    ],
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Ignored: ['8.8.8.8'], Updated: ['208.67.222.222']"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
             "render": {
                 "title": "Whitelist IP",
                 "type": "table"
             },
-            "output": [
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.ip",
-                    "data_type": "string",
-                    "contains": [
-                        "ip",
-                        "ipv6"
-                    ],
-                    "column_name": "IP",
-                    "column_order": 0,
-                    "example_values": [
-                        "8.8.8.8",
-                        "8.8.8.8, 208.67.222.222"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.url_category",
-                    "data_type": "string",
-                    "contains": [
-                        "zscaler url category"
-                    ],
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.configuredName",
-                    "data_type": "string",
-                    "example_values": [
-                        "Phantom-Whitelist"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customCategory",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.dbCategorizedUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.val",
-                    "data_type": "numeric",
-                    "example_values": [
-                        128
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.whitelistUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary.ignored",
-                    "data_type": "string",
-                    "column_name": "Ignored",
-                    "column_order": 2,
-                    "example_values": [
-                        "8.8.8.8"
-                    ],
-                    "contains": [
-                        "ip"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.updated",
-                    "data_type": "string",
-                    "column_name": "Updated",
-                    "column_order": 1,
-                    "example_values": [
-                        "208.67.222.222"
-                    ],
-                    "contains": [
-                        "ip"
-                    ]
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "Ignored: ['8.8.8.8'], Updated: ['208.67.222.222']"
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                }
-            ],
             "versions": "EQ(*)"
         },
         {
             "action": "whitelist url",
-            "identifier": "whitelist_url",
             "description": "Add a URL to the whitelist",
             "verbose": "If a <b>url_category</b> is specified, it will add the URL(s) as a rule to that category. If it is left blank, it will instead add the URL(s) to the global blacklist.",
             "type": "contain",
+            "identifier": "whitelist_url",
             "read_only": false,
-            "undo": "unwhitelist url",
             "parameters": {
                 "url": {
                     "description": "A comma seperated list of URLs",
@@ -1844,10 +1838,6 @@
                     ],
                     "order": 1
                 }
-            },
-            "render": {
-                "title": "Whitelist URL",
-                "type": "table"
             },
             "output": [
                 {
@@ -1969,16 +1959,19 @@
                     ]
                 }
             ],
+            "render": {
+                "title": "Whitelist URL",
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
             "action": "unwhitelist ip",
-            "identifier": "unwhitelist_ip",
             "description": "Remove an IP address from the whitelist",
             "verbose": "If a <b>url_category</b> is specified, it will remove the IP(s) from that category. If it is left blank, it will instead remove the IP(s) from the global blacklist.",
             "type": "correct",
+            "identifier": "unwhitelist_ip",
             "read_only": false,
-            "undo": "whitelist ip",
             "parameters": {
                 "ip": {
                     "description": "A comma seperated list of IPs",
@@ -2003,10 +1996,6 @@
                     "order": 1
                 }
             },
-            "render": {
-                "title": "Undo Whitelist IP",
-                "type": "table"
-            },
             "output": [
                 {
                     "data_path": "action_result.status",
@@ -2126,16 +2115,19 @@
                     ]
                 }
             ],
+            "render": {
+                "title": "Undo Whitelist IP",
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
             "action": "unwhitelist url",
-            "identifier": "unwhitelist_url",
             "description": "Remove a URL from the whitelist",
             "verbose": "If a <b>url_category</b> is specified, it will remove the URL(s) from that category. If it is left blank, it will instead remove the URL(s) from the global blacklist.",
             "type": "correct",
+            "identifier": "unwhitelist_url",
             "read_only": false,
-            "undo": "whitelist url",
             "parameters": {
                 "url": {
                     "description": "A comma seperated list of URLs",
@@ -2160,10 +2152,6 @@
                     ],
                     "order": 1
                 }
-            },
-            "render": {
-                "title": "Undo Whitelist URL",
-                "type": "table"
             },
             "output": [
                 {
@@ -2285,13 +2273,17 @@
                     ]
                 }
             ],
+            "render": {
+                "title": "Undo Whitelist URL",
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
             "action": "lookup ip",
-            "identifier": "lookup_ip",
             "description": "Lookup the categories related to an IP",
             "type": "investigate",
+            "identifier": "lookup_ip",
             "read_only": true,
             "parameters": {
                 "ip": {
@@ -2401,9 +2393,9 @@
         },
         {
             "action": "lookup url",
-            "identifier": "lookup_url",
             "description": "Lookup the categories related to a URL",
             "type": "investigate",
+            "identifier": "lookup_url",
             "read_only": true,
             "parameters": {
                 "url": {
