@@ -549,7 +549,12 @@ class ZscalerConnector(BaseConnector):
 
     def _handle_lookup_ip(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
-        return self._lookup_endpoint(action_result, param['ip'])
+
+        list_endpoints = list()
+        list_endpoints = [x.strip() for x in param['ip'].split(',')]
+        endpoints = list(filter(None, list_endpoints))
+
+        return self._lookup_endpoint(action_result, endpoints)
 
     def _handle_lookup_url(self, param):
 
