@@ -1,5 +1,5 @@
 # File: zscaler_connector.py
-# Copyright (c) 2017-2019 Splunk Inc.
+# Copyright (c) 2017-2020 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
@@ -13,7 +13,7 @@ import time
 import json
 import requests
 import ipaddress
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, UnicodeDammit
 from zscaler_consts import *
 
 
@@ -55,7 +55,7 @@ class ZscalerConnector(BaseConnector):
 
         message = "Please check the asset configuration parameters (the base_url should not end with /api/v1 e.g. https://admin.zscaler_instance.net)."
         if len(error_text) <= 500:
-            message += "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text.encode('utf-8'))
+            message += "Status Code: {0}. Data from server:\n{1}\n".format(status_code, UnicodeDammit(error_text).unicode_markup.encode('utf-8'))
 
         message = message.replace('{', '{{').replace('}', '}}')
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
@@ -123,7 +123,7 @@ class ZscalerConnector(BaseConnector):
         ip_address_input = input_ip_address
 
         try:
-            ipaddress.ip_address(unicode(ip_address_input))
+            ipaddress.ip_address(str(ip_address_input))
         except:
             return False
 
@@ -202,7 +202,7 @@ class ZscalerConnector(BaseConnector):
         return ret_val, response
 
     def _obfuscate_api_key(self, api_key):
-        now = str(long(time.time() * 1000))
+        now = str(int(time.time() * 1000))
         n = now[-6:]
         r = str(int(n) >> 1).zfill(6)
         key = ""
@@ -648,10 +648,37 @@ if __name__ == '__main__':
 
     import sys
     import pudb
+    import argparse
     pudb.set_trace()
 
+    argparser = argparse.ArgumentParser()
+
+    argparser.add_argument('input_test_json', help='Input Test JSON file')
+    argparser.add_argument('-u', '--username', help='username', required=False)
+    argparser.add_argument('-p', '--password', help='password', required=False)
+
+    args = argparser.parse_args()
+    session_id = None
+
+    if (args.username and args.password):
+        login_url = BaseConnector._get_phantom_base_url() + "login"
+        try:
+            print("Accessing the Login page")
+            r = requests.get(login_url, verify=False)
+            csrftoken = r.cookies['csrftoken']
+            data = {'username': args.username, 'password': args.password, 'csrfmiddlewaretoken': csrftoken}
+            headers = {'Cookie': 'csrftoken={0}'.format(csrftoken), 'Referer': login_url}
+
+            print("Logging into Platform to get the session id")
+            r2 = requests.post(login_url, verify=False, data=data, headers=headers)
+            session_id = r2.cookies['sessionid']
+
+        except Exception as e:
+            print(("Unable to get session id from the platform. Error: {0}".format(str(e))))
+            exit(1)
+
     if (len(sys.argv) < 2):
-        print "No test json specified as input"
+        print("No test json specified as input")
         exit(0)
 
     with open(sys.argv[1]) as f:
@@ -661,7 +688,11 @@ if __name__ == '__main__':
 
         connector = ZscalerConnector()
         connector.print_progress_message = True
+
+        if (session_id is not None):
+            in_json['user_session_token'] = session_id
+
         ret_val = connector._handle_action(json.dumps(in_json), None)
-        print (json.dumps(json.loads(ret_val), indent=4))
+        print(json.dumps(json.loads(ret_val), indent=4))
 
     exit(0)
