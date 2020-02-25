@@ -154,7 +154,17 @@ class ZscalerConnector(BaseConnector):
                 params=params
             )
         except Exception as e:
-            return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to server. Details: {0}".format(str(e))), resp_json)
+            if e.message:
+                if isinstance(e.message, basestring):
+                    error_msg = UnicodeDammit(e.message).unicode_markup.encode('UTF-8')
+                else:
+                    try:
+                        error_msg = UnicodeDammit(e.message).unicode_markup.encode('utf-8')
+                    except:
+                        error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+            else:
+                error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+            return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to server. Details: {0}".format(error_msg)), resp_json)
 
         self._response = r
 
@@ -634,7 +644,7 @@ class ZscalerConnector(BaseConnector):
         # that needs to be accessed across actions
         self._state = self.load_state()
         config = self.get_config()
-        self._base_url = config['base_url'].rstrip('/')
+        self._base_url = UnicodeDammit(config['base_url'].rstrip('/')).unicode_markup.encode('utf-8')
         self._username = config['username']
         self._password = config['password']
         self._headers = {}
@@ -650,7 +660,7 @@ class ZscalerConnector(BaseConnector):
 
 
 if __name__ == '__main__':
-
+    
     import sys
     import pudb
     import argparse
