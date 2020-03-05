@@ -660,7 +660,7 @@ class ZscalerConnector(BaseConnector):
 
 
 if __name__ == '__main__':
-    
+
     import sys
     import pudb
     import argparse
