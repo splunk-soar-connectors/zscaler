@@ -312,8 +312,8 @@ class ZscalerConnector(BaseConnector):
         summary['updated'] = filtered_endpoints
         summary['ignored'] = list(set(endpoints) - set(filtered_endpoints))
         # Encode the unicode IP or URL strings
-        summary['updated'] = [element.encode('utf-8') for element in summary['updated']]
-        summary['ignored'] = [element.encode('utf-8') for element in summary['ignored']]
+        summary['updated'] = [element for element in summary['updated']]
+        summary['ignored'] = [element for element in summary['ignored']]
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_whitelist(self, action_result):
@@ -354,8 +354,8 @@ class ZscalerConnector(BaseConnector):
         summary['updated'] = filtered_endpoints
         summary['ignored'] = list(set(endpoints) - set(filtered_endpoints))
         # Encode the unicode IP or URL strings
-        summary['updated'] = [element.encode('utf-8') for element in summary['updated']]
-        summary['ignored'] = [element.encode('utf-8') for element in summary['ignored']]
+        summary['updated'] = [element for element in summary['updated']]
+        summary['ignored'] = [element for element in summary['ignored']]
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_category(self, action_result, category):
@@ -412,8 +412,8 @@ class ZscalerConnector(BaseConnector):
         summary['updated'] = filtered_endpoints
         summary['ignored'] = list(set(endpoints) - set(filtered_endpoints))
         # Encode the unicode IP or URL strings
-        summary['updated'] = [element.encode('utf-8') for element in summary['updated']]
-        summary['ignored'] = [element.encode('utf-8') for element in summary['ignored']]
+        summary['updated'] = [element for element in summary['updated']]
+        summary['ignored'] = [element for element in summary['ignored']]
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _block_endpoint(self, action_result, endpoints, category):
