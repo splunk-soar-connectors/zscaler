@@ -17,7 +17,7 @@
     "python_version": "3",
     "min_phantom_version": "4.6.19142",
     "latest_tested_versions": [
-        "Cloud v6.0 tested 2/14/2020"
+        "Cloud v6.0 tested 3/11/2020"
     ],
     "app_wizard_version": "1.0.0",
     "configuration": {
@@ -422,7 +422,7 @@
             "undo": "unblock ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma-separated list of IPs",
+                    "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -576,7 +576,7 @@
             "undo": "unblacklist ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma-separated list of IPs",
+                    "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -729,7 +729,7 @@
             "undo": "unblock url",
             "parameters": {
                 "url": {
-                    "description": "A comma-separated list of URLs",
+                    "description": "A list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -772,7 +772,7 @@
                     "column_order": 0,
                     "example_values": [
                         "www.test.com",
-                        "www.test.com, www.myspace.com"
+                        "www.test.com, www.test123.com"
                     ]
                 },
                 {
@@ -840,7 +840,7 @@
                     "column_name": "Updated",
                     "column_order": 1,
                     "example_values": [
-                        "www.myspace.com"
+                        "www.test123.com"
                     ],
                     "contains": [
                         "url"
@@ -850,7 +850,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
+                        "Ignored: ['www.test.com'], Updated: ['www.test123.com']"
                     ]
                 },
                 {
@@ -884,7 +884,7 @@
             "undo": "unblacklist url",
             "parameters": {
                 "url": {
-                    "description": "A comma-separated list of URLs",
+                    "description": "A list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -927,7 +927,7 @@
                     "column_order": 0,
                     "example_values": [
                         "www.test.com",
-                        "www.test.com, www.myspace.com"
+                        "www.test.com, www.test123.com"
                     ]
                 },
                 {
@@ -995,7 +995,7 @@
                     "column_name": "Updated",
                     "column_order": 1,
                     "example_values": [
-                        "www.myspace.com"
+                        "www.test123.com"
                     ],
                     "contains": [
                         "url"
@@ -1005,7 +1005,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
+                        "Ignored: ['www.test.com'], Updated: ['www.test123.com']"
                     ]
                 },
                 {
@@ -1039,7 +1039,7 @@
             "undo": "block ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma-separated list of IPs",
+                    "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1193,7 +1193,7 @@
             "undo": "block url",
             "parameters": {
                 "url": {
-                    "description": "A comma-separated list of URLs",
+                    "description": "A list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1236,7 +1236,7 @@
                     "column_order": 0,
                     "example_values": [
                         "www.test.com",
-                        "www.test.com, www.myspace.com"
+                        "www.test.com, www.test123.com"
                     ]
                 },
                 {
@@ -1304,7 +1304,7 @@
                     "column_name": "Updated",
                     "column_order": 1,
                     "example_values": [
-                        "www.myspace.com"
+                        "www.test123.com"
                     ],
                     "contains": [
                         "url"
@@ -1314,7 +1314,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
+                        "Ignored: ['www.test.com'], Updated: ['www.test123.com']"
                     ]
                 },
                 {
@@ -1348,7 +1348,7 @@
             "undo": "blacklist ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma-separated list of IPs",
+                    "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1502,7 +1502,7 @@
             "undo": "blacklist url",
             "parameters": {
                 "url": {
-                    "description": "A comma-separated list of URLs",
+                    "description": "A list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1545,7 +1545,7 @@
                     "column_order": 0,
                     "example_values": [
                         "www.test.com",
-                        "www.test.com, www.myspace.com"
+                        "www.test.com, www.test123.com"
                     ]
                 },
                 {
@@ -1613,7 +1613,7 @@
                     "column_name": "Updated",
                     "column_order": 1,
                     "example_values": [
-                        "www.myspace.com"
+                        "www.test123.com"
                     ],
                     "contains": [
                         "url"
@@ -1623,7 +1623,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
+                        "Ignored: ['www.test.com'], Updated: ['www.test123.com']"
                     ]
                 },
                 {
@@ -1657,7 +1657,7 @@
             "undo": "unwhitelist ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma-separated list of IPs",
+                    "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1815,7 +1815,7 @@
             "undo": "unwhitelist url",
             "parameters": {
                 "url": {
-                    "description": "A comma-separated list of URLs",
+                    "description": "A list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1862,7 +1862,7 @@
                     "column_order": 0,
                     "example_values": [
                         "www.test.com",
-                        "www.test.com, www.myspace.com"
+                        "www.test.com, www.test123.com"
                     ]
                 },
                 {
@@ -1934,7 +1934,7 @@
                     "column_name": "Updated",
                     "column_order": 1,
                     "example_values": [
-                        "www.myspace.com"
+                        "www.test123.com"
                     ],
                     "contains": [
                         "url"
@@ -1944,7 +1944,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
+                        "Ignored: ['www.test.com'], Updated: ['www.test123.com']"
                     ]
                 },
                 {
@@ -1974,7 +1974,7 @@
             "undo": "whitelist ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma-separated list of IPs",
+                    "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -2132,7 +2132,7 @@
             "undo": "whitelist url",
             "parameters": {
                 "url": {
-                    "description": "A comma-separated list of URLs",
+                    "description": "A list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -2179,7 +2179,7 @@
                     "column_order": 0,
                     "example_values": [
                         "www.test.com",
-                        "www.test.com, www.myspace.com"
+                        "www.test.com, www.test123.com"
                     ]
                 },
                 {
@@ -2251,7 +2251,7 @@
                     "column_name": "Updated",
                     "column_order": 1,
                     "example_values": [
-                        "www.myspace.com"
+                        "www.test123.com"
                     ],
                     "contains": [
                         "url"
@@ -2261,7 +2261,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
+                        "Ignored: ['www.test.com'], Updated: ['www.test123.com']"
                     ]
                 },
                 {
@@ -2289,7 +2289,7 @@
             "read_only": true,
             "parameters": {
                 "ip": {
-                    "description": "A comma-separated list of IPs",
+                    "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -2402,7 +2402,7 @@
             "read_only": true,
             "parameters": {
                 "url": {
-                    "description": "A comma-separated list of URLs",
+                    "description": "A list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
