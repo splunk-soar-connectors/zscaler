@@ -13,6 +13,7 @@ import time
 import json
 import requests
 import ipaddress
+import sys
 from bs4 import BeautifulSoup, UnicodeDammit
 from zscaler_consts import *
 
@@ -53,9 +54,16 @@ class ZscalerConnector(BaseConnector):
         except:
             error_text = "Cannot parse error details"
 
+        # Handling of error_text for both the Python 2 and Python 3 versions
+        error_text = UnicodeDammit(error_text).unicode_markup.encode('UTF-8')
+
+        if self._python_version == 3:
+            error_text = error_text.decode('UTF-8')
+
         message = "Please check the asset configuration parameters (the base_url should not end with /api/v1 e.g. https://admin.zscaler_instance.net)."
+
         if len(error_text) <= 500:
-            message += "Status Code: {0}. Data from server:\n{1}\n".format(status_code, UnicodeDammit(error_text).unicode_markup.encode('utf-8'))
+            message += "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
 
         message = message.replace('{', '{{').replace('}', '}}')
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
@@ -144,7 +152,11 @@ class ZscalerConnector(BaseConnector):
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid method: {0}".format(method)), resp_json)
 
         # Create a URL to connect to
-        url = self._base_url + endpoint
+        if self._python_version == 3:
+            url = '{}{}'.format(self._base_url.decode('utf-8'), endpoint)
+        else:
+
+            url = '{}{}'.format(self._base_url, endpoint)
 
         try:
             r = request_func(
@@ -154,17 +166,25 @@ class ZscalerConnector(BaseConnector):
                 params=params
             )
         except Exception as e:
-            if e.message:
-                if isinstance(e.message, basestring):
-                    error_msg = UnicodeDammit(e.message).unicode_markup.encode('UTF-8')
+            try:
+                if e.args:
+                    if len(e.args) > 1:
+                        error_code = e.args[0]
+                        error_msg = e.args[1]
+                    elif len(e.args) == 1:
+                        error_code = "Error code unavailable"
+                        error_msg = e.args[0]
                 else:
-                    try:
-                        error_msg = UnicodeDammit(e.message).unicode_markup.encode('utf-8')
-                    except:
-                        error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
-            else:
+                    error_code = "Error code unavailable"
+                    error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+            except:
+                error_code = "Error code unavailable"
                 error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
-            return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to server. Details: {0}".format(error_msg)), resp_json)
+
+            if self._python_version == 2:
+                error_msg = UnicodeDammit(error_msg).unicode_markup.encode('UTF-8')
+
+            return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to server. Error Code: {0}. Error Message: {1}".format(error_code, error_msg)), resp_json)
 
         self._response = r
 
@@ -318,8 +338,8 @@ class ZscalerConnector(BaseConnector):
         summary['updated'] = filtered_endpoints
         summary['ignored'] = list(set(endpoints) - set(filtered_endpoints))
         # Encode the unicode IP or URL strings
-        summary['updated'] = [element.encode('utf-8') for element in summary['updated']]
-        summary['ignored'] = [element.encode('utf-8') for element in summary['ignored']]
+        summary['updated'] = [element if self._python_version == 3 else UnicodeDammit(element).unicode_markup.encode('UTF-8') for element in summary['updated']]
+        summary['ignored'] = [element if self._python_version == 3 else UnicodeDammit(element).unicode_markup.encode('UTF-8') for element in summary['ignored']]
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_whitelist(self, action_result):
@@ -360,8 +380,8 @@ class ZscalerConnector(BaseConnector):
         summary['updated'] = filtered_endpoints
         summary['ignored'] = list(set(endpoints) - set(filtered_endpoints))
         # Encode the unicode IP or URL strings
-        summary['updated'] = [element.encode('utf-8') for element in summary['updated']]
-        summary['ignored'] = [element.encode('utf-8') for element in summary['ignored']]
+        summary['updated'] = [element if self._python_version == 3 else UnicodeDammit(element).unicode_markup.encode('UTF-8') for element in summary['updated']]
+        summary['ignored'] = [element if self._python_version == 3 else UnicodeDammit(element).unicode_markup.encode('UTF-8') for element in summary['ignored']]
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_category(self, action_result, category):
@@ -418,8 +438,8 @@ class ZscalerConnector(BaseConnector):
         summary['updated'] = filtered_endpoints
         summary['ignored'] = list(set(endpoints) - set(filtered_endpoints))
         # Encode the unicode IP or URL strings
-        summary['updated'] = [element.encode('utf-8') for element in summary['updated']]
-        summary['ignored'] = [element.encode('utf-8') for element in summary['ignored']]
+        summary['updated'] = [element if self._python_version == 3 else UnicodeDammit(element).unicode_markup.encode('UTF-8') for element in summary['updated']]
+        summary['ignored'] = [element if self._python_version == 3 else UnicodeDammit(element).unicode_markup.encode('UTF-8') for element in summary['ignored']]
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _block_endpoint(self, action_result, endpoints, category):
@@ -640,6 +660,9 @@ class ZscalerConnector(BaseConnector):
 
     def initialize(self):
 
+        # fetching the Python major version
+        self._python_version = sys.version_info[0]
+
         # Load the state in initialize, use it to store data
         # that needs to be accessed across actions
         self._state = self.load_state()
@@ -661,7 +684,6 @@ class ZscalerConnector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import sys
     import pudb
     import argparse
     pudb.set_trace()
