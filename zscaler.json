@@ -17,16 +17,14 @@
     "python_version": "3",
     "min_phantom_version": "4.6.19142",
     "latest_tested_versions": [
-        "Cloud v6.0 tested 2/14/2020"
+        "Cloud v6.0 tested 3/11/2020"
     ],
     "app_wizard_version": "1.0.0",
     "configuration": {
         "base_url": {
-            "description": "Base URL",
+            "description": "Base URL (e.g. https://admin.zscaler_instance.net)",
             "data_type": "string",
             "required": true,
-            "value_list": [],
-            "default": "",
             "order": 0
         },
         "api_key": {
@@ -39,8 +37,6 @@
             "description": "Username",
             "data_type": "string",
             "required": true,
-            "value_list": [],
-            "default": "",
             "order": 2
         },
         "password": {
@@ -53,9 +49,9 @@
     "actions": [
         {
             "action": "test connectivity",
+            "identifier": "test_connectivity",
             "description": "Validate the asset configuration for connectivity using supplied configuration",
             "type": "test",
-            "identifier": "test_connectivity",
             "read_only": true,
             "parameters": {},
             "output": [],
@@ -63,13 +59,13 @@
         },
         {
             "action": "get report",
+            "identifier": "get_report",
             "description": "Fetch sandbox report for provided md5 file hash",
             "type": "investigate",
-            "identifier": "get_report",
             "read_only": true,
             "parameters": {
                 "file_hash": {
-                    "description": "md5 file hash",
+                    "description": "The md5 file hash",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -84,7 +80,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -112,10 +109,7 @@
                     "data_path": "action_result.data.*.Full Details.Classification.DetectedMalware",
                     "data_type": "string",
                     "column_name": "Detected Malware",
-                    "column_order": 2,
-                    "example_values": [
-                        ""
-                    ]
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.Full Details.Classification.Score",
@@ -135,10 +129,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.Full Details.FileProperties.DigitalCerificate",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.Full Details.FileProperties.FileSize",
@@ -156,10 +147,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.Full Details.FileProperties.Issuer",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.Full Details.FileProperties.MD5",
@@ -173,10 +161,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.Full Details.FileProperties.RootCA",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.Full Details.FileProperties.SHA1",
@@ -316,9 +301,9 @@
         },
         {
             "action": "list url categories",
+            "identifier": "list_url_categories",
             "description": "List all URL categories",
             "type": "investigate",
-            "identifier": "list_url_categories",
             "read_only": true,
             "parameters": {},
             "output": [
@@ -429,14 +414,15 @@
         },
         {
             "action": "block ip",
+            "identifier": "block_ip2",
             "description": "Block an IP",
             "verbose": "Alias for <b>blacklist ip</b>",
             "type": "contain",
-            "identifier": "block_ip2",
             "read_only": false,
+            "undo": "unblock ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma separated list of IPs",
+                    "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -450,7 +436,6 @@
                 "url_category": {
                     "description": "Add to this category",
                     "data_type": "string",
-                    "required": false,
                     "primary": true,
                     "contains": [
                         "zscaler url category"
@@ -463,7 +448,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -477,7 +463,8 @@
                     "column_order": 0,
                     "example_values": [
                         "8.8.8.8",
-                        "8.8.8.8, 208.67.222.222"
+                        "8.8.8.8, 208.67.222.222",
+                        "aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa"
                     ]
                 },
                 {
@@ -494,7 +481,7 @@
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
-                        "Phantom-Block"
+                        "Test-Block"
                     ]
                 },
                 {
@@ -581,14 +568,15 @@
         },
         {
             "action": "blacklist ip",
+            "identifier": "block_ip",
             "description": "Block an IP",
             "verbose": "If a <b>url_category</b> is specified, it will add the IP(s) as a rule to that category. If it is left blank, it will instead add the IP(s) to the global blacklist.",
             "type": "contain",
-            "identifier": "block_ip",
             "read_only": false,
+            "undo": "unblacklist ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma seperated list of IPs",
+                    "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -602,7 +590,6 @@
                 "url_category": {
                     "description": "Add to this category",
                     "data_type": "string",
-                    "required": false,
                     "primary": true,
                     "contains": [
                         "zscaler url category"
@@ -615,7 +602,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -628,8 +616,8 @@
                     "column_name": "IP",
                     "column_order": 0,
                     "example_values": [
-                        "8.8.8.8",
-                        "8.8.8.8, 208.67.222.222"
+                        "8.8.8.8, 208.67.222.222",
+                        "aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa"
                     ]
                 },
                 {
@@ -646,7 +634,7 @@
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
-                        "Phantom-Block"
+                        "Test-Block"
                     ]
                 },
                 {
@@ -733,14 +721,15 @@
         },
         {
             "action": "block url",
+            "identifier": "block_url2",
             "description": "Block a URL",
             "verbose": "Alias for <b>blacklist url</b>",
             "type": "contain",
-            "identifier": "block_url2",
             "read_only": false,
+            "undo": "unblock url",
             "parameters": {
                 "url": {
-                    "description": "A comma separated list of URLs",
+                    "description": "A list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -755,7 +744,6 @@
                 "url_category": {
                     "description": "Add to this category",
                     "data_type": "string",
-                    "required": false,
                     "primary": true,
                     "contains": [
                         "zscaler url category"
@@ -768,7 +756,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -783,7 +772,7 @@
                     "column_order": 0,
                     "example_values": [
                         "www.test.com",
-                        "www.test.com, www.myspace.com"
+                        "www.test.com, www.test123.com"
                     ]
                 },
                 {
@@ -800,7 +789,7 @@
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
-                        "Phantom-Block"
+                        "Test-Block"
                     ]
                 },
                 {
@@ -851,7 +840,7 @@
                     "column_name": "Updated",
                     "column_order": 1,
                     "example_values": [
-                        "www.myspace.com"
+                        "www.test123.com"
                     ],
                     "contains": [
                         "url"
@@ -861,7 +850,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
+                        "Ignored: ['www.test.com'], Updated: ['www.test123.com']"
                     ]
                 },
                 {
@@ -887,14 +876,15 @@
         },
         {
             "action": "blacklist url",
+            "identifier": "block_url",
             "description": "Block a URL",
             "verbose": "If a <b>url_category</b> is specified, it will add the URL(s) as a rule to that category. If it is left blank, it will instead add the URL(s) to the global blacklist.",
             "type": "contain",
-            "identifier": "block_url",
             "read_only": false,
+            "undo": "unblacklist url",
             "parameters": {
                 "url": {
-                    "description": "A comma seperated list of URLs",
+                    "description": "A list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -909,7 +899,6 @@
                 "url_category": {
                     "description": "Add to this category",
                     "data_type": "string",
-                    "required": false,
                     "primary": true,
                     "contains": [
                         "zscaler url category"
@@ -922,7 +911,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -937,7 +927,7 @@
                     "column_order": 0,
                     "example_values": [
                         "www.test.com",
-                        "www.test.com, www.myspace.com"
+                        "www.test.com, www.test123.com"
                     ]
                 },
                 {
@@ -954,7 +944,7 @@
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
-                        "Phantom-Block"
+                        "Test-Block"
                     ]
                 },
                 {
@@ -1005,7 +995,7 @@
                     "column_name": "Updated",
                     "column_order": 1,
                     "example_values": [
-                        "www.myspace.com"
+                        "www.test123.com"
                     ],
                     "contains": [
                         "url"
@@ -1015,7 +1005,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
+                        "Ignored: ['www.test.com'], Updated: ['www.test123.com']"
                     ]
                 },
                 {
@@ -1041,14 +1031,15 @@
         },
         {
             "action": "unblock ip",
+            "identifier": "unblock_ip2",
             "description": "Unblock an IP",
             "verbose": "Alias for <b>unblacklist ip</b>",
             "type": "correct",
-            "identifier": "unblock_ip2",
             "read_only": false,
+            "undo": "block ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma seperated list of IPs",
+                    "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1062,7 +1053,6 @@
                 "url_category": {
                     "description": "Remove from this category",
                     "data_type": "string",
-                    "required": false,
                     "primary": true,
                     "contains": [
                         "zscaler url category"
@@ -1075,7 +1065,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -1089,7 +1080,8 @@
                     "column_order": 0,
                     "example_values": [
                         "8.8.8.8",
-                        "8.8.8.8, 208.67.222.222"
+                        "8.8.8.8, 208.67.222.222",
+                        "aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa"
                     ]
                 },
                 {
@@ -1106,7 +1098,7 @@
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
-                        "Phantom-Block"
+                        "Test-Block"
                     ]
                 },
                 {
@@ -1193,14 +1185,15 @@
         },
         {
             "action": "unblock url",
+            "identifier": "unblock_url2",
             "description": "Unblock a URL",
             "verbose": "Alias for <b>unblacklist url</b>",
             "type": "correct",
-            "identifier": "unblock_url2",
             "read_only": false,
+            "undo": "block url",
             "parameters": {
                 "url": {
-                    "description": "A comma seperated list of URLs",
+                    "description": "A list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1215,7 +1208,6 @@
                 "url_category": {
                     "description": "Remove from this category",
                     "data_type": "string",
-                    "required": false,
                     "primary": true,
                     "contains": [
                         "zscaler url category"
@@ -1228,7 +1220,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -1243,7 +1236,7 @@
                     "column_order": 0,
                     "example_values": [
                         "www.test.com",
-                        "www.test.com, www.myspace.com"
+                        "www.test.com, www.test123.com"
                     ]
                 },
                 {
@@ -1260,7 +1253,7 @@
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
-                        "Phantom-Block"
+                        "Test-Block"
                     ]
                 },
                 {
@@ -1311,7 +1304,7 @@
                     "column_name": "Updated",
                     "column_order": 1,
                     "example_values": [
-                        "www.myspace.com"
+                        "www.test123.com"
                     ],
                     "contains": [
                         "url"
@@ -1321,7 +1314,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
+                        "Ignored: ['www.test.com'], Updated: ['www.test123.com']"
                     ]
                 },
                 {
@@ -1347,14 +1340,15 @@
         },
         {
             "action": "unblacklist ip",
+            "identifier": "unblock_ip",
             "description": "Unblock an IP",
             "verbose": "If a <b>url_category</b> is specified, it will remove the IP(s) from that category. If it is left blank, it will instead remove the IP(s) from the global blacklist.",
             "type": "correct",
-            "identifier": "unblock_ip",
             "read_only": false,
+            "undo": "blacklist ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma seperated list of IPs",
+                    "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1368,7 +1362,6 @@
                 "url_category": {
                     "description": "Remove from this category",
                     "data_type": "string",
-                    "required": false,
                     "primary": true,
                     "contains": [
                         "zscaler url category"
@@ -1381,7 +1374,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -1395,7 +1389,8 @@
                     "column_order": 0,
                     "example_values": [
                         "8.8.8.8",
-                        "8.8.8.8, 208.67.222.222"
+                        "8.8.8.8, 208.67.222.222",
+                        "aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa"
                     ]
                 },
                 {
@@ -1412,7 +1407,7 @@
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
-                        "Phantom-Block"
+                        "Test-Block"
                     ]
                 },
                 {
@@ -1499,14 +1494,15 @@
         },
         {
             "action": "unblacklist url",
+            "identifier": "unblock_url",
             "description": "Unblock a URL",
             "verbose": "If a <b>url_category</b> is specified, it will remove the URL(s) from that category. If it is left blank, it will instead remove the URL(s) from the global blacklist.",
             "type": "correct",
-            "identifier": "unblock_url",
             "read_only": false,
+            "undo": "blacklist url",
             "parameters": {
                 "url": {
-                    "description": "A comma seperated list of URLs",
+                    "description": "A list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1521,7 +1517,6 @@
                 "url_category": {
                     "description": "Remove from this category",
                     "data_type": "string",
-                    "required": false,
                     "primary": true,
                     "contains": [
                         "zscaler url category"
@@ -1534,7 +1529,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -1549,7 +1545,7 @@
                     "column_order": 0,
                     "example_values": [
                         "www.test.com",
-                        "www.test.com, www.myspace.com"
+                        "www.test.com, www.test123.com"
                     ]
                 },
                 {
@@ -1566,7 +1562,7 @@
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
-                        "Phantom-Block"
+                        "Test-Block"
                     ]
                 },
                 {
@@ -1617,7 +1613,7 @@
                     "column_name": "Updated",
                     "column_order": 1,
                     "example_values": [
-                        "www.myspace.com"
+                        "www.test123.com"
                     ],
                     "contains": [
                         "url"
@@ -1627,7 +1623,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
+                        "Ignored: ['www.test.com'], Updated: ['www.test123.com']"
                     ]
                 },
                 {
@@ -1653,14 +1649,15 @@
         },
         {
             "action": "whitelist ip",
-            "description": "Add an IP address to the whitelist",
-            "verbose": "If a <b>url_category</b> is specified, it will add the IP(s) as a rule to that category. If it is left blank, it will instead add this IP(s) to the global blacklist.",
-            "type": "contain",
             "identifier": "whitelist_ip",
+            "description": "Add an IP address to the whitelist",
+            "verbose": "If a <b>url_category</b> is specified, it will add the IP(s) as a rule to that category. If it is left blank, it will instead add this IP(s) to the global whitelist.",
+            "type": "contain",
             "read_only": false,
+            "undo": "unwhitelist ip",
             "parameters": {
                 "ip": {
-                    "description": "A comma seperated list of IPs",
+                    "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1674,7 +1671,6 @@
                 "url_category": {
                     "description": "Add to this category",
                     "data_type": "string",
-                    "required": false,
                     "primary": true,
                     "contains": [
                         "zscaler url category"
@@ -1682,326 +1678,17 @@
                     "order": 1
                 }
             },
-            "output": [
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.ip",
-                    "data_type": "string",
-                    "contains": [
-                        "ip",
-                        "ipv6"
-                    ],
-                    "column_name": "IP",
-                    "column_order": 0,
-                    "example_values": [
-                        "8.8.8.8",
-                        "8.8.8.8, 208.67.222.222"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.url_category",
-                    "data_type": "string",
-                    "contains": [
-                        "zscaler url category"
-                    ],
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.configuredName",
-                    "data_type": "string",
-                    "example_values": [
-                        "Phantom-Whitelist"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customCategory",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.dbCategorizedUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.val",
-                    "data_type": "numeric",
-                    "example_values": [
-                        128
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.whitelistUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary.ignored",
-                    "data_type": "string",
-                    "column_name": "Ignored",
-                    "column_order": 2,
-                    "example_values": [
-                        "8.8.8.8"
-                    ],
-                    "contains": [
-                        "ip"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.updated",
-                    "data_type": "string",
-                    "column_name": "Updated",
-                    "column_order": 1,
-                    "example_values": [
-                        "208.67.222.222"
-                    ],
-                    "contains": [
-                        "ip"
-                    ]
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "Ignored: ['8.8.8.8'], Updated: ['208.67.222.222']"
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                }
-            ],
             "render": {
                 "title": "Whitelist IP",
                 "type": "table"
             },
-            "versions": "EQ(*)"
-        },
-        {
-            "action": "whitelist url",
-            "description": "Add a URL to the whitelist",
-            "verbose": "If a <b>url_category</b> is specified, it will add the URL(s) as a rule to that category. If it is left blank, it will instead add the URL(s) to the global blacklist.",
-            "type": "contain",
-            "identifier": "whitelist_url",
-            "read_only": false,
-            "parameters": {
-                "url": {
-                    "description": "A comma seperated list of URLs",
-                    "data_type": "string",
-                    "required": true,
-                    "primary": true,
-                    "contains": [
-                        "url",
-                        "domain",
-                        "url list"
-                    ],
-                    "order": 0,
-                    "allow_list": true
-                },
-                "url_category": {
-                    "description": "Add to this category",
-                    "data_type": "string",
-                    "required": false,
-                    "primary": true,
-                    "contains": [
-                        "zscaler url category"
-                    ],
-                    "order": 1
-                }
-            },
             "output": [
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.url",
-                    "data_type": "string",
-                    "contains": [
-                        "url",
-                        "domain",
-                        "url list"
-                    ],
-                    "column_name": "URL",
-                    "column_order": 0,
-                    "example_values": [
-                        "www.test.com",
-                        "www.test.com, www.myspace.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.url_category",
-                    "data_type": "string",
-                    "contains": [
-                        "zscaler url category"
-                    ],
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.configuredName",
-                    "data_type": "string",
-                    "example_values": [
-                        "Phantom-Whitelist"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customCategory",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.dbCategorizedUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "CUSTOM_01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.val",
-                    "data_type": "numeric",
-                    "example_values": [
-                        128
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.whitelistUrls",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary.ignored",
-                    "data_type": "string",
-                    "column_name": "Ignored",
-                    "column_order": 2,
-                    "example_values": [
-                        "www.test.com"
-                    ],
-                    "contains": [
-                        "url"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.updated",
-                    "data_type": "string",
-                    "column_name": "Updated",
-                    "column_order": 1,
-                    "example_values": [
-                        "www.myspace.com"
-                    ],
-                    "contains": [
-                        "url"
-                    ]
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                }
-            ],
-            "render": {
-                "title": "Whitelist URL",
-                "type": "table"
-            },
-            "versions": "EQ(*)"
-        },
-        {
-            "action": "unwhitelist ip",
-            "description": "Remove an IP address from the whitelist",
-            "verbose": "If a <b>url_category</b> is specified, it will remove the IP(s) from that category. If it is left blank, it will instead remove the IP(s) from the global blacklist.",
-            "type": "correct",
-            "identifier": "unwhitelist_ip",
-            "read_only": false,
-            "parameters": {
-                "ip": {
-                    "description": "A comma seperated list of IPs",
-                    "data_type": "string",
-                    "required": true,
-                    "primary": true,
-                    "contains": [
-                        "ip",
-                        "ipv6"
-                    ],
-                    "order": 0,
-                    "allow_list": true
-                },
-                "url_category": {
-                    "description": "Add to this category",
-                    "data_type": "string",
-                    "required": false,
-                    "primary": true,
-                    "contains": [
-                        "zscaler url category"
-                    ],
-                    "order": 1
-                }
-            },
-            "output": [
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -2015,7 +1702,8 @@
                     "column_order": 0,
                     "example_values": [
                         "8.8.8.8",
-                        "8.8.8.8, 208.67.222.222"
+                        "8.8.8.8, 208.67.222.222",
+                        "aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa"
                     ]
                 },
                 {
@@ -2032,7 +1720,7 @@
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
-                        "Phantom-Whitelist"
+                        "Test-Whitelist"
                     ]
                 },
                 {
@@ -2115,22 +1803,19 @@
                     ]
                 }
             ],
-            "render": {
-                "title": "Undo Whitelist IP",
-                "type": "table"
-            },
             "versions": "EQ(*)"
         },
         {
-            "action": "unwhitelist url",
-            "description": "Remove a URL from the whitelist",
-            "verbose": "If a <b>url_category</b> is specified, it will remove the URL(s) from that category. If it is left blank, it will instead remove the URL(s) from the global blacklist.",
-            "type": "correct",
-            "identifier": "unwhitelist_url",
+            "action": "whitelist url",
+            "identifier": "whitelist_url",
+            "description": "Add a URL to the whitelist",
+            "verbose": "If a <b>url_category</b> is specified, it will add the URL(s) as a rule to that category. If it is left blank, it will instead add the URL(s) to the global whitelist.",
+            "type": "contain",
             "read_only": false,
+            "undo": "unwhitelist url",
             "parameters": {
                 "url": {
-                    "description": "A comma seperated list of URLs",
+                    "description": "A list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -2145,7 +1830,6 @@
                 "url_category": {
                     "description": "Add to this category",
                     "data_type": "string",
-                    "required": false,
                     "primary": true,
                     "contains": [
                         "zscaler url category"
@@ -2153,12 +1837,17 @@
                     "order": 1
                 }
             },
+            "render": {
+                "title": "Whitelist URL",
+                "type": "table"
+            },
             "output": [
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -2173,7 +1862,7 @@
                     "column_order": 0,
                     "example_values": [
                         "www.test.com",
-                        "www.test.com, www.myspace.com"
+                        "www.test.com, www.test123.com"
                     ]
                 },
                 {
@@ -2190,7 +1879,7 @@
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
-                        "Phantom-Whitelist"
+                        "Test-Whitelist"
                     ]
                 },
                 {
@@ -2245,7 +1934,7 @@
                     "column_name": "Updated",
                     "column_order": 1,
                     "example_values": [
-                        "www.myspace.com"
+                        "www.test123.com"
                     ],
                     "contains": [
                         "url"
@@ -2255,7 +1944,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Ignored: ['www.test.com'], Updated: ['www.myspace.com']"
+                        "Ignored: ['www.test.com'], Updated: ['www.test123.com']"
                     ]
                 },
                 {
@@ -2273,21 +1962,334 @@
                     ]
                 }
             ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "unwhitelist ip",
+            "identifier": "unwhitelist_ip",
+            "description": "Remove an IP address from the whitelist",
+            "verbose": "If a <b>url_category</b> is specified, it will remove the IP(s) from that category. If it is left blank, it will instead remove the IP(s) from the global whitelist.",
+            "type": "correct",
+            "read_only": false,
+            "undo": "whitelist ip",
+            "parameters": {
+                "ip": {
+                    "description": "A list of IPs",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "ip",
+                        "ipv6"
+                    ],
+                    "order": 0,
+                    "allow_list": true
+                },
+                "url_category": {
+                    "description": "Remove from this category",
+                    "data_type": "string",
+                    "primary": true,
+                    "contains": [
+                        "zscaler url category"
+                    ],
+                    "order": 1
+                }
+            },
+            "render": {
+                "title": "Undo Whitelist IP",
+                "type": "table"
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip",
+                        "ipv6"
+                    ],
+                    "column_name": "IP",
+                    "column_order": 0,
+                    "example_values": [
+                        "8.8.8.8",
+                        "8.8.8.8, 208.67.222.222",
+                        "aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.url_category",
+                    "data_type": "string",
+                    "contains": [
+                        "zscaler url category"
+                    ],
+                    "example_values": [
+                        "CUSTOM_01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Test-Whitelist"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "CUSTOM_01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        128
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.whitelistUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.ignored",
+                    "data_type": "string",
+                    "column_name": "Ignored",
+                    "column_order": 2,
+                    "example_values": [
+                        "8.8.8.8"
+                    ],
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.updated",
+                    "data_type": "string",
+                    "column_name": "Updated",
+                    "column_order": 1,
+                    "example_values": [
+                        "208.67.222.222"
+                    ],
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Ignored: ['8.8.8.8'], Updated: ['208.67.222.222']"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "unwhitelist url",
+            "identifier": "unwhitelist_url",
+            "description": "Remove a URL from the whitelist",
+            "verbose": "If a <b>url_category</b> is specified, it will remove the URL(s) from that category. If it is left blank, it will instead remove the URL(s) from the global whitelist.",
+            "type": "correct",
+            "read_only": false,
+            "undo": "whitelist url",
+            "parameters": {
+                "url": {
+                    "description": "A list of URLs",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "url",
+                        "domain",
+                        "url list"
+                    ],
+                    "order": 0,
+                    "allow_list": true
+                },
+                "url_category": {
+                    "description": "Remove from this category",
+                    "data_type": "string",
+                    "primary": true,
+                    "contains": [
+                        "zscaler url category"
+                    ],
+                    "order": 1
+                }
+            },
             "render": {
                 "title": "Undo Whitelist URL",
                 "type": "table"
             },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.url",
+                    "data_type": "string",
+                    "contains": [
+                        "url",
+                        "domain",
+                        "url list"
+                    ],
+                    "column_name": "URL",
+                    "column_order": 0,
+                    "example_values": [
+                        "www.test.com",
+                        "www.test.com, www.test123.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.url_category",
+                    "data_type": "string",
+                    "contains": [
+                        "zscaler url category"
+                    ],
+                    "example_values": [
+                        "CUSTOM_01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Test-Whitelist"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "CUSTOM_01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        128
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.whitelistUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.ignored",
+                    "data_type": "string",
+                    "column_name": "Ignored",
+                    "column_order": 2,
+                    "example_values": [
+                        "www.test.com"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.updated",
+                    "data_type": "string",
+                    "column_name": "Updated",
+                    "column_order": 1,
+                    "example_values": [
+                        "www.test123.com"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Ignored: ['www.test.com'], Updated: ['www.test123.com']"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
             "versions": "EQ(*)"
         },
         {
             "action": "lookup ip",
+            "identifier": "lookup_ip",
             "description": "Lookup the categories related to an IP",
             "type": "investigate",
-            "identifier": "lookup_ip",
             "read_only": true,
             "parameters": {
                 "ip": {
-                    "description": "A comma seperated list of IPs",
+                    "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -2304,7 +2306,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -2316,7 +2319,8 @@
                     ],
                     "example_values": [
                         "8.8.8.8",
-                        "208.67.222.222, 8.8.8.8"
+                        "208.67.222.222, 8.8.8.8",
+                        "aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa"
                     ]
                 },
                 {
@@ -2340,7 +2344,7 @@
                         "ip",
                         "ipv6"
                     ],
-                    "column_name": "ip/url",
+                    "column_name": "IP/URL",
                     "column_order": 0
                 },
                 {
@@ -2366,7 +2370,6 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "",
                         "Successfully completed lookup"
                     ]
                 },
@@ -2393,13 +2396,13 @@
         },
         {
             "action": "lookup url",
+            "identifier": "lookup_url",
             "description": "Lookup the categories related to a URL",
             "type": "investigate",
-            "identifier": "lookup_url",
             "read_only": true,
             "parameters": {
                 "url": {
-                    "description": "A comma seperated list of URLs",
+                    "description": "A list of URLs",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -2417,7 +2420,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -2429,8 +2433,6 @@
                         "url list"
                     ],
                     "example_values": [
-                        "test.com",
-                        "test.com, test1.com",
                         "www.test.com, www.test3.com, test2.tv"
                     ]
                 },
@@ -2452,7 +2454,6 @@
                         "domain"
                     ],
                     "example_values": [
-                        "test1.com",
                         "www.test.com"
                     ],
                     "column_name": "URL",
@@ -2462,7 +2463,6 @@
                     "data_path": "action_result.data.*.urlClassifications",
                     "data_type": "string",
                     "example_values": [
-                        "NEWS_AND_MEDIA",
                         "MISCELLANEOUS_OR_UNKNOWN"
                     ],
                     "column_name": "Classifications",
@@ -2482,7 +2482,6 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "",
                         "Successfully completed lookup"
                     ]
                 },
