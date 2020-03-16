@@ -35,6 +35,23 @@ class ZscalerConnector(BaseConnector):
         self._headers = None
         self._category = None
 
+    @staticmethod
+    def _handle_py_ver_compat_for_input_str(python_version, input_str):
+        """
+        This method returns the encoded|original string based on the Python version.
+
+        :param python_version: Information of the Python version
+        :param input_str: Input string to be processed
+        :return: input_str (Processed input string based on following logic 'input_str - Python 3; encoded input_str - Python 2')
+        """
+
+        if python_version == 3:
+            input_str = input_str
+        else:
+            input_str = UnicodeDammit(input_str).unicode_markup.encode('utf-8')
+
+        return input_str
+
     def _process_empty_reponse(self, response, action_result):
         if response.status_code == 200 or response.status_code == 204:
             return RetVal(phantom.APP_SUCCESS, {})
@@ -55,10 +72,7 @@ class ZscalerConnector(BaseConnector):
             error_text = "Cannot parse error details"
 
         # Handling of error_text for both the Python 2 and Python 3 versions
-        error_text = UnicodeDammit(error_text).unicode_markup.encode('UTF-8')
-
-        if self._python_version == 3:
-            error_text = error_text.decode('UTF-8')
+        error_text = ZscalerConnector._handle_py_ver_compat_for_input_str(self._python_version, error_text)
 
         message = "Please check the asset configuration parameters (the base_url should not end with /api/v1 e.g. https://admin.zscaler_instance.net)."
 
@@ -152,11 +166,7 @@ class ZscalerConnector(BaseConnector):
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid method: {0}".format(method)), resp_json)
 
         # Create a URL to connect to
-        if self._python_version == 3:
-            url = '{}{}'.format(self._base_url.decode('utf-8'), endpoint)
-        else:
-
-            url = '{}{}'.format(self._base_url, endpoint)
+        url = '{}{}'.format(ZscalerConnector._handle_py_ver_compat_for_input_str(self._python_version, self._base_url), endpoint)
 
         try:
             r = request_func(
@@ -181,8 +191,7 @@ class ZscalerConnector(BaseConnector):
                 error_code = "Error code unavailable"
                 error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
 
-            if self._python_version == 2:
-                error_msg = UnicodeDammit(error_msg).unicode_markup.encode('UTF-8')
+            error_msg = ZscalerConnector._handle_py_ver_compat_for_input_str(self._python_version, error_msg)
 
             return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to server. Error Code: {0}. Error Message: {1}".format(error_code, error_msg)), resp_json)
 
@@ -284,7 +293,12 @@ class ZscalerConnector(BaseConnector):
 
     def _deinit_session(self):
         action_result = ActionResult()
-        ret_val, response = self._make_rest_call_helper('/api/v1/authenticatedSession', action_result, method='delete')  # noqa
+        ret_val, response = self._make_rest_call_helper('/api/v1/authenticatedSession', action_result, method='delete')
+
+        if phantom.is_fail(ret_val):
+            self.debug_print("Deleting the authenticated session failed on the ZScaler server.")
+            self.debug_print("Marking the action as successful run.")
+
         return phantom.APP_SUCCESS
 
     def _handle_test_connectivity(self, param):
@@ -338,8 +352,8 @@ class ZscalerConnector(BaseConnector):
         summary['updated'] = filtered_endpoints
         summary['ignored'] = list(set(endpoints) - set(filtered_endpoints))
         # Encode the unicode IP or URL strings
-        summary['updated'] = [element if self._python_version == 3 else UnicodeDammit(element).unicode_markup.encode('UTF-8') for element in summary['updated']]
-        summary['ignored'] = [element if self._python_version == 3 else UnicodeDammit(element).unicode_markup.encode('UTF-8') for element in summary['ignored']]
+        summary['updated'] = [ZscalerConnector._handle_py_ver_compat_for_input_str(self._python_version, element) for element in summary['updated']]
+        summary['ignored'] = [ZscalerConnector._handle_py_ver_compat_for_input_str(self._python_version, element) for element in summary['ignored']]
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_whitelist(self, action_result):
@@ -380,8 +394,8 @@ class ZscalerConnector(BaseConnector):
         summary['updated'] = filtered_endpoints
         summary['ignored'] = list(set(endpoints) - set(filtered_endpoints))
         # Encode the unicode IP or URL strings
-        summary['updated'] = [element if self._python_version == 3 else UnicodeDammit(element).unicode_markup.encode('UTF-8') for element in summary['updated']]
-        summary['ignored'] = [element if self._python_version == 3 else UnicodeDammit(element).unicode_markup.encode('UTF-8') for element in summary['ignored']]
+        summary['updated'] = [ZscalerConnector._handle_py_ver_compat_for_input_str(self._python_version, element) for element in summary['updated']]
+        summary['ignored'] = [ZscalerConnector._handle_py_ver_compat_for_input_str(self._python_version, element) for element in summary['ignored']]
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_category(self, action_result, category):
@@ -438,8 +452,8 @@ class ZscalerConnector(BaseConnector):
         summary['updated'] = filtered_endpoints
         summary['ignored'] = list(set(endpoints) - set(filtered_endpoints))
         # Encode the unicode IP or URL strings
-        summary['updated'] = [element if self._python_version == 3 else UnicodeDammit(element).unicode_markup.encode('UTF-8') for element in summary['updated']]
-        summary['ignored'] = [element if self._python_version == 3 else UnicodeDammit(element).unicode_markup.encode('UTF-8') for element in summary['ignored']]
+        summary['updated'] = [ZscalerConnector._handle_py_ver_compat_for_input_str(self._python_version, element) for element in summary['updated']]
+        summary['ignored'] = [ZscalerConnector._handle_py_ver_compat_for_input_str(self._python_version, element) for element in summary['ignored']]
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _block_endpoint(self, action_result, endpoints, category):
@@ -660,14 +674,14 @@ class ZscalerConnector(BaseConnector):
 
     def initialize(self):
 
-        # fetching the Python major version
+        # Fetching the Python major version
         self._python_version = sys.version_info[0]
 
         # Load the state in initialize, use it to store data
         # that needs to be accessed across actions
         self._state = self.load_state()
         config = self.get_config()
-        self._base_url = UnicodeDammit(config['base_url'].rstrip('/')).unicode_markup.encode('utf-8')
+        self._base_url = config['base_url'].rstrip('/')
         self._username = config['username']
         self._password = config['password']
         self._headers = {}
