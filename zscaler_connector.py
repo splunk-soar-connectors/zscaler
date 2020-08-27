@@ -459,14 +459,20 @@ class ZscalerConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _block_endpoint(self, action_result, endpoints, category):
-        endpoints = [x.strip() for x in endpoints.split(',')]
+        list_endpoints = list()
+        list_endpoints = [x.strip() for x in endpoints.split(',')]
+        endpoints = list(filter(None, list_endpoints))
+        endpoints = self._truncate_protocol(endpoints)
         if category is None:
             return self._amend_blacklist(action_result, endpoints, 'ADD_TO_LIST')
         else:
             return self._amend_category(action_result, endpoints, category, 'ADD_TO_LIST')
 
     def _unblock_endpoint(self, action_result, endpoints, category):
-        endpoints = [x.strip() for x in endpoints.split(',')]
+        list_endpoints = list()
+        list_endpoints = [x.strip() for x in endpoints.split(',')]
+        endpoints = list(filter(None, list_endpoints))
+        endpoints = self._truncate_protocol(endpoints)
         if category is None:
             return self._amend_blacklist(action_result, endpoints, 'REMOVE_FROM_LIST')
         else:
@@ -489,14 +495,20 @@ class ZscalerConnector(BaseConnector):
         return self._unblock_endpoint(action_result, param['url'], param.get('url_category'))
 
     def _whitelist_endpoint(self, action_result, endpoints, category):
-        endpoints = [x.strip() for x in endpoints.split(',')]
+        list_endpoints = list()
+        list_endpoints = [x.strip() for x in endpoints.split(',')]
+        endpoints = list(filter(None, list_endpoints))
+        endpoints = self._truncate_protocol(endpoints)
         if category is None:
             return self._amend_whitelist(action_result, endpoints, 'ADD_TO_LIST')
         else:
             return self._amend_category(action_result, endpoints, category, 'ADD_TO_LIST')
 
     def _unwhitelist_endpoint(self, action_result, endpoints, category):
-        endpoints = [x.strip() for x in endpoints.split(',')]
+        list_endpoints = list()
+        list_endpoints = [x.strip() for x in endpoints.split(',')]
+        endpoints = list(filter(None, list_endpoints))
+        endpoints = self._truncate_protocol(endpoints)
         if category is None:
             return self._amend_whitelist(action_result, endpoints, 'REMOVE_FROM_LIST')
         else:
@@ -610,7 +622,23 @@ class ZscalerConnector(BaseConnector):
         list_endpoints = [x.strip() for x in param['url'].split(',')]
         endpoints = list(filter(None, list_endpoints))
 
+        endpoints = self._truncate_protocol(endpoints)
+
         return self._lookup_endpoint(action_result, endpoints)
+
+    def _truncate_protocol(self, endpoints):
+        """
+        This action truncates the protocol from the list of URLs if present
+        :param: endpoints: list of URLs
+        :return: updated list of url
+        """
+        for i in range(len(endpoints)):
+            if endpoints[i].startswith("http://"):
+                endpoints[i] = endpoints[i][(len("http://")):]
+            elif endpoints[i].startswith("https://"):
+                endpoints[i] = endpoints[i][(len("https://")):]
+
+        return endpoints
 
     def handle_action(self, param):
 
