@@ -463,6 +463,12 @@ class ZscalerConnector(BaseConnector):
         list_endpoints = [x.strip() for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
+
+        ret_val = self._check_for_overlength(action_result, endpoints)
+
+        if phantom.is_fail(ret_val):
+            return ret_val
+
         if category is None:
             return self._amend_blacklist(action_result, endpoints, 'ADD_TO_LIST')
         else:
@@ -473,6 +479,12 @@ class ZscalerConnector(BaseConnector):
         list_endpoints = [x.strip() for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
+
+        ret_val = self._check_for_overlength(action_result, endpoints)
+
+        if phantom.is_fail(ret_val):
+            return ret_val
+
         if category is None:
             return self._amend_blacklist(action_result, endpoints, 'REMOVE_FROM_LIST')
         else:
@@ -499,6 +511,12 @@ class ZscalerConnector(BaseConnector):
         list_endpoints = [x.strip() for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
+
+        ret_val = self._check_for_overlength(action_result, endpoints)
+
+        if phantom.is_fail(ret_val):
+            return ret_val
+
         if category is None:
             return self._amend_whitelist(action_result, endpoints, 'ADD_TO_LIST')
         else:
@@ -509,6 +527,12 @@ class ZscalerConnector(BaseConnector):
         list_endpoints = [x.strip() for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
+
+        ret_val = self._check_for_overlength(action_result, endpoints)
+
+        if phantom.is_fail(ret_val):
+            return ret_val
+
         if category is None:
             return self._amend_whitelist(action_result, endpoints, 'REMOVE_FROM_LIST')
         else:
@@ -623,12 +647,16 @@ class ZscalerConnector(BaseConnector):
         endpoints = list(filter(None, list_endpoints))
 
         endpoints = self._truncate_protocol(endpoints)
+        ret_val = self._check_for_overlength(action_result, endpoints)
+
+        if phantom.is_fail(ret_val):
+            return ret_val
 
         return self._lookup_endpoint(action_result, endpoints)
 
     def _truncate_protocol(self, endpoints):
         """
-        This action truncates the protocol from the list of URLs if present
+        This function truncates the protocol from the list of URLs if present
         :param: endpoints: list of URLs
         :return: updated list of url
         """
@@ -639,6 +667,18 @@ class ZscalerConnector(BaseConnector):
                 endpoints[i] = endpoints[i][(len("https://")):]
 
         return endpoints
+
+    def _check_for_overlength(self, action_result, endpoints):
+        """This function checks whether the length of each url is not more
+        than 1024
+        :param: :endpoints: list of URLs
+
+        """
+        for url in endpoints:
+            if len(url) > 1024:
+                return action_result.set_status(phantom.APP_ERROR,
+                        "Please provide valid comma-separated values in the action parameter. Max allowed length for each value is 1024.")
+        return phantom.APP_SUCCESS
 
     def handle_action(self, param):
 
