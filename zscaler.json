@@ -15,7 +15,7 @@
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.py",
     "python_version": "3",
-    "min_phantom_version": "4.6.19142",
+    "min_phantom_version": "4.8.24304",
     "latest_tested_versions": [
         "Cloud v6.0 tested 3/11/2020"
     ],
@@ -427,11 +427,11 @@
                     "required": true,
                     "primary": true,
                     "contains": [
+                        "ipv",
                         "ip",
                         "ipv6"
                     ],
-                    "order": 0,
-                    "allow_list": true
+                    "order": 0
                 },
                 "url_category": {
                     "description": "Add to this category",
@@ -456,6 +456,7 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
+                        "ipv",
                         "ip",
                         "ipv6"
                     ],
@@ -581,11 +582,11 @@
                     "required": true,
                     "primary": true,
                     "contains": [
+                        "ipv",
                         "ip",
                         "ipv6"
                     ],
-                    "order": 0,
-                    "allow_list": true
+                    "order": 0
                 },
                 "url_category": {
                     "description": "Add to this category",
@@ -610,6 +611,7 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
+                        "ipv",
                         "ip",
                         "ipv6"
                     ],
@@ -735,11 +737,9 @@
                     "primary": true,
                     "contains": [
                         "url",
-                        "domain",
-                        "url list"
+                        "domain"
                     ],
-                    "order": 0,
-                    "allow_list": true
+                    "order": 0
                 },
                 "url_category": {
                     "description": "Add to this category",
@@ -765,8 +765,7 @@
                     "data_type": "string",
                     "contains": [
                         "url",
-                        "domain",
-                        "url list"
+                        "domain"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -890,11 +889,9 @@
                     "primary": true,
                     "contains": [
                         "url",
-                        "domain",
-                        "url list"
+                        "domain"
                     ],
-                    "order": 0,
-                    "allow_list": true
+                    "order": 0
                 },
                 "url_category": {
                     "description": "Add to this category",
@@ -920,8 +917,7 @@
                     "data_type": "string",
                     "contains": [
                         "url",
-                        "domain",
-                        "url list"
+                        "domain"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -1044,11 +1040,11 @@
                     "required": true,
                     "primary": true,
                     "contains": [
+                        "ipv",
                         "ip",
                         "ipv6"
                     ],
-                    "order": 0,
-                    "allow_list": true
+                    "order": 0
                 },
                 "url_category": {
                     "description": "Remove from this category",
@@ -1073,6 +1069,7 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
+                        "ipv",
                         "ip",
                         "ipv6"
                     ],
@@ -1199,11 +1196,9 @@
                     "primary": true,
                     "contains": [
                         "url",
-                        "domain",
-                        "url list"
+                        "domain"
                     ],
-                    "order": 0,
-                    "allow_list": true
+                    "order": 0
                 },
                 "url_category": {
                     "description": "Remove from this category",
@@ -1229,8 +1224,7 @@
                     "data_type": "string",
                     "contains": [
                         "url",
-                        "domain",
-                        "url list"
+                        "domain"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -1353,11 +1347,11 @@
                     "required": true,
                     "primary": true,
                     "contains": [
+                        "ipv",
                         "ip",
                         "ipv6"
                     ],
-                    "order": 0,
-                    "allow_list": true
+                    "order": 0
                 },
                 "url_category": {
                     "description": "Remove from this category",
@@ -1382,6 +1376,7 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
+                        "ipv",
                         "ip",
                         "ipv6"
                     ],
@@ -1508,11 +1503,9 @@
                     "primary": true,
                     "contains": [
                         "url",
-                        "domain",
-                        "url list"
+                        "domain"
                     ],
-                    "order": 0,
-                    "allow_list": true
+                    "order": 0
                 },
                 "url_category": {
                     "description": "Remove from this category",
@@ -1538,8 +1531,7 @@
                     "data_type": "string",
                     "contains": [
                         "url",
-                        "domain",
-                        "url list"
+                        "domain"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -1662,11 +1654,11 @@
                     "required": true,
                     "primary": true,
                     "contains": [
+                        "ipv",
                         "ip",
                         "ipv6"
                     ],
-                    "order": 0,
-                    "allow_list": true
+                    "order": 0
                 },
                 "url_category": {
                     "description": "Add to this category",
@@ -1695,6 +1687,7 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
+                        "ipv",
                         "ip",
                         "ipv6"
                     ],
@@ -1821,11 +1814,9 @@
                     "primary": true,
                     "contains": [
                         "url",
-                        "domain",
-                        "url list"
+                        "domain"
                     ],
-                    "order": 0,
-                    "allow_list": true
+                    "order": 0
                 },
                 "url_category": {
                     "description": "Add to this category",
@@ -1855,8 +1846,7 @@
                     "data_type": "string",
                     "contains": [
                         "url",
-                        "domain",
-                        "url list"
+                        "domain"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -1979,11 +1969,11 @@
                     "required": true,
                     "primary": true,
                     "contains": [
+                        "ipv",
                         "ip",
                         "ipv6"
                     ],
-                    "order": 0,
-                    "allow_list": true
+                    "order": 0
                 },
                 "url_category": {
                     "description": "Remove from this category",
@@ -2012,6 +2002,7 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
+                        "ipv",
                         "ip",
                         "ipv6"
                     ],
@@ -2138,11 +2129,9 @@
                     "primary": true,
                     "contains": [
                         "url",
-                        "domain",
-                        "url list"
+                        "domain"
                     ],
-                    "order": 0,
-                    "allow_list": true
+                    "order": 0
                 },
                 "url_category": {
                     "description": "Remove from this category",
@@ -2172,8 +2161,7 @@
                     "data_type": "string",
                     "contains": [
                         "url",
-                        "domain",
-                        "url list"
+                        "domain"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -2294,11 +2282,11 @@
                     "required": true,
                     "primary": true,
                     "contains": [
+                        "ipv",
                         "ip",
                         "ipv6"
                     ],
-                    "order": 0,
-                    "allow_list": true
+                    "order": 0
                 }
             },
             "output": [
@@ -2314,6 +2302,7 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
+                        "ipv",
                         "ip",
                         "ipv6"
                     ],
@@ -2341,6 +2330,7 @@
                         "8.8.8.8"
                     ],
                     "contains": [
+                        "ipv",
                         "ip",
                         "ipv6"
                     ],
@@ -2408,11 +2398,9 @@
                     "primary": true,
                     "contains": [
                         "url",
-                        "domain",
-                        "url list"
+                        "domain"
                     ],
-                    "order": 0,
-                    "allow_list": true
+                    "order": 0
                 }
             },
             "output": [
@@ -2429,8 +2417,7 @@
                     "data_type": "string",
                     "contains": [
                         "url",
-                        "domain",
-                        "url list"
+                        "domain"
                     ],
                     "example_values": [
                         "www.test.com, www.test3.com, test2.tv"
