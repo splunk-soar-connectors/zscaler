@@ -794,7 +794,7 @@ class ZscalerConnector(BaseConnector):
         self._password = config['password']
         self._headers = {}
 
-        self.set_validator('ipv', self._is_ip)
+        self.set_validator('ipv6', self._is_ip)
 
         return self._init_session()
 
