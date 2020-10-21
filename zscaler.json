@@ -425,11 +425,6 @@
                     "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
-                    "primary": true,
-                    "contains": [
-                        "ip",
-                        "ipv6"
-                    ],
                     "order": 0,
                     "allow_list": true
                 },
@@ -456,8 +451,7 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ],
                     "column_name": "IP",
                     "column_order": 0,
@@ -523,8 +517,7 @@
                         "8.8.8.8"
                     ],
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ]
                 },
                 {
@@ -536,8 +529,7 @@
                         "208.67.222.222"
                     ],
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ]
                 },
                 {
@@ -581,11 +573,6 @@
                     "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
-                    "primary": true,
-                    "contains": [
-                        "ip",
-                        "ipv6"
-                    ],
                     "order": 0,
                     "allow_list": true
                 },
@@ -612,8 +599,7 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ],
                     "column_name": "IP",
                     "column_order": 0,
@@ -678,8 +664,7 @@
                         "8.8.8.8"
                     ],
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ]
                 },
                 {
@@ -691,8 +676,7 @@
                         "208.67.222.222"
                     ],
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ]
                 },
                 {
@@ -1040,11 +1024,6 @@
                     "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
-                    "primary": true,
-                    "contains": [
-                        "ip",
-                        "ipv6"
-                    ],
                     "order": 0,
                     "allow_list": true
                 },
@@ -1071,8 +1050,7 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ],
                     "column_name": "IP",
                     "column_order": 0,
@@ -1138,8 +1116,7 @@
                         "8.8.8.8"
                     ],
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ]
                 },
                 {
@@ -1151,8 +1128,7 @@
                         "208.67.222.222"
                     ],
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ]
                 },
                 {
@@ -1348,11 +1324,6 @@
                     "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
-                    "primary": true,
-                    "contains": [
-                        "ip",
-                        "ipv6"
-                    ],
                     "order": 0,
                     "allow_list": true
                 },
@@ -1379,8 +1350,7 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ],
                     "column_name": "IP",
                     "column_order": 0,
@@ -1446,8 +1416,7 @@
                         "8.8.8.8"
                     ],
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ]
                 },
                 {
@@ -1459,8 +1428,7 @@
                         "208.67.222.222"
                     ],
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ]
                 },
                 {
@@ -1656,11 +1624,6 @@
                     "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
-                    "primary": true,
-                    "contains": [
-                        "ip",
-                        "ipv6"
-                    ],
                     "order": 0,
                     "allow_list": true
                 },
@@ -1691,8 +1654,7 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ],
                     "column_name": "IP",
                     "column_order": 0,
@@ -1762,8 +1724,7 @@
                         "8.8.8.8"
                     ],
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ]
                 },
                 {
@@ -1775,8 +1736,7 @@
                         "208.67.222.222"
                     ],
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ]
                 },
                 {
@@ -1972,11 +1932,6 @@
                     "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
-                    "primary": true,
-                    "contains": [
-                        "ip",
-                        "ipv6"
-                    ],
                     "order": 0,
                     "allow_list": true
                 },
@@ -2007,8 +1962,7 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ],
                     "column_name": "IP",
                     "column_order": 0,
@@ -2078,8 +2032,7 @@
                         "8.8.8.8"
                     ],
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ]
                 },
                 {
@@ -2091,8 +2044,7 @@
                         "208.67.222.222"
                     ],
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ]
                 },
                 {
@@ -2286,13 +2238,7 @@
                     "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
-                    "primary": true,
-                    "contains": [
-                        "ip",
-                        "ipv6"
-                    ],
-                    "order": 0,
-                    "allow_list": true
+                    "order": 0
                 }
             },
             "output": [
@@ -2308,8 +2254,7 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "zscaler ip"
                     ],
                     "example_values": [
                         "8.8.8.8",
@@ -2333,10 +2278,6 @@
                     "example_values": [
                         "208.67.222.222",
                         "8.8.8.8"
-                    ],
-                    "contains": [
-                        "ip",
-                        "ipv6"
                     ],
                     "column_name": "IP/URL",
                     "column_order": 0

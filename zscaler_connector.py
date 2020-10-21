@@ -499,6 +499,15 @@ class ZscalerConnector(BaseConnector):
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
+        if self.get_action_identifier() in ['block_ip2', 'block_ip']:
+            invalid_ip = list()
+            for ip_value in endpoints:
+                if not (self._is_ip(ip_value)):
+                    invalid_ip.append(ip_value)
+
+            if invalid_ip != []:
+                return action_result.set_status(phantom.APP_ERROR, 'Please provide valid IP address for {} values'.format(', '.join(invalid_ip)))
+
         ret_val = self._check_for_overlength(action_result, endpoints)
 
         if phantom.is_fail(ret_val):
@@ -514,6 +523,15 @@ class ZscalerConnector(BaseConnector):
         list_endpoints = [x.strip() for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
+
+        if self.get_action_identifier() in ['unblock_ip2', 'unblock_ip']:
+            invalid_ip = list()
+            for ip_value in endpoints:
+                if not (self._is_ip(ip_value)):
+                    invalid_ip.append(ip_value)
+
+            if invalid_ip != []:
+                return action_result.set_status(phantom.APP_ERROR, 'Please provide valid IP address for {} values'.format(', '.join(invalid_ip)))
 
         ret_val = self._check_for_overlength(action_result, endpoints)
 
@@ -547,6 +565,15 @@ class ZscalerConnector(BaseConnector):
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
+        if self.get_action_identifier() in ['whitelist_ip']:
+            invalid_ip = list()
+            for ip_value in endpoints:
+                if not (self._is_ip(ip_value)):
+                    invalid_ip.append(ip_value)
+
+            if invalid_ip != []:
+                return action_result.set_status(phantom.APP_ERROR, 'Please provide valid IP address for {} values'.format(', '.join(invalid_ip)))
+
         ret_val = self._check_for_overlength(action_result, endpoints)
 
         if phantom.is_fail(ret_val):
@@ -562,6 +589,15 @@ class ZscalerConnector(BaseConnector):
         list_endpoints = [x.strip() for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
+
+        if self.get_action_identifier() in ['unwhitelist_ip']:
+            invalid_ip = list()
+            for ip_value in endpoints:
+                if not (self._is_ip(ip_value)):
+                    invalid_ip.append(ip_value)
+
+            if invalid_ip != []:
+                return action_result.set_status(phantom.APP_ERROR, 'Please provide valid IP address for {} values'.format(', '.join(invalid_ip)))
 
         ret_val = self._check_for_overlength(action_result, endpoints)
 
@@ -670,6 +706,14 @@ class ZscalerConnector(BaseConnector):
         list_endpoints = list()
         list_endpoints = [x.strip() for x in param['ip'].split(',')]
         endpoints = list(filter(None, list_endpoints))
+
+        invalid_ip = list()
+        for ip_value in endpoints:
+            if not (self._is_ip(ip_value)):
+                invalid_ip.append(ip_value)
+
+        if invalid_ip != []:
+            return action_result.set_status(phantom.APP_ERROR, 'Please provide valid IP address for {} values'.format(', '.join(invalid_ip)))
 
         return self._lookup_endpoint(action_result, endpoints)
 
@@ -793,8 +837,6 @@ class ZscalerConnector(BaseConnector):
         self._username = config['username']
         self._password = config['password']
         self._headers = {}
-
-        self.set_validator('ipv6', self._is_ip)
 
         return self._init_session()
 
