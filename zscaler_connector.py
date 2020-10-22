@@ -60,29 +60,29 @@ class ZscalerConnector(BaseConnector):
         :return: error message
         """
 
-        error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
-        error_code = "Error code unavailable"
+        error_msg = ZSCALER_ERROR_MESSAGE
+        error_code = ZSCALER_ERROR_CODE_MESSAGE
         try:
             if hasattr(e, "args"):
                 if len(e.args) > 1:
                     error_code = e.args[0]
                     error_msg = e.args[1]
                 elif len(e.args) == 1:
-                    error_code = "Error code unavailable"
+                    error_code = ZSCALER_ERROR_CODE_MESSAGE
                     error_msg = e.args[0]
             else:
-                error_code = "Error code unavailable"
-                error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+                error_code = ZSCALER_ERROR_CODE_MESSAGE
+                error_msg = ZSCALER_ERROR_MESSAGE
         except:
-            error_code = "Error code unavailable"
-            error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+            error_code = ZSCALER_ERROR_CODE_MESSAGE
+            error_msg = ZSCALER_ERROR_MESSAGE
 
         try:
             error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
         except TypeError:
-            error_msg = "Error occurred while connecting to the Crowdstrike server. Please check the asset configuration and|or the action parameters."
+            error_msg = "Error occurred while connecting to the Zscaler server. Please check the asset configuration and|or the action parameters."
         except:
-            error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+            error_msg = ZSCALER_ERROR_MESSAGE
 
         return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
 
@@ -213,24 +213,7 @@ class ZscalerConnector(BaseConnector):
                 params=params
             )
         except Exception as e:
-            try:
-                if e.args:
-                    if len(e.args) > 1:
-                        error_code = e.args[0]
-                        error_msg = e.args[1]
-                    elif len(e.args) == 1:
-                        error_code = "Error code unavailable"
-                        error_msg = e.args[0]
-                else:
-                    error_code = "Error code unavailable"
-                    error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
-            except:
-                error_code = "Error code unavailable"
-                error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
-
-            error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
-
-            return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to server. Error Code: {0}. Error Message: {1}".format(error_code, error_msg)), resp_json)
+            return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to Zscaler server. Details: {}".format(self._get_error_message_from_exception(e))), resp_json)
 
         self._response = r
 

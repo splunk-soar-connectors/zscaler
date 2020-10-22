@@ -426,7 +426,10 @@
                     "data_type": "string",
                     "required": true,
                     "order": 0,
-                    "allow_list": true
+                    "primary": true,
+                    "contains": [
+                        "zscaler ip"
+                    ]
                 },
                 "url_category": {
                     "description": "Add to this category",
@@ -574,7 +577,10 @@
                     "data_type": "string",
                     "required": true,
                     "order": 0,
-                    "allow_list": true
+                    "primary": true,
+                    "contains": [
+                        "zscaler ip"
+                    ]
                 },
                 "url_category": {
                     "description": "Add to this category",
@@ -722,8 +728,7 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "url",
-                        "domain"
+                        "zscaler url"
                     ],
                     "order": 0
                 },
@@ -750,8 +755,7 @@
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
-                        "url",
-                        "domain"
+                        "zscaler url"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -874,8 +878,7 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "url",
-                        "domain"
+                        "zscaler url"
                     ],
                     "order": 0
                 },
@@ -902,8 +905,7 @@
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
-                        "url",
-                        "domain"
+                        "zscaler url"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -1025,7 +1027,10 @@
                     "data_type": "string",
                     "required": true,
                     "order": 0,
-                    "allow_list": true
+                    "primary": true,
+                    "contains": [
+                        "zscaler ip"
+                    ]
                 },
                 "url_category": {
                     "description": "Remove from this category",
@@ -1174,8 +1179,7 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "url",
-                        "domain"
+                        "zscaler url"
                     ],
                     "order": 0
                 },
@@ -1202,8 +1206,7 @@
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
-                        "url",
-                        "domain"
+                        "zscaler url"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -1325,7 +1328,10 @@
                     "data_type": "string",
                     "required": true,
                     "order": 0,
-                    "allow_list": true
+                    "primary": true,
+                    "contains": [
+                        "zscaler ip"
+                    ]
                 },
                 "url_category": {
                     "description": "Remove from this category",
@@ -1474,8 +1480,7 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "url",
-                        "domain"
+                        "zscaler url"
                     ],
                     "order": 0
                 },
@@ -1502,8 +1507,7 @@
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
-                        "url",
-                        "domain"
+                        "zscaler url"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -1625,7 +1629,10 @@
                     "data_type": "string",
                     "required": true,
                     "order": 0,
-                    "allow_list": true
+                    "primary": true,
+                    "contains": [
+                        "zscaler ip"
+                    ]
                 },
                 "url_category": {
                     "description": "Add to this category",
@@ -1778,8 +1785,7 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "url",
-                        "domain"
+                        "zscaler url"
                     ],
                     "order": 0
                 },
@@ -1810,8 +1816,7 @@
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
-                        "url",
-                        "domain"
+                        "zscaler url"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -1933,7 +1938,10 @@
                     "data_type": "string",
                     "required": true,
                     "order": 0,
-                    "allow_list": true
+                    "primary": true,
+                    "contains": [
+                        "zscaler ip"
+                    ]
                 },
                 "url_category": {
                     "description": "Remove from this category",
@@ -2086,8 +2094,7 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "url",
-                        "domain"
+                        "zscaler url"
                     ],
                     "order": 0
                 },
@@ -2118,8 +2125,7 @@
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
-                        "url",
-                        "domain"
+                        "zscaler url"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -2238,7 +2244,11 @@
                     "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
-                    "order": 0
+                    "order": 0,
+                    "primary": true,
+                    "contains": [
+                        "zscaler ip"
+                    ]
                 }
             },
             "output": [
@@ -2342,8 +2352,7 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "url",
-                        "domain"
+                        "zscaler url"
                     ],
                     "order": 0
                 }
@@ -2361,8 +2370,7 @@
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
-                        "url",
-                        "domain"
+                        "zscaler url"
                     ],
                     "example_values": [
                         "www.test.com, www.test3.com, test2.tv"
@@ -2382,8 +2390,7 @@
                     "data_path": "action_result.data.*.url",
                     "data_type": "string",
                     "contains": [
-                        "url",
-                        "domain"
+                        "zscaler url"
                     ],
                     "example_values": [
                         "www.test.com"
