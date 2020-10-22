@@ -479,7 +479,7 @@ class ZscalerConnector(BaseConnector):
 
     def _block_endpoint(self, action_result, endpoints, category):
         list_endpoints = list()
-        list_endpoints = [x.strip() for x in endpoints.split(',')]
+        list_endpoints = [self._handle_py_ver_compat_for_input_str(x.strip()) for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
@@ -504,7 +504,7 @@ class ZscalerConnector(BaseConnector):
 
     def _unblock_endpoint(self, action_result, endpoints, category):
         list_endpoints = list()
-        list_endpoints = [x.strip() for x in endpoints.split(',')]
+        list_endpoints = [self._handle_py_ver_compat_for_input_str(x.strip()) for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
@@ -545,7 +545,7 @@ class ZscalerConnector(BaseConnector):
 
     def _whitelist_endpoint(self, action_result, endpoints, category):
         list_endpoints = list()
-        list_endpoints = [x.strip() for x in endpoints.split(',')]
+        list_endpoints = [self._handle_py_ver_compat_for_input_str(x.strip()) for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
@@ -570,7 +570,7 @@ class ZscalerConnector(BaseConnector):
 
     def _unwhitelist_endpoint(self, action_result, endpoints, category):
         list_endpoints = list()
-        list_endpoints = [x.strip() for x in endpoints.split(',')]
+        list_endpoints = [self._handle_py_ver_compat_for_input_str(x.strip()) for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
@@ -688,7 +688,7 @@ class ZscalerConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         list_endpoints = list()
-        list_endpoints = [x.strip() for x in param['ip'].split(',')]
+        list_endpoints = [self._handle_py_ver_compat_for_input_str(x.strip()) for x in param['ip'].split(',')]
         endpoints = list(filter(None, list_endpoints))
 
         invalid_ip = list()
@@ -706,7 +706,7 @@ class ZscalerConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         list_endpoints = list()
-        list_endpoints = [x.strip() for x in param['url'].split(',')]
+        list_endpoints = [self._handle_py_ver_compat_for_input_str(x.strip()) for x in param['url'].split(',')]
         endpoints = list(filter(None, list_endpoints))
 
         endpoints = self._truncate_protocol(endpoints)
