@@ -820,7 +820,7 @@
                         "www.test.com"
                     ],
                     "contains": [
-                        "url"
+                        "zscaler url"
                     ]
                 },
                 {
@@ -832,7 +832,7 @@
                         "www.test123.com"
                     ],
                     "contains": [
-                        "url"
+                        "zscaler url"
                     ]
                 },
                 {
@@ -970,7 +970,7 @@
                         "www.test.com"
                     ],
                     "contains": [
-                        "url"
+                        "zscaler url"
                     ]
                 },
                 {
@@ -982,7 +982,7 @@
                         "www.test123.com"
                     ],
                     "contains": [
-                        "url"
+                        "zscaler url"
                     ]
                 },
                 {
@@ -1271,7 +1271,7 @@
                         "www.test.com"
                     ],
                     "contains": [
-                        "url"
+                        "zscaler url"
                     ]
                 },
                 {
@@ -1283,7 +1283,7 @@
                         "www.test123.com"
                     ],
                     "contains": [
-                        "url"
+                        "zscaler url"
                     ]
                 },
                 {
@@ -1572,7 +1572,7 @@
                         "www.test.com"
                     ],
                     "contains": [
-                        "url"
+                        "zscaler url"
                     ]
                 },
                 {
@@ -1584,7 +1584,7 @@
                         "www.test123.com"
                     ],
                     "contains": [
-                        "url"
+                        "zscaler url"
                     ]
                 },
                 {
@@ -1885,7 +1885,7 @@
                         "www.test.com"
                     ],
                     "contains": [
-                        "url"
+                        "zscaler url"
                     ]
                 },
                 {
@@ -1897,7 +1897,7 @@
                         "www.test123.com"
                     ],
                     "contains": [
-                        "url"
+                        "zscaler url"
                     ]
                 },
                 {
@@ -2194,7 +2194,7 @@
                         "www.test.com"
                     ],
                     "contains": [
-                        "url"
+                        "zscaler url"
                     ]
                 },
                 {
@@ -2206,7 +2206,7 @@
                         "www.test123.com"
                     ],
                     "contains": [
-                        "url"
+                        "zscaler url"
                     ]
                 },
                 {
