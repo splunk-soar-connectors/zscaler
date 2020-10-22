@@ -213,7 +213,8 @@ class ZscalerConnector(BaseConnector):
                 params=params
             )
         except Exception as e:
-            return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to Zscaler server. Details: {}".format(self._get_error_message_from_exception(e))), resp_json)
+            return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to Zscaler server. Details: {}"
+                    .format(self._get_error_message_from_exception(e))), resp_json)
 
         self._response = r
 
