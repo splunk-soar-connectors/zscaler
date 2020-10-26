@@ -80,11 +80,20 @@ class ZscalerConnector(BaseConnector):
         try:
             error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
         except TypeError:
-            error_msg = "Error occurred while connecting to the Zscaler server. Please check the asset configuration and|or the action parameters."
+            error_msg = TYPE_ERROR_MSG
         except:
             error_msg = ZSCALER_ERROR_MESSAGE
 
-        return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
+        try:
+            if error_code in  ZSCALER_ERROR_CODE_MESSAGE:
+                error_text = "Error Message: {0}".format(error_msg)
+            else:
+                error_text = "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
+        except:
+            self.debug_print("Error occurred while parsing error message")
+            error_text = PARSE_ERROR_MSG
+
+        return error_text
 
     def _process_empty_reponse(self, response, action_result):
         if response.status_code == 200 or response.status_code == 204:
@@ -213,7 +222,7 @@ class ZscalerConnector(BaseConnector):
                 params=params
             )
         except Exception as e:
-            return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to Zscaler server. Details: {}"
+            return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to Zscaler server. {}"
                     .format(self._get_error_message_from_exception(e))), resp_json)
 
         self._response = r
@@ -490,12 +499,12 @@ class ZscalerConnector(BaseConnector):
                     invalid_ip.append(ip_value)
 
             if invalid_ip != []:
-                return action_result.set_status(phantom.APP_ERROR, 'Please provide valid IP address for {} values'.format(', '.join(invalid_ip)))
+                return action_result.set_status(phantom.APP_ERROR, ZSCALER_INVALID_IP_MESSAGE.format(', '.join(invalid_ip)))
 
-        ret_val = self._check_for_overlength(action_result, endpoints)
-
-        if phantom.is_fail(ret_val):
-            return ret_val
+        if self.get_action_identifier() in ['block_url', 'block_url2']:
+            ret_val = self._check_for_overlength(action_result, endpoints)
+            if phantom.is_fail(ret_val):
+                return ret_val
 
         if category is None:
             return self._amend_blacklist(action_result, endpoints, 'ADD_TO_LIST')
@@ -515,12 +524,12 @@ class ZscalerConnector(BaseConnector):
                     invalid_ip.append(ip_value)
 
             if invalid_ip != []:
-                return action_result.set_status(phantom.APP_ERROR, 'Please provide valid IP address for {} values'.format(', '.join(invalid_ip)))
+                return action_result.set_status(phantom.APP_ERROR, ZSCALER_INVALID_IP_MESSAGE.format(', '.join(invalid_ip)))
 
-        ret_val = self._check_for_overlength(action_result, endpoints)
-
-        if phantom.is_fail(ret_val):
-            return ret_val
+        if self.get_action_identifier() in ['unblock_url', 'unblock_url2']:
+            ret_val = self._check_for_overlength(action_result, endpoints)
+            if phantom.is_fail(ret_val):
+                return ret_val
 
         if category is None:
             return self._amend_blacklist(action_result, endpoints, 'REMOVE_FROM_LIST')
@@ -556,12 +565,12 @@ class ZscalerConnector(BaseConnector):
                     invalid_ip.append(ip_value)
 
             if invalid_ip != []:
-                return action_result.set_status(phantom.APP_ERROR, 'Please provide valid IP address for {} values'.format(', '.join(invalid_ip)))
+                return action_result.set_status(phantom.APP_ERROR, ZSCALER_INVALID_IP_MESSAGE.format(', '.join(invalid_ip)))
 
-        ret_val = self._check_for_overlength(action_result, endpoints)
-
-        if phantom.is_fail(ret_val):
-            return ret_val
+        if self.get_action_identifier() in ['whitelist_url']:
+            ret_val = self._check_for_overlength(action_result, endpoints)
+            if phantom.is_fail(ret_val):
+                return ret_val
 
         if category is None:
             return self._amend_whitelist(action_result, endpoints, 'ADD_TO_LIST')
@@ -581,12 +590,12 @@ class ZscalerConnector(BaseConnector):
                     invalid_ip.append(ip_value)
 
             if invalid_ip != []:
-                return action_result.set_status(phantom.APP_ERROR, 'Please provide valid IP address for {} values'.format(', '.join(invalid_ip)))
+                return action_result.set_status(phantom.APP_ERROR, ZSCALER_INVALID_IP_MESSAGE.format(', '.join(invalid_ip)))
 
-        ret_val = self._check_for_overlength(action_result, endpoints)
-
-        if phantom.is_fail(ret_val):
-            return ret_val
+        if self.get_action_identifier() in ['unwhitelist_url']:
+            ret_val = self._check_for_overlength(action_result, endpoints)
+            if phantom.is_fail(ret_val):
+                return ret_val
 
         if category is None:
             return self._amend_whitelist(action_result, endpoints, 'REMOVE_FROM_LIST')
@@ -697,7 +706,7 @@ class ZscalerConnector(BaseConnector):
                 invalid_ip.append(ip_value)
 
         if invalid_ip != []:
-            return action_result.set_status(phantom.APP_ERROR, 'Please provide valid IP address for {} values'.format(', '.join(invalid_ip)))
+            return action_result.set_status(phantom.APP_ERROR, ZSCALER_INVALID_IP_MESSAGE.format(', '.join(invalid_ip)))
 
         return self._lookup_endpoint(action_result, endpoints)
 
@@ -735,7 +744,6 @@ class ZscalerConnector(BaseConnector):
         """This function checks whether the length of each url is not more
         than 1024
         :param: :endpoints: list of URLs
-
         """
         for url in endpoints:
             if len(url) > 1024:
