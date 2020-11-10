@@ -456,8 +456,10 @@
                     "order": 0,
                     "primary": true,
                     "contains": [
-                        "zscaler ip"
-                    ]
+                        "ip",
+                        "ipv6"
+                    ],
+                    "allow_list": true
                 },
                 "url_category": {
                     "description": "Add to this category",
@@ -482,7 +484,8 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "zscaler ip"
+                        "ip",
+                        "ipv6"
                     ],
                     "column_name": "IP",
                     "column_order": 0,
@@ -630,8 +633,10 @@
                     "order": 0,
                     "primary": true,
                     "contains": [
-                        "zscaler ip"
-                    ]
+                        "ip",
+                        "ipv6"
+                    ],
+                    "allow_list": true
                 },
                 "url_category": {
                     "description": "Add to this category",
@@ -656,7 +661,8 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "zscaler ip"
+                        "ip",
+                        "ipv6"
                     ],
                     "column_name": "IP",
                     "column_order": 0,
@@ -773,9 +779,12 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "zscaler url"
+                        "url",
+                        "domain",
+                        "url list"
                     ],
-                    "order": 0
+                    "order": 0,
+                    "allow_list": true
                 },
                 "url_category": {
                     "description": "Add to this category",
@@ -800,7 +809,9 @@
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
-                        "zscaler url"
+                        "url",
+                        "domain",
+                        "url list"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -946,9 +957,12 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "zscaler url"
+                        "url",
+                        "domain",
+                        "url list"
                     ],
-                    "order": 0
+                    "order": 0,
+                    "allow_list": true
                 },
                 "url_category": {
                     "description": "Add to this category",
@@ -973,7 +987,9 @@
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
-                        "zscaler url"
+                        "url",
+                        "domain",
+                        "url list"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -1120,8 +1136,10 @@
                     "order": 0,
                     "primary": true,
                     "contains": [
-                        "zscaler ip"
-                    ]
+                        "ip",
+                        "ipv6"
+                    ],
+                    "allow_list": true
                 },
                 "url_category": {
                     "description": "Remove from this category",
@@ -1146,7 +1164,8 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "zscaler ip"
+                        "ip",
+                        "ipv6"
                     ],
                     "column_name": "IP",
                     "column_order": 0,
@@ -1264,9 +1283,12 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "zscaler url"
+                        "url",
+                        "domain",
+                        "url list"
                     ],
-                    "order": 0
+                    "order": 0,
+                    "allow_list": true
                 },
                 "url_category": {
                     "description": "Remove from this category",
@@ -1291,7 +1313,9 @@
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
-                        "zscaler url"
+                        "url",
+                        "domain",
+                        "url list"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -1438,8 +1462,10 @@
                     "order": 0,
                     "primary": true,
                     "contains": [
-                        "zscaler ip"
-                    ]
+                        "ip",
+                        "ipv6"
+                    ],
+                    "allow_list": true
                 },
                 "url_category": {
                     "description": "Remove from this category",
@@ -1464,7 +1490,8 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "zscaler ip"
+                        "ip",
+                        "ipv6"
                     ],
                     "column_name": "IP",
                     "column_order": 0,
@@ -1582,9 +1609,12 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "zscaler url"
+                        "url",
+                        "domain",
+                        "url list"
                     ],
-                    "order": 0
+                    "order": 0,
+                    "allow_list": true
                 },
                 "url_category": {
                     "description": "Remove from this category",
@@ -1609,7 +1639,9 @@
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
-                        "zscaler url"
+                        "url",
+                        "domain",
+                        "url list"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -1756,8 +1788,10 @@
                     "order": 0,
                     "primary": true,
                     "contains": [
-                        "zscaler ip"
-                    ]
+                        "ip",
+                        "ipv6"
+                    ],
+                    "allow_list": true
                 },
                 "url_category": {
                     "description": "Add to this category",
@@ -1786,7 +1820,8 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "zscaler ip"
+                        "ip",
+                        "ipv6"
                     ],
                     "column_name": "IP",
                     "column_order": 0,
@@ -1904,9 +1939,12 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "zscaler url"
+                        "url",
+                        "domain",
+                        "url list"
                     ],
-                    "order": 0
+                    "order": 0,
+                    "allow_list": true
                 },
                 "url_category": {
                     "description": "Add to this category",
@@ -1935,7 +1973,9 @@
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
-                        "zscaler url"
+                        "url",
+                        "domain",
+                        "url list"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -2082,8 +2122,10 @@
                     "order": 0,
                     "primary": true,
                     "contains": [
-                        "zscaler ip"
-                    ]
+                        "ip",
+                        "ipv6"
+                    ],
+                    "allow_list": true
                 },
                 "url_category": {
                     "description": "Remove from this category",
@@ -2112,7 +2154,8 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "zscaler ip"
+                        "ip",
+                        "ipv6"
                     ],
                     "column_name": "IP",
                     "column_order": 0,
@@ -2230,9 +2273,12 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "zscaler url"
+                        "url",
+                        "domain",
+                        "url list"
                     ],
-                    "order": 0
+                    "order": 0,
+                    "allow_list": true
                 },
                 "url_category": {
                     "description": "Remove from this category",
@@ -2261,7 +2307,9 @@
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
-                        "zscaler url"
+                        "url",
+                        "domain",
+                        "url list"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -2377,8 +2425,10 @@
                     "order": 0,
                     "primary": true,
                     "contains": [
-                        "zscaler ip"
-                    ]
+                        "ip",
+                        "ipv6"
+                    ],
+                    "allow_list": true
                 }
             },
             "output": [
@@ -2399,7 +2449,8 @@
                         "aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa"
                     ],
                     "contains": [
-                        "zscaler ip"
+                        "ip",
+                        "ipv6"
                     ]
                 },
                 {
@@ -2420,7 +2471,8 @@
                         "8.8.8.8"
                     ],
                     "contains": [
-                        "zscaler ip"
+                        "ip",
+                        "ipv6"
                     ],
                     "column_name": "IP/URL",
                     "column_order": 0
@@ -2485,9 +2537,12 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "zscaler url"
+                        "url",
+                        "domain",
+                        "url list"
                     ],
-                    "order": 0
+                    "order": 0,
+                    "allow_list": true
                 }
             },
             "output": [
@@ -2503,7 +2558,9 @@
                     "data_path": "action_result.parameter.url",
                     "data_type": "string",
                     "contains": [
-                        "zscaler url"
+                        "url",
+                        "domain",
+                        "url list"
                     ],
                     "example_values": [
                         "www.test.com, www.test3.com, test2.tv"
@@ -2523,7 +2580,9 @@
                     "data_path": "action_result.data.*.url",
                     "data_type": "string",
                     "contains": [
-                        "zscaler url"
+                        "url",
+                        "domain",
+                        "url list"
                     ],
                     "example_values": [
                         "www.test.com"

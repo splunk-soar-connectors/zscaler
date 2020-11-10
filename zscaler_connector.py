@@ -14,7 +14,6 @@ from phantom.action_result import ActionResult
 import time
 import json
 import requests
-import ipaddress
 import sys
 from bs4 import BeautifulSoup, UnicodeDammit
 from zscaler_consts import *
@@ -85,7 +84,7 @@ class ZscalerConnector(BaseConnector):
             error_msg = ZSCALER_ERROR_MESSAGE
 
         try:
-            if error_code in  ZSCALER_ERROR_CODE_MESSAGE:
+            if error_code in ZSCALER_ERROR_CODE_MESSAGE:
                 error_text = "Error Message: {0}".format(error_msg)
             else:
                 error_text = "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
@@ -492,15 +491,6 @@ class ZscalerConnector(BaseConnector):
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
-        if self.get_action_identifier() in ['block_ip2', 'block_ip']:
-            invalid_ip = list()
-            for ip_value in endpoints:
-                if not (self._is_ip(ip_value)):
-                    invalid_ip.append(ip_value)
-
-            if invalid_ip != []:
-                return action_result.set_status(phantom.APP_ERROR, ZSCALER_INVALID_IP_MESSAGE.format(', '.join(invalid_ip)))
-
         if self.get_action_identifier() in ['block_url', 'block_url2']:
             ret_val = self._check_for_overlength(action_result, endpoints)
             if phantom.is_fail(ret_val):
@@ -516,15 +506,6 @@ class ZscalerConnector(BaseConnector):
         list_endpoints = [self._handle_py_ver_compat_for_input_str(x.strip()) for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
-
-        if self.get_action_identifier() in ['unblock_ip2', 'unblock_ip']:
-            invalid_ip = list()
-            for ip_value in endpoints:
-                if not (self._is_ip(ip_value)):
-                    invalid_ip.append(ip_value)
-
-            if invalid_ip != []:
-                return action_result.set_status(phantom.APP_ERROR, ZSCALER_INVALID_IP_MESSAGE.format(', '.join(invalid_ip)))
 
         if self.get_action_identifier() in ['unblock_url', 'unblock_url2']:
             ret_val = self._check_for_overlength(action_result, endpoints)
@@ -558,15 +539,6 @@ class ZscalerConnector(BaseConnector):
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
-        if self.get_action_identifier() in ['whitelist_ip']:
-            invalid_ip = list()
-            for ip_value in endpoints:
-                if not (self._is_ip(ip_value)):
-                    invalid_ip.append(ip_value)
-
-            if invalid_ip != []:
-                return action_result.set_status(phantom.APP_ERROR, ZSCALER_INVALID_IP_MESSAGE.format(', '.join(invalid_ip)))
-
         if self.get_action_identifier() in ['whitelist_url']:
             ret_val = self._check_for_overlength(action_result, endpoints)
             if phantom.is_fail(ret_val):
@@ -582,15 +554,6 @@ class ZscalerConnector(BaseConnector):
         list_endpoints = [self._handle_py_ver_compat_for_input_str(x.strip()) for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
-
-        if self.get_action_identifier() in ['unwhitelist_ip']:
-            invalid_ip = list()
-            for ip_value in endpoints:
-                if not (self._is_ip(ip_value)):
-                    invalid_ip.append(ip_value)
-
-            if invalid_ip != []:
-                return action_result.set_status(phantom.APP_ERROR, ZSCALER_INVALID_IP_MESSAGE.format(', '.join(invalid_ip)))
 
         if self.get_action_identifier() in ['unwhitelist_url']:
             ret_val = self._check_for_overlength(action_result, endpoints)
@@ -699,14 +662,6 @@ class ZscalerConnector(BaseConnector):
         list_endpoints = list()
         list_endpoints = [self._handle_py_ver_compat_for_input_str(x.strip()) for x in param['ip'].split(',')]
         endpoints = list(filter(None, list_endpoints))
-
-        invalid_ip = list()
-        for ip_value in endpoints:
-            if not (self._is_ip(ip_value)):
-                invalid_ip.append(ip_value)
-
-        if invalid_ip != []:
-            return action_result.set_status(phantom.APP_ERROR, ZSCALER_INVALID_IP_MESSAGE.format(', '.join(invalid_ip)))
 
         return self._lookup_endpoint(action_result, endpoints)
 
@@ -829,6 +784,8 @@ class ZscalerConnector(BaseConnector):
         self._username = config['username']
         self._password = config['password']
         self._headers = {}
+
+        self.set_validator('ipv6', self._is_ip)
 
         return self._init_session()
 
