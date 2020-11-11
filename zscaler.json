@@ -10,14 +10,14 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2017-2020 Splunk Inc.",
-    "app_version": "2.0.11",
-    "utctime_updated": "2020-03-17T00:40:33.000000Z",
+    "app_version": "2.0.18",
+    "utctime_updated": "2020-11-11T12:36:08.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.py",
     "python_version": "3",
-    "min_phantom_version": "4.6.19142",
+    "min_phantom_version": "4.8.24304",
     "latest_tested_versions": [
-        "Cloud v6.0 tested 3/11/2020"
+        "Cloud v6.0"
     ],
     "app_wizard_version": "1.0.0",
     "configuration": {
@@ -316,6 +316,34 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "URL_CATEGORY"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customUrlsCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.scopes.*.Type",
+                    "data_type": "string",
+                    "example_values": [
+                        "ORGANIZATION"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
@@ -425,12 +453,12 @@
                     "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
+                    "order": 0,
                     "primary": true,
                     "contains": [
                         "ip",
                         "ipv6"
                     ],
-                    "order": 0,
                     "allow_list": true
                 },
                 "url_category": {
@@ -478,6 +506,35 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "URL_CATEGORY"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.editable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customUrlsCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        2
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
@@ -521,9 +578,6 @@
                     "column_order": 2,
                     "example_values": [
                         "8.8.8.8"
-                    ],
-                    "contains": [
-                        "ip"
                     ]
                 },
                 {
@@ -533,9 +587,6 @@
                     "column_order": 1,
                     "example_values": [
                         "208.67.222.222"
-                    ],
-                    "contains": [
-                        "ip"
                     ]
                 },
                 {
@@ -579,12 +630,12 @@
                     "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
+                    "order": 0,
                     "primary": true,
                     "contains": [
                         "ip",
                         "ipv6"
                     ],
-                    "order": 0,
                     "allow_list": true
                 },
                 "url_category": {
@@ -674,9 +725,6 @@
                     "column_order": 2,
                     "example_values": [
                         "8.8.8.8"
-                    ],
-                    "contains": [
-                        "ip"
                     ]
                 },
                 {
@@ -686,9 +734,6 @@
                     "column_order": 1,
                     "example_values": [
                         "208.67.222.222"
-                    ],
-                    "contains": [
-                        "ip"
                     ]
                 },
                 {
@@ -786,6 +831,35 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "URL_CATEGORY"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.editable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customUrlsCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        4
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
@@ -829,9 +903,6 @@
                     "column_order": 2,
                     "example_values": [
                         "www.test.com"
-                    ],
-                    "contains": [
-                        "url"
                     ]
                 },
                 {
@@ -841,9 +912,6 @@
                     "column_order": 1,
                     "example_values": [
                         "www.test123.com"
-                    ],
-                    "contains": [
-                        "url"
                     ]
                 },
                 {
@@ -941,6 +1009,35 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "URL_CATEGORY"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.editable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customUrlsCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        3
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
@@ -984,9 +1081,6 @@
                     "column_order": 2,
                     "example_values": [
                         "www.test.com"
-                    ],
-                    "contains": [
-                        "url"
                     ]
                 },
                 {
@@ -996,9 +1090,6 @@
                     "column_order": 1,
                     "example_values": [
                         "www.test123.com"
-                    ],
-                    "contains": [
-                        "url"
                     ]
                 },
                 {
@@ -1042,12 +1133,12 @@
                     "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
+                    "order": 0,
                     "primary": true,
                     "contains": [
                         "ip",
                         "ipv6"
                     ],
-                    "order": 0,
                     "allow_list": true
                 },
                 "url_category": {
@@ -1138,9 +1229,6 @@
                     "column_order": 2,
                     "example_values": [
                         "8.8.8.8"
-                    ],
-                    "contains": [
-                        "ip"
                     ]
                 },
                 {
@@ -1150,9 +1238,6 @@
                     "column_order": 1,
                     "example_values": [
                         "208.67.222.222"
-                    ],
-                    "contains": [
-                        "ip"
                     ]
                 },
                 {
@@ -1250,6 +1335,35 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "URL_CATEGORY"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.editable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customUrlsCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        4
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
@@ -1293,9 +1407,6 @@
                     "column_order": 2,
                     "example_values": [
                         "www.test.com"
-                    ],
-                    "contains": [
-                        "url"
                     ]
                 },
                 {
@@ -1305,9 +1416,6 @@
                     "column_order": 1,
                     "example_values": [
                         "www.test123.com"
-                    ],
-                    "contains": [
-                        "url"
                     ]
                 },
                 {
@@ -1351,12 +1459,12 @@
                     "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
+                    "order": 0,
                     "primary": true,
                     "contains": [
                         "ip",
                         "ipv6"
                     ],
-                    "order": 0,
                     "allow_list": true
                 },
                 "url_category": {
@@ -1447,9 +1555,6 @@
                     "column_order": 2,
                     "example_values": [
                         "8.8.8.8"
-                    ],
-                    "contains": [
-                        "ip"
                     ]
                 },
                 {
@@ -1459,9 +1564,6 @@
                     "column_order": 1,
                     "example_values": [
                         "208.67.222.222"
-                    ],
-                    "contains": [
-                        "ip"
                     ]
                 },
                 {
@@ -1559,6 +1661,35 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "URL_CATEGORY"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.editable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customUrlsCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
@@ -1602,9 +1733,6 @@
                     "column_order": 2,
                     "example_values": [
                         "www.test.com"
-                    ],
-                    "contains": [
-                        "url"
                     ]
                 },
                 {
@@ -1614,9 +1742,6 @@
                     "column_order": 1,
                     "example_values": [
                         "www.test123.com"
-                    ],
-                    "contains": [
-                        "url"
                     ]
                 },
                 {
@@ -1660,12 +1785,12 @@
                     "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
+                    "order": 0,
                     "primary": true,
                     "contains": [
                         "ip",
                         "ipv6"
                     ],
-                    "order": 0,
                     "allow_list": true
                 },
                 "url_category": {
@@ -1764,9 +1889,6 @@
                     "column_order": 2,
                     "example_values": [
                         "8.8.8.8"
-                    ],
-                    "contains": [
-                        "ip"
                     ]
                 },
                 {
@@ -1776,9 +1898,6 @@
                     "column_order": 1,
                     "example_values": [
                         "208.67.222.222"
-                    ],
-                    "contains": [
-                        "ip"
                     ]
                 },
                 {
@@ -1876,6 +1995,35 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "URL_CATEGORY"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.editable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customUrlsCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        3
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
@@ -1923,9 +2071,6 @@
                     "column_order": 2,
                     "example_values": [
                         "www.test.com"
-                    ],
-                    "contains": [
-                        "url"
                     ]
                 },
                 {
@@ -1935,9 +2080,6 @@
                     "column_order": 1,
                     "example_values": [
                         "www.test123.com"
-                    ],
-                    "contains": [
-                        "url"
                     ]
                 },
                 {
@@ -1977,12 +2119,12 @@
                     "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
+                    "order": 0,
                     "primary": true,
                     "contains": [
                         "ip",
                         "ipv6"
                     ],
-                    "order": 0,
                     "allow_list": true
                 },
                 "url_category": {
@@ -2081,9 +2223,6 @@
                     "column_order": 2,
                     "example_values": [
                         "8.8.8.8"
-                    ],
-                    "contains": [
-                        "ip"
                     ]
                 },
                 {
@@ -2093,9 +2232,6 @@
                     "column_order": 1,
                     "example_values": [
                         "208.67.222.222"
-                    ],
-                    "contains": [
-                        "ip"
                     ]
                 },
                 {
@@ -2240,9 +2376,6 @@
                     "column_order": 2,
                     "example_values": [
                         "www.test.com"
-                    ],
-                    "contains": [
-                        "url"
                     ]
                 },
                 {
@@ -2252,9 +2385,6 @@
                     "column_order": 1,
                     "example_values": [
                         "www.test123.com"
-                    ],
-                    "contains": [
-                        "url"
                     ]
                 },
                 {
@@ -2292,12 +2422,12 @@
                     "description": "A list of IPs",
                     "data_type": "string",
                     "required": true,
+                    "order": 0,
                     "primary": true,
                     "contains": [
                         "ip",
                         "ipv6"
                     ],
-                    "order": 0,
                     "allow_list": true
                 }
             },
@@ -2313,14 +2443,14 @@
                 {
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
-                    "contains": [
-                        "ip",
-                        "ipv6"
-                    ],
                     "example_values": [
                         "8.8.8.8",
                         "208.67.222.222, 8.8.8.8",
                         "aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa"
+                    ],
+                    "contains": [
+                        "ip",
+                        "ipv6"
                     ]
                 },
                 {
@@ -2451,7 +2581,8 @@
                     "data_type": "string",
                     "contains": [
                         "url",
-                        "domain"
+                        "domain",
+                        "url list"
                     ],
                     "example_values": [
                         "www.test.com"
