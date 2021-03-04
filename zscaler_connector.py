@@ -332,7 +332,7 @@ class ZscalerConnector(BaseConnector):
 
     def _handle_test_connectivity(self, param):
         # If we are here we have successfully initialized a session
-        self.save_progress("Connectivity test passed")
+        self.save_progress("Test Connectivity Passed")
         return self.set_status(phantom.APP_SUCCESS)
 
     def _filter_endpoints(self, action_result, to_add, existing, action, name):
@@ -350,20 +350,20 @@ class ZscalerConnector(BaseConnector):
             return RetVal(action_result.set_status(phantom.APP_SUCCESS, msg), None)
         return RetVal(phantom.APP_SUCCESS, endpoints)
 
-    def _get_blacklist(self, action_result):
+    def _get_blocklist(self, action_result):
         return self._make_rest_call_helper('/api/v1/security/advanced', action_result)
 
-    def _check_blacklist(self, action_result, endpoints, action):
-        ret_val, response = self._get_blacklist(action_result)
+    def _check_blocklist(self, action_result, endpoints, action):
+        ret_val, response = self._get_blocklist(action_result)
         if phantom.is_fail(ret_val):
             return RetVal(ret_val, None)
 
-        blacklist = response.get('blacklistUrls', [])
+        blocklist = response.get('blacklistUrls', [])
 
-        return self._filter_endpoints(action_result, endpoints, blacklist, action, 'Blacklist')
+        return self._filter_endpoints(action_result, endpoints, blocklist, action, 'Blocklist')
 
-    def _amend_blacklist(self, action_result, endpoints, action):
-        ret_val, filtered_endpoints = self._check_blacklist(action_result, endpoints, action)
+    def _amend_blocklist(self, action_result, endpoints, action):
+        ret_val, filtered_endpoints = self._check_blocklist(action_result, endpoints, action)
         if phantom.is_fail(ret_val) or filtered_endpoints is None:
             return ret_val
 
@@ -385,28 +385,28 @@ class ZscalerConnector(BaseConnector):
         summary['ignored'] = [self._handle_py_ver_compat_for_input_str(element) for element in summary['ignored']]
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _get_whitelist(self, action_result):
+    def _get_allowlist(self, action_result):
         return self._make_rest_call_helper('/api/v1/security', action_result)
 
-    def _check_whitelist(self, action_result, endpoints, action):
-        ret_val, response = self._get_whitelist(action_result)
+    def _check_allowlist(self, action_result, endpoints, action):
+        ret_val, response = self._get_allowlist(action_result)
         if phantom.is_fail(ret_val):
             return RetVal(ret_val, None)
 
-        whitelist = response.get('whitelistUrls', [])
-        self._whitelist = whitelist
+        allowlist = response.get('whitelistUrls', [])
+        self._allowlist = allowlist
 
-        return self._filter_endpoints(action_result, endpoints, whitelist, action, 'Whitelist')
+        return self._filter_endpoints(action_result, endpoints, allowlist, action, 'Allowlist')
 
-    def _amend_whitelist(self, action_result, endpoints, action):
-        ret_val, filtered_endpoints = self._check_whitelist(action_result, endpoints, action)
+    def _amend_allowlist(self, action_result, endpoints, action):
+        ret_val, filtered_endpoints = self._check_allowlist(action_result, endpoints, action)
         if phantom.is_fail(ret_val) or filtered_endpoints is None:
             return ret_val
 
         if action == "ADD_TO_LIST":
-            to_add_endpoints = list(set(self._whitelist + filtered_endpoints))
+            to_add_endpoints = list(set(self._allowlist + filtered_endpoints))
         else:
-            to_add_endpoints = list(set(self._whitelist) - set(filtered_endpoints))
+            to_add_endpoints = list(set(self._allowlist) - set(filtered_endpoints))
 
         data = {
             "whitelistUrls": to_add_endpoints
@@ -491,13 +491,13 @@ class ZscalerConnector(BaseConnector):
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
-        if self.get_action_identifier() in ['block_url', 'block_url2']:
+        if self.get_action_identifier() in ['block_url']:
             ret_val = self._check_for_overlength(action_result, endpoints)
             if phantom.is_fail(ret_val):
                 return ret_val
 
         if category is None:
-            return self._amend_blacklist(action_result, endpoints, 'ADD_TO_LIST')
+            return self._amend_blocklist(action_result, endpoints, 'ADD_TO_LIST')
         else:
             return self._amend_category(action_result, endpoints, category, 'ADD_TO_LIST')
 
@@ -507,13 +507,13 @@ class ZscalerConnector(BaseConnector):
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
-        if self.get_action_identifier() in ['unblock_url', 'unblock_url2']:
+        if self.get_action_identifier() in ['unblock_url']:
             ret_val = self._check_for_overlength(action_result, endpoints)
             if phantom.is_fail(ret_val):
                 return ret_val
 
         if category is None:
-            return self._amend_blacklist(action_result, endpoints, 'REMOVE_FROM_LIST')
+            return self._amend_blocklist(action_result, endpoints, 'REMOVE_FROM_LIST')
         else:
             return self._amend_category(action_result, endpoints, category, 'REMOVE_FROM_LIST')
 
@@ -533,53 +533,53 @@ class ZscalerConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
         return self._unblock_endpoint(action_result, param['url'], param.get('url_category'))
 
-    def _whitelist_endpoint(self, action_result, endpoints, category):
+    def _allowlist_endpoint(self, action_result, endpoints, category):
         list_endpoints = list()
         list_endpoints = [self._handle_py_ver_compat_for_input_str(x.strip()) for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
-        if self.get_action_identifier() in ['whitelist_url']:
+        if self.get_action_identifier() in ['allow_url']:
             ret_val = self._check_for_overlength(action_result, endpoints)
             if phantom.is_fail(ret_val):
                 return ret_val
 
         if category is None:
-            return self._amend_whitelist(action_result, endpoints, 'ADD_TO_LIST')
+            return self._amend_allowlist(action_result, endpoints, 'ADD_TO_LIST')
         else:
             return self._amend_category(action_result, endpoints, category, 'ADD_TO_LIST')
 
-    def _unwhitelist_endpoint(self, action_result, endpoints, category):
+    def _unallow_endpoint(self, action_result, endpoints, category):
         list_endpoints = list()
         list_endpoints = [self._handle_py_ver_compat_for_input_str(x.strip()) for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
-        if self.get_action_identifier() in ['unwhitelist_url']:
+        if self.get_action_identifier() in ['unallow_url']:
             ret_val = self._check_for_overlength(action_result, endpoints)
             if phantom.is_fail(ret_val):
                 return ret_val
 
         if category is None:
-            return self._amend_whitelist(action_result, endpoints, 'REMOVE_FROM_LIST')
+            return self._amend_allowlist(action_result, endpoints, 'REMOVE_FROM_LIST')
         else:
             return self._amend_category(action_result, endpoints, category, 'REMOVE_FROM_LIST')
 
-    def _handle_whitelist_ip(self, param):
+    def _handle_allow_ip(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
-        return self._whitelist_endpoint(action_result, param['ip'], param.get('url_category'))
+        return self._allowlist_endpoint(action_result, param['ip'], param.get('url_category'))
 
-    def _handle_whitelist_url(self, param):
+    def _handle_allow_url(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
-        return self._whitelist_endpoint(action_result, param['url'], param.get('url_category'))
+        return self._allowlist_endpoint(action_result, param['url'], param.get('url_category'))
 
-    def _handle_unwhitelist_ip(self, param):
+    def _handle_unallow_ip(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
-        return self._unwhitelist_endpoint(action_result, param['ip'], param.get('url_category'))
+        return self._unallow_endpoint(action_result, param['ip'], param.get('url_category'))
 
-    def _handle_unwhitelist_url(self, param):
+    def _handle_unallow_url(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
-        return self._unwhitelist_endpoint(action_result, param['url'], param.get('url_category'))
+        return self._unallow_endpoint(action_result, param['url'], param.get('url_category'))
 
     def _lookup_endpoint(self, action_result, endpoints):
 
@@ -593,7 +593,7 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return ret_val
 
-        ret_val, blacklist_response = self._make_rest_call_helper(
+        ret_val, blocklist_response = self._make_rest_call_helper(
             '/api/v1/security/advanced', action_result,
             data=endpoints, method='get'
         )
@@ -602,10 +602,10 @@ class ZscalerConnector(BaseConnector):
             return ret_val
 
         for e in endpoints:
-            if e in blacklist_response.get('blacklistUrls', []):
-                [response[i].update({"blacklisted": True}) for i, item in enumerate(response) if item['url'] == e]
+            if e in blocklist_response.get('blacklistUrls', []):
+                [response[i].update({"blocklisted": True}) for i, item in enumerate(response) if item['url'] == e]
             else:
-                [response[i].update({"blacklisted": False}) for i, item in enumerate(response) if item['url'] == e]
+                [response[i].update({"blocklisted": False}) for i, item in enumerate(response) if item['url'] == e]
 
         action_result.update_data(response)
 
@@ -736,29 +736,17 @@ class ZscalerConnector(BaseConnector):
         elif action_id == 'unblock_url':
             ret_val = self._handle_unblock_url(param)
 
-        elif action_id == 'block_ip2':
-            ret_val = self._handle_block_ip(param)
+        elif action_id == 'allow_ip':
+            ret_val = self._handle_allow_ip(param)
 
-        elif action_id == 'block_url2':
-            ret_val = self._handle_block_url(param)
+        elif action_id == 'allow_url':
+            ret_val = self._handle_allow_url(param)
 
-        elif action_id == 'unblock_ip2':
-            ret_val = self._handle_unblock_ip(param)
+        elif action_id == 'unallow_ip':
+            ret_val = self._handle_unallow_ip(param)
 
-        elif action_id == 'unblock_url2':
-            ret_val = self._handle_unblock_url(param)
-
-        elif action_id == 'whitelist_ip':
-            ret_val = self._handle_whitelist_ip(param)
-
-        elif action_id == 'whitelist_url':
-            ret_val = self._handle_whitelist_url(param)
-
-        elif action_id == 'unwhitelist_ip':
-            ret_val = self._handle_unwhitelist_ip(param)
-
-        elif action_id == 'unwhitelist_url':
-            ret_val = self._handle_unwhitelist_url(param)
+        elif action_id == 'unallow_url':
+            ret_val = self._handle_unallow_url(param)
 
         elif action_id == "lookup_ip":
             ret_val = self._handle_lookup_ip(param)
