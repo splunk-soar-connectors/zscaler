@@ -1,4 +1,4 @@
-unallow{
+{
     "appid": "ee475421-d2e4-4d8e-addb-a2ce1465d6a3",
     "name": "Zscaler",
     "description": "This app implements containment and investigative actions on Zscaler",
