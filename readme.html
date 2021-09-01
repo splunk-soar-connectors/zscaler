@@ -24,3 +24,14 @@
     <li>The comma-separated values of <b>URL</b> should correctly be given e.g. test.com,test1.com else the Phantom framework's parameter validator will return the error mentioning <b>Exception occurred: string index out of range</b>.</li>
   </ul>
 </p>
+
+<p>Configure and set up permissions for the <b>lookup_url</b> action</p>
+      <p>
+        <ul>
+          <li>Login to Zscaler UI using the Administrator credentials.</li>
+          <li>Once logged in, go to <b>Administration -> Role Management</b> section.</li>
+          <li>Click on the <b>Edit</b> icon beside the role that your account uses to configure the test connectivity.</li>
+          <li>Go to the <b>Functional Scope</b> section, enable <b>Security</b> if disabled, and save it.</li>
+        </ul>
+        The above steps would help run the Lookup URL action as expected.
+      </p>
