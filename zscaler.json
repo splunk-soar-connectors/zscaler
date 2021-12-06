@@ -10,12 +10,12 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2017-2021 Splunk Inc.",
-    "app_version": "2.1.4",
+    "app_version": "2.2.0",
     "utctime_updated": "2021-10-12T17:07:40.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.py",
     "python_version": "3",
-    "min_phantom_version": "4.9.39220",
+    "min_phantom_version": "5.0.0",
     "latest_tested_versions": [
         "Cloud v6.0"
     ],
@@ -1939,6 +1939,98 @@
                 "type": "table"
             },
             "versions": "EQ(*)"
+        },
+        {
+            "action": "submit file",
+            "description": "Submit a file to Zscaler Sandbox",
+            "verbose": "This action requires a Sandbox Submission API token. By default, files are scanned by Zscaler antivirus (AV) and submitted directly to the sandbox in order to obtain a verdict. However, if a verdict already exists for the file, you can use the 'force' parameter to make the sandbox to reanalyze it.",
+            "type": "generic",
+            "identifier": "submit_file",
+            "read_only": false,
+            "parameters": {
+                "sandbox_base_url": {
+                    "data_type": "string",
+                    "description": "Base URL to be used for submitting file to Sandbox",
+                    "required": true,
+                    "primary": true,
+                    "order": 0
+                },
+                "api_token": {
+                    "data_type": "string",
+                    "description": "Sandbox Submission API token",
+                    "required": true,
+                    "primary": true,
+                    "order": 1
+                },
+                "vault_id": {
+                    "data_type": "string",
+                    "description": "Vault ID of file to submit",
+                    "required": true,
+                    "primary": true,
+                    "order": 2,
+                    "contains": [
+                        "vault id"
+                    ]
+                },
+                "force": {
+                    "data_type": "boolean",
+                    "description": "Submit file to sandbox even if found malicious during AV scan and a verdict already exists",
+                    "order": 3
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.vault_id",
+                    "data_type": "string",
+                    "example_values": [
+                        "30c5e524e975816fbce1d958150e394efc219772",
+                        "3625d01958241505e11605ea7b89b81df54b7638"
+                    ],
+                    "contains": [
+                        "vault id"
+                    ],
+                    "column_name": "Vault ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Successfully submitted file to Sandbox"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "versions": "EQ(*)",
+            "render": {
+                "title": "Submit File",
+                "type": "table"
+            }
         }
     ],
     "pip_dependencies": {

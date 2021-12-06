@@ -15,15 +15,17 @@
 #
 #
 # Phantom App imports
-import phantom.app as phantom
-from phantom.base_connector import BaseConnector
-from phantom.action_result import ActionResult
-
-import time
 import json
-import requests
 import sys
+import time
+
+import phantom.app as phantom
+import phantom.rules as phantom_rules
+import requests
 from bs4 import BeautifulSoup, UnicodeDammit
+from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
+
 from zscaler_consts import *
 
 
@@ -124,7 +126,8 @@ class ZscalerConnector(BaseConnector):
         # Handling of error_text for both the Python 2 and Python 3 versions
         error_text = self._handle_py_ver_compat_for_input_str(error_text)
 
-        message = "Please check the asset configuration parameters (the base_url should not end with /api/v1 e.g. https://admin.zscaler_instance.net)."
+        message = "Please check the asset configuration parameters (the base_url should not end with \
+            /api/v1 e.g. https://admin.zscaler_instance.net)."
 
         if len(error_text) <= 500:
             message += "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
@@ -138,7 +141,8 @@ class ZscalerConnector(BaseConnector):
         try:
             resp_json = r.json()
         except Exception as e:
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}".format(self._get_error_message_from_exception(e))), None)
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}"
+                .format(self._get_error_message_from_exception(e))), None)
 
         # Please specify the status codes here
         if 200 <= r.status_code < 399:
@@ -204,14 +208,15 @@ class ZscalerConnector(BaseConnector):
 
         return True
 
-    def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get"):
+    def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get", use_json=True):
 
         resp_json = None
 
         if headers is None:
             headers = {}
 
-        headers.update(self._headers)
+        if self.get_action_identifier() != 'submit_file':
+            headers.update(self._headers)
 
         try:
             request_func = getattr(requests, method)
@@ -221,16 +226,28 @@ class ZscalerConnector(BaseConnector):
         # Create a URL to connect to
         url = '{}{}'.format(self._handle_py_ver_compat_for_input_str(self._base_url), endpoint)
 
-        try:
-            r = request_func(
-                url,
-                json=data,
-                headers=headers,
-                params=params
-            )
-        except Exception as e:
-            return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to Zscaler server. {}"
-                    .format(self._get_error_message_from_exception(e))), resp_json)
+        if use_json:
+            try:
+                r = request_func(
+                    url,
+                    json=data,
+                    headers=headers,
+                    params=params
+                )
+            except Exception as e:
+                return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to Zscaler server. {}"
+                        .format(self._get_error_message_from_exception(e))), resp_json)
+        else:
+            try:
+                r = request_func(
+                    url,
+                    data=data,
+                    headers=headers,
+                    params=params
+                )
+            except Exception as e:
+                return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to Zscaler server. {}"
+                        .format(self._get_error_message_from_exception(e))), resp_json)
 
         self._response = r
 
@@ -630,7 +647,8 @@ class ZscalerConnector(BaseConnector):
 
         file_hash = param['file_hash']
 
-        ret_val, sandbox_report = self._make_rest_call_helper('/api/v1/sandbox/report/{0}?details=full'.format(file_hash), action_result)
+        ret_val, sandbox_report = self._make_rest_call_helper('/api/v1/sandbox/report/{0}?details=full'
+            .format(file_hash), action_result)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -642,6 +660,53 @@ class ZscalerConnector(BaseConnector):
         action_result.add_data(sandbox_report)
 
         return action_result.set_status(phantom.APP_SUCCESS, ZSCALER_SANDBOX_GET_REPORT_MSG)
+
+    def _handle_submit_file(self, param):
+        """
+        This action is used to retrieve a sandbox report of provided md5 file hash
+        :param file_hash: md5Hash of file
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        self._base_url = param['sandbox_base_url']
+        try:
+            file_id = param['vault_id']
+            success, message, file_info = phantom_rules.vault_info(vault_id=file_id)
+            file_info = list(file_info)[0]
+        except IndexError:
+            return action_result.set_status(phantom.APP_ERROR, 'Vault file could not be found with supplied Vault ID')
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, 'Vault ID not valid: {}'
+                .format(self._get_error_message_from_exception(e)))
+
+        params = {
+            'force': 0 if param.get('force', False) else 1,
+            'api_token': param.get('api_token')
+        }
+
+        with open(file_info.get('path'), 'rb') as f:
+            data = f.read()
+
+        ret_val, resp_json = self._make_rest_call_helper('/zscsb/submit',
+            action_result, params=params, data=data, method='post', use_json=False)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(resp_json)
+
+        if resp_json.get('code') != 200:
+            return action_result.set_status(phantom.APP_ERROR, "{}. {}"
+                .format(resp_json.get('message'), "Please make sure ZScaler Sandbox Base URL and API token are configured correctly"))
+
+        if resp_json.get('message') == '/submit response OK':
+            message = ZSCALER_SANDBOX_SUBMIT_FILE_MSG
+        else:
+            message = '{}. {}'.format(resp_json.get('message'), "Please check if a verdict already exists for this file, \
+                you can use the 'force' parameter to make the sandbox to reanalyze it.")
+
+        return action_result.set_status(phantom.APP_SUCCESS, message)
 
     def _handle_list_url_categories(self, param):
         """
@@ -756,11 +821,14 @@ class ZscalerConnector(BaseConnector):
         elif action_id == 'unallow_url':
             ret_val = self._handle_unallow_url(param)
 
-        elif action_id == "lookup_ip":
+        elif action_id == 'lookup_ip':
             ret_val = self._handle_lookup_ip(param)
 
         elif action_id == 'lookup_url':
             ret_val = self._handle_lookup_url(param)
+
+        elif action_id == 'submit_file':
+            ret_val = self._handle_submit_file(param)
 
         return ret_val
 
@@ -793,8 +861,9 @@ class ZscalerConnector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import pudb
     import argparse
+
+    import pudb
     pudb.set_trace()
 
     argparser = argparse.ArgumentParser()
