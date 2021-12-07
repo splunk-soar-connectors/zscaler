@@ -681,7 +681,7 @@ class ZscalerConnector(BaseConnector):
                 .format(self._get_error_message_from_exception(e)))
 
         params = {
-            'force': 0 if param.get('force', False) else 1,
+            'force': 1 if param.get('force', False) else 0,
             'api_token': param.get('api_token')
         }
 
@@ -703,8 +703,10 @@ class ZscalerConnector(BaseConnector):
         if resp_json.get('message') == '/submit response OK':
             message = ZSCALER_SANDBOX_SUBMIT_FILE_MSG
         else:
-            message = '{}. {}'.format(resp_json.get('message'), "Please check if a verdict already exists for this file, \
-                you can use the 'force' parameter to make the sandbox to reanalyze it.")
+            if resp_json.get('message').lower() != resp_json.get('sandboxSubmission').lower():
+                message = '{}. {}. {}'.format(resp_json.get('sandboxSubmission'), resp_json.get('message'), ZSCALER_SANDBOX_FORCE_SUBMIT_FILE_MSG)
+            else:
+                message = '{}. {}'.format(resp_json.get('message'), ZSCALER_SANDBOX_FORCE_SUBMIT_FILE_MSG)
 
         return action_result.set_status(phantom.APP_SUCCESS, message)
 

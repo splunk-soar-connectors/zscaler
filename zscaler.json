@@ -1953,13 +1953,15 @@
                     "description": "Base URL to be used for submitting file to Sandbox",
                     "required": true,
                     "primary": true,
+                    "contains": [
+                        "url"
+                    ],
                     "order": 0
                 },
                 "api_token": {
                     "data_type": "string",
                     "description": "Sandbox Submission API token",
                     "required": true,
-                    "primary": true,
                     "order": 1
                 },
                 "vault_id": {
@@ -2008,7 +2010,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Successfully submitted file to Sandbox"
+                        "Successfully submitted the file to Sandbox"
                     ]
                 },
                 {
@@ -2023,6 +2025,83 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.md5",
+                    "data_type": "string",
+                    "example_values": [
+                        "6CE6F415D8475545BE5BA114F208B0FF"
+                    ],
+                    "contains": [
+                        "md5"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.code",
+                    "data_type": "numeric",
+                    "example_values": [
+                        200
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "/submit response OK"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.fileType",
+                    "data_type": "string",
+                    "example_values": [
+                        "zip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.virusName",
+                    "data_type": "string",
+                    "example_values": [
+                        "EICAR_Test_File"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.virusType",
+                    "data_type": "string",
+                    "example_values": [
+                        "Virus"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.sandboxSubmission",
+                    "data_type": "string",
+                    "example_values": [
+                        "Virus"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.force",
+                    "data_type": "numeric",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.api_token",
+                    "data_type": "string",
+                    "example_values": [
+                        "AacvfYu3iAPU+I2Tumqj3pnGj6/cpuEtqsY8JNvl7CeO"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.sandbox_base_url",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://csbapi.zscalerbeta.net"
+                    ],
+                    "contains": [
+                        "url"
                     ]
                 }
             ],
