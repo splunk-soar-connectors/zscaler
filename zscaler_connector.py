@@ -704,7 +704,8 @@ class ZscalerConnector(BaseConnector):
             message = ZSCALER_SANDBOX_SUBMIT_FILE_MSG
         else:
             if resp_json.get('message').lower() != resp_json.get('sandboxSubmission').lower():
-                message = '{}. {}. {}'.format(resp_json.get('sandboxSubmission'), resp_json.get('message'), ZSCALER_SANDBOX_FORCE_SUBMIT_FILE_MSG)
+                message = '{}. {}. {}'.format(resp_json.get('sandboxSubmission'), resp_json.get('message'),
+                    ZSCALER_SANDBOX_FORCE_SUBMIT_FILE_MSG)
             else:
                 message = '{}. {}'.format(resp_json.get('message'), ZSCALER_SANDBOX_FORCE_SUBMIT_FILE_MSG)
 
