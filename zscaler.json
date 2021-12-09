@@ -2035,7 +2035,9 @@
                     ],
                     "contains": [
                         "md5"
-                    ]
+                    ],
+                    "column_name": "MD5",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.code",
@@ -2077,7 +2079,9 @@
                     "data_type": "string",
                     "example_values": [
                         "Virus"
-                    ]
+                    ],
+                    "column_name": "Sandbox Submission",
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.parameter.force",
