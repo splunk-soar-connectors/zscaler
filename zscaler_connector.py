@@ -669,7 +669,7 @@ class ZscalerConnector(BaseConnector):
         """
 
         action_result = self.add_action_result(ActionResult(dict(param)))
-        self._base_url = param['sandbox_base_url']
+        self._base_url = param['sandbox_base_url'].rstrip('/')
         try:
             file_id = param['vault_id']
             success, message, file_info = phantom_rules.vault_info(vault_id=file_id)
