@@ -694,20 +694,21 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        action_result.add_data(resp_json)
-
         if resp_json.get('code') != 200:
             return action_result.set_status(phantom.APP_ERROR, "{}. {}"
                 .format(resp_json.get('message'), "Please make sure ZScaler Sandbox Base URL and API token are configured correctly"))
+
+        action_result.add_data(resp_json)
 
         if resp_json.get('message') == '/submit response OK':
             message = ZSCALER_SANDBOX_SUBMIT_FILE_MSG
         else:
             if resp_json.get('message').lower() != resp_json.get('sandboxSubmission').lower():
-                message = '{}. {}. {}'.format(resp_json.get('sandboxSubmission'), resp_json.get('message'),
-                    ZSCALER_SANDBOX_FORCE_SUBMIT_FILE_MSG)
+                message = 'Status Code: {}. Data from server: {}. {}.'.format(resp_json.get('code'), resp_json.get('sandboxSubmission'),
+                    resp_json.get('message'))
             else:
-                message = '{}. {}'.format(resp_json.get('message'), ZSCALER_SANDBOX_FORCE_SUBMIT_FILE_MSG)
+                message = 'Status Code: {}. Data from server: {}. {}'.format(resp_json.get('code'), resp_json.get('message'),
+                    ZSCALER_SANDBOX_FORCE_SUBMIT_FILE_MSG)
 
         return action_result.set_status(phantom.APP_SUCCESS, message)
 

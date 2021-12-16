@@ -2112,7 +2112,8 @@
             "versions": "EQ(*)",
             "render": {
                 "title": "Submit File",
-                "type": "table"
+                "type": "custom",
+                "view": "zscaler_view.display_view"
             }
         }
     ],
