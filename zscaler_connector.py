@@ -695,8 +695,8 @@ class ZscalerConnector(BaseConnector):
             return action_result.get_status()
 
         if resp_json.get('code') != 200:
-            return action_result.set_status(phantom.APP_ERROR, "{}. {}"
-                .format(resp_json.get('message'), "Please make sure ZScaler Sandbox Base URL and API token are configured correctly"))
+            return action_result.set_status(phantom.APP_ERROR, "Status code: {} Details: {}. {}"
+                .format(resp_json.get('code'), resp_json.get('message'), "Please make sure ZScaler Sandbox Base URL and API token are configured correctly"))
 
         action_result.add_data(resp_json)
 

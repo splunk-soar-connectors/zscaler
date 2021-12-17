@@ -108,7 +108,7 @@
           <td>
             {% if result.data.md5%}
               <a href="javascript:;" onclick="context_menu(this, [{'contains': ['md5'],
-              'value':'{{ result.param.vault_id }}' }], 0,
+              'value':'{{ result.data.md5 }}' }], 0,
               {{ container.id }}, null, false);">
                   {{ result.data.md5 }}
                   &nbsp;
