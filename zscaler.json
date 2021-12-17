@@ -16,6 +16,7 @@
     "main_module": "zscaler_connector.py",
     "python_version": "3",
     "min_phantom_version": "5.0.0",
+    "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud v6.0"
     ],
