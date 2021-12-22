@@ -54,3 +54,11 @@ The Sandbox Submission API requires a separate API key and uses a different host
 -   The base URL and token displayed here can be used as **sandbox_base_url** and **api_token** parameters for the action respectively.
 
 The above steps would help run the Submit File action as expected.
+
+### Port Information
+The app uses HTTP/ HTTPS protocol for communicating with the Zscaler server. Below are the default ports used by Splunk SOAR.
+
+SERVICE NAME | TRANSPORT PROTOCOL | PORT
+------------ | ------------------ | ----
+**http** | tcp | 80
+**https** | tcp | 443

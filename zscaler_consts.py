@@ -16,11 +16,11 @@ ZSCALER_JSON_FULL_DETAILS = 'Full Details'
 ZSCLAER_ERR_MD5_UNKNOWN_MSG = 'md5 is unknown or analysis has yet not been completed'
 ZSCALER_SANDBOX_GET_REPORT_MSG = 'Sandbox report successfully fetched for the provided md5 hash'
 ZSCALER_SANDBOX_SUBMIT_FILE_MSG = "Successfully submitted the file to Sandbox"
-ZSCALER_SANDBOX_FORCE_SUBMIT_FILE_MSG = "Please check if a verdict already exists for this file, \
-                you can use the 'force' parameter to make the sandbox to reanalyze it."
+ZSCALER_SANDBOX_FORCE_SUBMIT_FILE_MSG = "Please check if a verdict already exists for this file, "\
+                "you can use the 'force' parameter to make the sandbox to reanalyze it."
 ZSCALER_ERROR_CODE_MESSAGE = "Error code unavailable"
 ZSCALER_ERROR_MESSAGE = "Unknown error occurred. Please check the asset configuration and|or action parameters"
-TYPE_ERROR_MSG = "Error occurred while connecting to the Zscaler server. \
-    Please check the asset configuration and|or the action parameters"
-PARSE_ERROR_MSG = "Unable to parse the error message. \
-    Please check the asset configuration and|or action parameters"
+TYPE_ERROR_MSG = "Error occurred while connecting to the Zscaler server. "\
+    "Please check the asset configuration and|or the action parameters"
+PARSE_ERROR_MSG = "Unable to parse the error message. "\
+    "Please check the asset configuration and|or action parameters"

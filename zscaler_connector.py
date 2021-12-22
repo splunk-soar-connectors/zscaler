@@ -104,7 +104,7 @@ class ZscalerConnector(BaseConnector):
 
         return error_text
 
-    def _process_empty_reponse(self, response, action_result):
+    def _process_empty_response(self, response, action_result):
         if response.status_code == 200 or response.status_code == 204:
             return RetVal(phantom.APP_SUCCESS, {})
         return RetVal(action_result.set_status(phantom.APP_ERROR, "Empty response and no information in the header"), None)
@@ -126,8 +126,8 @@ class ZscalerConnector(BaseConnector):
         # Handling of error_text for both the Python 2 and Python 3 versions
         error_text = self._handle_py_ver_compat_for_input_str(error_text)
 
-        message = "Please check the asset configuration parameters (the base_url should not end with \
-            /api/v1 e.g. https://admin.zscaler_instance.net)."
+        message = "Please check the asset configuration parameters (the base_url should not end with "\
+            "/api/v1 e.g. https://admin.zscaler_instance.net)."
 
         if len(error_text) <= 500:
             message += "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
@@ -171,7 +171,7 @@ class ZscalerConnector(BaseConnector):
         if 'json' in r.headers.get('Content-Type', ''):
             return self._process_json_response(r, action_result)
 
-        # Process an HTML resonse, Do this no matter what the api talks.
+        # Process an HTML response, Do this no matter what the api talks.
         # There is a high chance of a PROXY in between phantom and the rest of
         # world, in case of errors, PROXY's return HTML, this function parses
         # the error and adds it to the action_result.
@@ -180,7 +180,7 @@ class ZscalerConnector(BaseConnector):
 
         # it's not content-type that is to be parsed, handle an empty response
         if not r.text:
-            return self._process_empty_reponse(r, action_result)
+            return self._process_empty_response(r, action_result)
 
         # everything else is actually an error at this point
         message = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
@@ -266,7 +266,7 @@ class ZscalerConnector(BaseConnector):
 
     def _make_rest_call_helper(self, *args, **kwargs):
         # There are two rate limits
-        #  1. There is a maximum limt of requests per second, depending on if its a GET / POST / PUT / DETE
+        #  1. There is a maximum limit of requests per second, depending on if its a GET / POST / PUT / DELETE
         #  2. There is a maximum number of requests per hour
         # Regardless, the response will include a try-after value, which we can use to sleep
         ret_val, response = self._make_rest_call(*args, **kwargs)

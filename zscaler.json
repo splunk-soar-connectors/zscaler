@@ -1944,7 +1944,7 @@
         {
             "action": "submit file",
             "description": "Submit a file to Zscaler Sandbox",
-            "verbose": "This action requires a Sandbox Submission API token. By default, files are scanned by Zscaler antivirus (AV) and submitted directly to the sandbox in order to obtain a verdict. However, if a verdict already exists for the file, you can use the 'force' parameter to make the sandbox to reanalyze it.",
+            "verbose": "This action requires a Sandbox Submission API token. By default, files are scanned by Zscaler antivirus (AV) and submitted directly to the sandbox in order to obtain a verdict. However, if a verdict already exists for the file, you can use the 'force' parameter to make the sandbox to reanalyze it. You can submit up to 100 files per day.",
             "type": "generic",
             "identifier": "submit_file",
             "read_only": false,
