@@ -708,8 +708,7 @@ class ZscalerConnector(BaseConnector):
                 message = 'Status Code: {}. Data from server: {}. {}.'.format(resp_json.get('code'), resp_json.get('sandboxSubmission'),
                     resp_json.get('message'))
             else:
-                message = 'Status Code: {}. Data from server: {}. {}'.format(resp_json.get('code'), resp_json.get('message'),
-                    ZSCALER_SANDBOX_FORCE_SUBMIT_FILE_MSG)
+                message = 'Status Code: {}. Data from server: {}'.format(resp_json.get('code'), resp_json.get('message'))
 
         return action_result.set_status(phantom.APP_SUCCESS, message)
 
