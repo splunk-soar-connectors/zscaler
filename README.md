@@ -11,7 +11,7 @@ Minimum Product Version: 4\.9\.39220
 This app implements containment and investigative actions on Zscaler
 
 [comment]: # " File: readme.md"
-[comment]: # "  Copyright (c) 2017-2021 Splunk Inc."
+[comment]: # "  Copyright (c) 2017-2022 Splunk Inc."
 [comment]: # ""
 [comment]: # "Licensed under the Apache License, Version 2.0 (the 'License');"
 [comment]: # "you may not use this file except in compliance with the License."
@@ -57,6 +57,14 @@ Configure and set up permissions for the **lookup_url** action
 -   Go to the **Functional Scope** section, enable **Security** if disabled, and save it.
 
 The above steps would help run the Lookup URL action as expected.
+
+### Port Information
+The app uses HTTP/ HTTPS protocol for communicating with the Zscaler server. Below are the default ports used by Splunk SOAR.
+
+SERVICE NAME | TRANSPORT PROTOCOL | PORT
+------------ | ------------------ | ----
+**http** | tcp | 80
+**https** | tcp | 443
 
 
 ### Configuration Variables
