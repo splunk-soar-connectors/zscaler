@@ -2012,10 +2012,7 @@
                 },
                 {
                     "data_path": "action_result.parameter.api_token",
-                    "data_type": "string",
-                    "example_values": [
-                        "AacvfYu3iAPU+I2Tumqj3pnGj6/cpuEtqsY8JNvl7CeO"
-                    ]
+                    "data_type": "password"
                 },
                 {
                     "data_path": "action_result.parameter.sandbox_base_url",
