@@ -2004,6 +2004,31 @@
                     "column_order": 0
                 },
                 {
+                    "data_path": "action_result.parameter.force",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.api_token",
+                    "data_type": "string",
+                    "example_values": [
+                        "AacvfYu3iAPU+I2Tumqj3pnGj6/cpuEtqsY8JNvl7CeO"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.sandbox_base_url",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://csbapi.zscalerbeta.net"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
                     "data_path": "action_result.summary",
                     "data_type": "string"
                 },
@@ -2083,31 +2108,6 @@
                     ],
                     "column_name": "Sandbox Submission",
                     "column_order": 2
-                },
-                {
-                    "data_path": "action_result.parameter.force",
-                    "data_type": "numeric",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.api_token",
-                    "data_type": "string",
-                    "example_values": [
-                        "AacvfYu3iAPU+I2Tumqj3pnGj6/cpuEtqsY8JNvl7CeO"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.sandbox_base_url",
-                    "data_type": "string",
-                    "example_values": [
-                        "https://csbapi.zscalerbeta.net"
-                    ],
-                    "contains": [
-                        "url"
-                    ]
                 }
             ],
             "versions": "EQ(*)",
