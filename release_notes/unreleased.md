@@ -1,2 +1,2 @@
 **Unreleased**
-* Added new action 'submit file' support [PAPP-21221]
+* Added new action 'submit file' [PAPP-21221]

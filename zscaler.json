@@ -1960,7 +1960,7 @@
                     "order": 0
                 },
                 "api_token": {
-                    "data_type": "string",
+                    "data_type": "password",
                     "description": "Sandbox Submission API token",
                     "required": true,
                     "order": 1
@@ -1972,7 +1972,8 @@
                     "primary": true,
                     "order": 2,
                     "contains": [
-                        "vault id"
+                        "vault id",
+                        "sha1"
                     ]
                 },
                 "force": {
@@ -1994,14 +1995,12 @@
                     "data_path": "action_result.parameter.vault_id",
                     "data_type": "string",
                     "example_values": [
-                        "30c5e524e975816fbce1d958150e394efc219772",
-                        "3625d01958241505e11605ea7b89b81df54b7638"
+                        "30c5e524e975816fbce1d958150e394efc219772"
                     ],
                     "contains": [
-                        "vault id"
-                    ],
-                    "column_name": "Vault ID",
-                    "column_order": 0
+                        "vault id",
+                        "sha1"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.force",
@@ -2061,9 +2060,7 @@
                     ],
                     "contains": [
                         "md5"
-                    ],
-                    "column_name": "MD5",
-                    "column_order": 1
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.code",
@@ -2105,9 +2102,7 @@
                     "data_type": "string",
                     "example_values": [
                         "Virus"
-                    ],
-                    "column_name": "Sandbox Submission",
-                    "column_order": 2
+                    ]
                 }
             ],
             "versions": "EQ(*)",
