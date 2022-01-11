@@ -58,11 +58,11 @@ Configure and set up permissions for the **lookup_url** action
 
 The above steps would help run the Lookup URL action as expected.
 
-The Sandbox Submission API requires a separate API key and uses a different host (csbapi.[zscaler-cloud-name]). Follow the below steps to fetch the credentials for the **submit_file** action
+The Sandbox Submission API requires a separate API key and uses a different host (csbapi.[zscaler-cloud-name]). For the **submit_file** action, the **sandbox_base_url** and **sandbox_api_token** asset configuration parameters should be configured. These two asset parameters, wont affect test_connectivity. Follow the below steps to fetch these credentials for the **submit_file** action
 -   Log in to the ZIA Admin Portal using your **admin** credentials.
 -   Once logged in, go to **Administration -> Cloud Service API Key Management** section. In order to view the Cloud Service API Key Management page, the admin must be assigned an admin role.
 -   For the Cloud Sandbox Submission API used in this action, the base URL and token are displayed on the **Sandbox Submission API Token** tab.
--   The base URL and token displayed here can be used as **sandbox_base_url** and **api_token** parameters for the action respectively.
+-   The base URL and token displayed here can be configured in the asset parameters in **sandbox_base_url** and **sandbox_api_token** parameters respectively and will be used for the submit_file action.
 
 The above steps would help run the Submit File action as expected.
 

@@ -45,6 +45,20 @@
             "data_type": "password",
             "required": true,
             "order": 3
+        },
+        "sandbox_base_url": {
+            "data_type": "string",
+            "description": "Sandbox Base URL",
+            "primary": true,
+            "contains": [
+                "url"
+            ],
+            "order": 4
+        },
+        "sandbox_api_token": {
+            "data_type": "password",
+            "description": "Sandbox API Token",
+            "order": 5
         }
     },
     "actions": [
@@ -1949,28 +1963,12 @@
             "identifier": "submit_file",
             "read_only": false,
             "parameters": {
-                "sandbox_base_url": {
-                    "data_type": "string",
-                    "description": "Base URL to be used for submitting file to Sandbox",
-                    "required": true,
-                    "primary": true,
-                    "contains": [
-                        "url"
-                    ],
-                    "order": 0
-                },
-                "api_token": {
-                    "data_type": "password",
-                    "description": "Sandbox Submission API token",
-                    "required": true,
-                    "order": 1
-                },
                 "vault_id": {
                     "data_type": "string",
                     "description": "Vault ID of file to submit",
                     "required": true,
                     "primary": true,
-                    "order": 2,
+                    "order": 0,
                     "contains": [
                         "vault id",
                         "sha1"
@@ -1979,7 +1977,7 @@
                 "force": {
                     "data_type": "boolean",
                     "description": "Submit file to sandbox even if found malicious during AV scan and a verdict already exists",
-                    "order": 3
+                    "order": 1
                 }
             },
             "output": [
@@ -2008,20 +2006,6 @@
                     "example_values": [
                         true,
                         false
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.api_token",
-                    "data_type": "password"
-                },
-                {
-                    "data_path": "action_result.parameter.sandbox_base_url",
-                    "data_type": "string",
-                    "example_values": [
-                        "https://csbapi.zscalerbeta.net"
-                    ],
-                    "contains": [
-                        "url"
                     ]
                 },
                 {

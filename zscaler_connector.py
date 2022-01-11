@@ -311,6 +311,7 @@ class ZscalerConnector(BaseConnector):
         username = config['username']
         password = config['password']
         api_key = config['api_key']
+        self._base_url = config['base_url'].rstrip('/')
         try:
             timestamp, obf_api_key = self._obfuscate_api_key(api_key)
         except:
@@ -347,6 +348,8 @@ class ZscalerConnector(BaseConnector):
 
     def _deinit_session(self):
         action_result = ActionResult()
+        config = self.get_config()
+        self._base_url = config['base_url'].rstrip('/')
         ret_val, response = self._make_rest_call_helper('/api/v1/authenticatedSession', action_result, method='delete')
 
         if phantom.is_fail(ret_val):
@@ -669,7 +672,12 @@ class ZscalerConnector(BaseConnector):
         """
 
         action_result = self.add_action_result(ActionResult(dict(param)))
-        self._base_url = param['sandbox_base_url'].rstrip('/')
+
+        if not (self._sandbox_api_token and self._sandbox_base_url):
+            return action_result.set_status(
+                phantom.APP_ERROR, "Please provide ZScaler Sandbox Base URL and API token to submit the file to Sandbox")
+        self._base_url = self._sandbox_base_url
+
         try:
             file_id = param['vault_id']
             success, message, file_info = phantom_rules.vault_info(vault_id=file_id)
@@ -682,7 +690,7 @@ class ZscalerConnector(BaseConnector):
 
         params = {
             'force': 1 if param.get('force', False) else 0,
-            'api_token': param.get('api_token')
+            'api_token': self._sandbox_api_token
         }
 
         with open(file_info.get('path'), 'rb') as f:
@@ -851,6 +859,10 @@ class ZscalerConnector(BaseConnector):
         self._base_url = config['base_url'].rstrip('/')
         self._username = config['username']
         self._password = config['password']
+        self._sandbox_base_url = config.get('sandbox_base_url', None)
+        if self._sandbox_base_url:
+            self._sandbox_base_url = self._sandbox_base_url.rstrip('/')
+        self._sandbox_api_token = config.get('sandbox_api_token', None)
         self._headers = {}
 
         self.set_validator('ipv6', self._is_ip)
