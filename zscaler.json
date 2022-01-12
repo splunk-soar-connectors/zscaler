@@ -49,10 +49,6 @@
         "sandbox_base_url": {
             "data_type": "string",
             "description": "Sandbox Base URL",
-            "primary": true,
-            "contains": [
-                "url"
-            ],
             "order": 4
         },
         "sandbox_api_token": {
