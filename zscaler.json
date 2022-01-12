@@ -10,7 +10,7 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2017-2021 Splunk Inc.",
-    "app_version": "2.1.5",
+    "app_version": "2.1.6",
     "utctime_updated": "2022-01-07T20:36:42.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.py",
@@ -1936,6 +1936,128 @@
             ],
             "render": {
                 "title": "Lookup URL",
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+		{
+            "action": "get admin users",
+            "identifier": "get_admin_users",
+            "description": "Get a list of admin users",
+            "type": "investigate",
+			"parameters": {},
+            "read_only": true,
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+				{
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.loginName",
+                    "data_type": "string",
+					"example_values": [
+                        "first.last@domain.com"
+                    ],
+                    "column_name": "Login Name",
+                    "column_order": 0
+                },
+				{
+                    "data_path": "action_result.data.*.userName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Last, First"
+                    ],
+                    "column_name": "User Name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.email",
+                    "data_type": "string",
+					"example_values": [
+                        "first.last@emaildomain.com"
+                    ],
+                    "column_name": "Email",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.role.id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.role.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "Super Admin"
+                    ],
+                    "column_name": "Role",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.role.extensions.adminRank",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.role.extensions.roleType",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.adminScopeType",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.isNonEditable",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.isPasswordLoginAllowed",
+                    "data_type": "boolean",
+					"example_values": [
+                        "True",
+						"False"
+                    ],
+                    "column_name": "Password Login",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.pwdLastModifiedTime",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Successfully completed lookup"
+                    ]
+                }
+            ],
+            "render": {
+                "title": "Admin Users",
                 "type": "table"
             },
             "versions": "EQ(*)"

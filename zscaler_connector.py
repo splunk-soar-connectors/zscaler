@@ -714,6 +714,27 @@ class ZscalerConnector(BaseConnector):
                         "Please provide valid comma-separated values in the action parameter. Max allowed length for each value is 1024.")
         return phantom.APP_SUCCESS
 
+    def _handle_get_admin_users(self, param):
+        """
+        This action is used to fetch all admin users
+        :param: No parameters
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        ret_val, get_admin_users = self._make_rest_call_helper('/api/v1/adminUsers', action_result)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        for admin_users in get_admin_users:
+            action_result.add_data(admin_users)
+
+        summary = action_result.update_summary({})
+        summary['total_admin_users'] = action_result.get_data_size()
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
     def handle_action(self, param):
 
         ret_val = phantom.APP_SUCCESS
@@ -761,6 +782,9 @@ class ZscalerConnector(BaseConnector):
 
         elif action_id == 'lookup_url':
             ret_val = self._handle_lookup_url(param)
+
+        elif action_id == 'get_admin_users':
+            ret_val = self._handle_get_admin_users(param)
 
         return ret_val
 
