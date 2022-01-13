@@ -685,8 +685,9 @@ class ZscalerConnector(BaseConnector):
         except IndexError:
             return action_result.set_status(phantom.APP_ERROR, 'Vault file could not be found with supplied Vault ID')
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, 'Vault ID not valid: {}'
-                .format(self._get_error_message_from_exception(e)))
+            error_msg = self._get_error_message_from_exception(e)
+            self.debug_print("Vault ID not valid. Error: {}".format(error_msg))
+            return action_result.set_status(phantom.APP_ERROR, 'Vault ID not valid')
 
         params = {
             'force': 1 if param.get('force', False) else 0,
