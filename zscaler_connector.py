@@ -226,28 +226,24 @@ class ZscalerConnector(BaseConnector):
         # Create a URL to connect to
         url = '{}{}'.format(self._handle_py_ver_compat_for_input_str(self._base_url), endpoint)
 
-        if use_json:
-            try:
+        try:
+            if use_json:
                 r = request_func(
                     url,
                     json=data,
                     headers=headers,
                     params=params
                 )
-            except Exception as e:
-                return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to Zscaler server. {}"
-                        .format(self._get_error_message_from_exception(e))), resp_json)
-        else:
-            try:
+            else:
                 r = request_func(
                     url,
                     data=data,
                     headers=headers,
                     params=params
                 )
-            except Exception as e:
-                return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to Zscaler server. {}"
-                        .format(self._get_error_message_from_exception(e))), resp_json)
+        except Exception as e:
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to Zscaler server. {}"
+                    .format(self._get_error_message_from_exception(e))), resp_json)
 
         self._response = r
 
