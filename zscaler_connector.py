@@ -894,14 +894,14 @@ if __name__ == '__main__':
         login_url = BaseConnector._get_phantom_base_url() + "login"
         try:
             print("Accessing the Login page")
-            r = requests.get(    # nosemgrep: python.requests.best-practice.use-timeout.use-timeout
+            r = requests.get(  # nosemgrep: python.requests.best-practice.use-timeout.use-timeout
                 login_url, verify=verify)
             csrftoken = r.cookies['csrftoken']
             data = {'username': args.username, 'password': args.password, 'csrfmiddlewaretoken': csrftoken}
             headers = {'Cookie': 'csrftoken={0}'.format(csrftoken), 'Referer': login_url}
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(    # nosemgrep: python.requests.best-practice.use-timeout.use-timeout
+            r2 = requests.post(  # nosemgrep: python.requests.best-practice.use-timeout.use-timeout
                 login_url, verify=verify, data=data, headers=headers)
             session_id = r2.cookies['sessionid']
 
