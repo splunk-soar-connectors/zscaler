@@ -2,15 +2,15 @@
 # Zscaler
 
 Publisher: Splunk  
-Connector Version: 2\.1\.4  
+Connector Version: 2\.2\.1  
 Product Vendor: Zscaler  
 Product Name: Zscaler  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 4\.9\.39220  
+Minimum Product Version: 5\.0\.0  
 
 This app implements containment and investigative actions on Zscaler
 
-[comment]: # " File: readme.md"
+[comment]: # " File: README.md"
 [comment]: # "  Copyright (c) 2017-2022 Splunk Inc."
 [comment]: # ""
 [comment]: # "Licensed under the Apache License, Version 2.0 (the 'License');"
@@ -58,23 +58,34 @@ Configure and set up permissions for the **lookup_url** action
 
 The above steps would help run the Lookup URL action as expected.
 
-The Sandbox Submission API requires a separate API key and uses a different host (csbapi.[zscaler-cloud-name]). For the **submit_file** action, the **sandbox_base_url** and **sandbox_api_token** asset configuration parameters should be configured. These two asset parameters, wont affect test_connectivity. Follow the below steps to fetch these credentials for the **submit_file** action
+The Sandbox Submission API requires a separate API key and uses a different host
+(csbapi.\[zscaler-cloud-name\]). For the **submit_file** action, the **sandbox_base_url** and
+**sandbox_api_token** asset configuration parameters should be configured. These two asset
+parameters, wont affect test_connectivity. Follow the below steps to fetch these credentials for the
+**submit_file** action
+
 -   Log in to the ZIA Admin Portal using your **admin** credentials.
--   Once logged in, go to **Administration -> Cloud Service API Key Management** section. In order to view the Cloud Service API Key Management page, the admin must be assigned an admin role.
--   For the Cloud Sandbox Submission API used in this action, the base URL and token are displayed on the **Sandbox Submission API Token** tab.
--   The base URL and token displayed here can be configured in the asset parameters in **sandbox_base_url** and **sandbox_api_token** parameters respectively and will be used for the submit_file action.
+-   Once logged in, go to **Administration -> Cloud Service API Key Management** section. In order
+    to view the Cloud Service API Key Management page, the admin must be assigned an admin role.
+-   For the Cloud Sandbox Submission API used in this action, the base URL and token are displayed
+    on the **Sandbox Submission API Token** tab.
+-   The base URL and token displayed here can be configured in the asset parameters in
+    **sandbox_base_url** and **sandbox_api_token** parameters respectively and will be used for the
+    submit_file action.
 
 The above steps would help run the Submit File action as expected.
 
 **NOTE:** This action would work according to the API behavior
 
-### Port Information
-The app uses HTTP/ HTTPS protocol for communicating with the Zscaler server. Below are the default ports used by Splunk SOAR.
+Port Information
 
-SERVICE NAME | TRANSPORT PROTOCOL | PORT
------------- | ------------------ | ----
-**http** | tcp | 80
-**https** | tcp | 443
+The app uses HTTP/ HTTPS protocol for communicating with the Zscaler server. Below are the default
+ports used by Splunk SOAR.
+
+|         Service Name | Transport Protocol | Port |
+|----------------------|--------------------|------|
+|         http         | tcp                | 80   |
+|         https        | tcp                | 443  |
 
 
 ### Configuration Variables
@@ -86,6 +97,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 **api\_key** |  required  | password | API Key
 **username** |  required  | string | Username
 **password** |  required  | password | Password
+**sandbox\_base\_url** |  optional  | string | Sandbox Base URL
+**sandbox\_api\_token** |  optional  | password | Sandbox API Token
 
 ### Supported Actions  
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
@@ -101,6 +114,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [unallow url](#action-unallow-url) - Remove a URL from the allowed list  
 [lookup ip](#action-lookup-ip) - Lookup the categories related to an IP  
 [lookup url](#action-lookup-url) - Lookup the categories related to a URL  
+[submit file](#action-submit-file) - Submit a file to Zscaler Sandbox  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -504,4 +518,36 @@ action\_result\.data\.\*\.urlClassificationsWithSecurityAlert | string |
 action\_result\.summary | string | 
 action\_result\.message | string | 
 summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'submit file'
+Submit a file to Zscaler Sandbox
+
+Type: **generic**  
+Read only: **False**
+
+This action requires a Sandbox Submission API token\. By default, files are scanned by Zscaler antivirus \(AV\) and submitted directly to the sandbox in order to obtain a verdict\. However, if a verdict already exists for the file, you can use the 'force' parameter to make the sandbox to reanalyze it\. You can submit up to 100 files per day\.
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**vault\_id** |  required  | Vault ID of file to submit | string |  `vault id`  `sha1` 
+**force** |  optional  | Submit file to sandbox even if found malicious during AV scan and a verdict already exists | boolean | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.vault\_id | string |  `vault id`  `sha1` 
+action\_result\.parameter\.force | boolean | 
+action\_result\.summary | string | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric | 
+action\_result\.data\.\*\.md5 | string |  `md5` 
+action\_result\.data\.\*\.code | numeric | 
+action\_result\.data\.\*\.message | string | 
+action\_result\.data\.\*\.fileType | string | 
+action\_result\.data\.\*\.virusName | string | 
+action\_result\.data\.\*\.virusType | string | 
+action\_result\.data\.\*\.sandboxSubmission | string | 
