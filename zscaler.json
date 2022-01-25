@@ -9,13 +9,14 @@
     "product_name": "Zscaler",
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2017-2021 Splunk Inc.",
-    "app_version": "2.1.5",
-    "utctime_updated": "2021-10-15T17:52:50.000000Z",
+    "license": "Copyright (c) 2017-2022 Splunk Inc.",
+    "app_version": "2.2.2",
+    "utctime_updated": "2022-01-24T06:29:48.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.py",
     "python_version": "3",
-    "min_phantom_version": "4.9.39220",
+    "min_phantom_version": "5.0.0",
+    "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud v6.0"
     ],
@@ -44,6 +45,16 @@
             "data_type": "password",
             "required": true,
             "order": 3
+        },
+        "sandbox_base_url": {
+            "data_type": "string",
+            "description": "Sandbox Base URL",
+            "order": 4
+        },
+        "sandbox_api_token": {
+            "data_type": "password",
+            "description": "Sandbox API Token",
+            "order": 5
         }
     },
     "actions": [
@@ -1939,6 +1950,176 @@
                 "type": "table"
             },
             "versions": "EQ(*)"
+        },
+        {
+            "action": "submit file",
+            "description": "Submit a file to Zscaler Sandbox",
+            "verbose": "This action requires a Sandbox Submission API token. By default, files are scanned by Zscaler antivirus (AV) and submitted directly to the sandbox in order to obtain a verdict. However, if a verdict already exists for the file, you can use the 'force' parameter to make the sandbox to reanalyze it. You can submit up to 100 files per day.",
+            "type": "generic",
+            "identifier": "submit_file",
+            "read_only": false,
+            "parameters": {
+                "vault_id": {
+                    "data_type": "string",
+                    "description": "Vault ID of file to submit",
+                    "required": true,
+                    "primary": true,
+                    "order": 0,
+                    "contains": [
+                        "vault id",
+                        "sha1"
+                    ]
+                },
+                "force": {
+                    "data_type": "boolean",
+                    "description": "Submit file to sandbox even if found malicious during AV scan and a verdict already exists",
+                    "order": 1
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.vault_id",
+                    "data_type": "string",
+                    "example_values": [
+                        "30c5e524e975816fbce1d958150e394efc219772"
+                    ],
+                    "contains": [
+                        "vault id",
+                        "sha1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.force",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Successfully submitted the file to Sandbox"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.md5",
+                    "data_type": "string",
+                    "example_values": [
+                        "6CE6F415D8475545BE5BA114F208B0FF"
+                    ],
+                    "contains": [
+                        "md5"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.code",
+                    "data_type": "numeric",
+                    "example_values": [
+                        200
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "/submit response OK"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.fileType",
+                    "data_type": "string",
+                    "example_values": [
+                        "zip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.virusName",
+                    "data_type": "string",
+                    "example_values": [
+                        "EICAR_Test_File"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.virusType",
+                    "data_type": "string",
+                    "example_values": [
+                        "Virus"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.sandboxSubmission",
+                    "data_type": "string",
+                    "example_values": [
+                        "Virus"
+                    ]
+                }
+            ],
+            "versions": "EQ(*)",
+            "render": {
+                "title": "Submit File",
+                "type": "custom",
+                "view": "zscaler_view.display_view"
+            }
         }
-    ]
+    ],
+    "pip_dependencies": {
+        "wheel": [
+            {
+                "module": "beautifulsoup4",
+                "input_file": "wheels/beautifulsoup4-4.9.1-py3-none-any.whl"
+            },
+            {
+                "module": "certifi",
+                "input_file": "wheels/certifi-2021.10.8-py2.py3-none-any.whl"
+            },
+            {
+                "module": "chardet",
+                "input_file": "wheels/chardet-3.0.4-py2.py3-none-any.whl"
+            },
+            {
+                "module": "idna",
+                "input_file": "wheels/idna-2.10-py2.py3-none-any.whl"
+            },
+            {
+                "module": "requests",
+                "input_file": "wheels/requests-2.25.0-py2.py3-none-any.whl"
+            },
+            {
+                "module": "soupsieve",
+                "input_file": "wheels/soupsieve-2.3.1-py3-none-any.whl"
+            },
+            {
+                "module": "urllib3",
+                "input_file": "wheels/urllib3-1.26.7-py2.py3-none-any.whl"
+            }
+        ]
+    }
 }

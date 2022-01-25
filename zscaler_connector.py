@@ -1,20 +1,31 @@
 # File: zscaler_connector.py
-# Copyright (c) 2017-2021 Splunk Inc.
 #
-# SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
-# without a valid written license from Splunk Inc. is PROHIBITED.
-# --
-
+# Copyright (c) 2017-2022 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
+#
+#
 # Phantom App imports
-import phantom.app as phantom
-from phantom.base_connector import BaseConnector
-from phantom.action_result import ActionResult
-
-import time
 import json
-import requests
 import sys
+import time
+
+import phantom.app as phantom
+import phantom.rules as phantom_rules
+import requests
 from bs4 import BeautifulSoup, UnicodeDammit
+from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
+
 from zscaler_consts import *
 
 
@@ -93,7 +104,7 @@ class ZscalerConnector(BaseConnector):
 
         return error_text
 
-    def _process_empty_reponse(self, response, action_result):
+    def _process_empty_response(self, response, action_result):
         if response.status_code == 200 or response.status_code == 204:
             return RetVal(phantom.APP_SUCCESS, {})
         return RetVal(action_result.set_status(phantom.APP_ERROR, "Empty response and no information in the header"), None)
@@ -115,7 +126,8 @@ class ZscalerConnector(BaseConnector):
         # Handling of error_text for both the Python 2 and Python 3 versions
         error_text = self._handle_py_ver_compat_for_input_str(error_text)
 
-        message = "Please check the asset configuration parameters (the base_url should not end with /api/v1 e.g. https://admin.zscaler_instance.net)."
+        message = "Please check the asset configuration parameters (the base_url should not end with "\
+            "/api/v1 e.g. https://admin.zscaler_instance.net)."
 
         if len(error_text) <= 500:
             message += "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
@@ -129,7 +141,8 @@ class ZscalerConnector(BaseConnector):
         try:
             resp_json = r.json()
         except Exception as e:
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}".format(self._get_error_message_from_exception(e))), None)
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}"
+                .format(self._get_error_message_from_exception(e))), None)
 
         # Please specify the status codes here
         if 200 <= r.status_code < 399:
@@ -158,7 +171,7 @@ class ZscalerConnector(BaseConnector):
         if 'json' in r.headers.get('Content-Type', ''):
             return self._process_json_response(r, action_result)
 
-        # Process an HTML resonse, Do this no matter what the api talks.
+        # Process an HTML response, Do this no matter what the api talks.
         # There is a high chance of a PROXY in between phantom and the rest of
         # world, in case of errors, PROXY's return HTML, this function parses
         # the error and adds it to the action_result.
@@ -167,7 +180,7 @@ class ZscalerConnector(BaseConnector):
 
         # it's not content-type that is to be parsed, handle an empty response
         if not r.text:
-            return self._process_empty_reponse(r, action_result)
+            return self._process_empty_response(r, action_result)
 
         # everything else is actually an error at this point
         message = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
@@ -195,14 +208,15 @@ class ZscalerConnector(BaseConnector):
 
         return True
 
-    def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get"):
+    def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get", use_json=True):
 
         resp_json = None
 
         if headers is None:
             headers = {}
 
-        headers.update(self._headers)
+        if self.get_action_identifier() != 'submit_file':
+            headers.update(self._headers)
 
         try:
             request_func = getattr(requests, method)
@@ -213,14 +227,22 @@ class ZscalerConnector(BaseConnector):
         url = '{}{}'.format(self._handle_py_ver_compat_for_input_str(self._base_url), endpoint)
 
         try:
-            r = request_func(
-                url,
-                json=data,
-                headers=headers,
-                params=params
-            )
+            if use_json:
+                r = request_func(
+                    url,
+                    json=data,
+                    headers=headers,
+                    params=params
+                )
+            else:
+                r = request_func(
+                    url,
+                    data=data,
+                    headers=headers,
+                    params=params
+                )
         except Exception as e:
-            return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to Zscaler server. {}"
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to Zscaler server. {}"
                     .format(self._get_error_message_from_exception(e))), resp_json)
 
         self._response = r
@@ -240,7 +262,7 @@ class ZscalerConnector(BaseConnector):
 
     def _make_rest_call_helper(self, *args, **kwargs):
         # There are two rate limits
-        #  1. There is a maximum limt of requests per second, depending on if its a GET / POST / PUT / DETE
+        #  1. There is a maximum limit of requests per second, depending on if its a GET / POST / PUT / DELETE
         #  2. There is a maximum number of requests per hour
         # Regardless, the response will include a try-after value, which we can use to sleep
         ret_val, response = self._make_rest_call(*args, **kwargs)
@@ -285,6 +307,7 @@ class ZscalerConnector(BaseConnector):
         username = config['username']
         password = config['password']
         api_key = config['api_key']
+        self._base_url = config['base_url'].rstrip('/')
         try:
             timestamp, obf_api_key = self._obfuscate_api_key(api_key)
         except:
@@ -321,6 +344,8 @@ class ZscalerConnector(BaseConnector):
 
     def _deinit_session(self):
         action_result = ActionResult()
+        config = self.get_config()
+        self._base_url = config['base_url'].rstrip('/')
         ret_val, response = self._make_rest_call_helper('/api/v1/authenticatedSession', action_result, method='delete')
 
         if phantom.is_fail(ret_val):
@@ -621,7 +646,8 @@ class ZscalerConnector(BaseConnector):
 
         file_hash = param['file_hash']
 
-        ret_val, sandbox_report = self._make_rest_call_helper('/api/v1/sandbox/report/{0}?details=full'.format(file_hash), action_result)
+        ret_val, sandbox_report = self._make_rest_call_helper('/api/v1/sandbox/report/{0}?details=full'
+            .format(file_hash), action_result)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -633,6 +659,63 @@ class ZscalerConnector(BaseConnector):
         action_result.add_data(sandbox_report)
 
         return action_result.set_status(phantom.APP_SUCCESS, ZSCALER_SANDBOX_GET_REPORT_MSG)
+
+    def _handle_submit_file(self, param):
+        """
+        This action is used to retrieve a sandbox report of provided md5 file hash
+        :param file_hash: md5Hash of file
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        if not (self._sandbox_api_token and self._sandbox_base_url):
+            return action_result.set_status(
+                phantom.APP_ERROR, "Please provide ZScaler Sandbox Base URL and API token to submit the file to Sandbox")
+        self._base_url = self._sandbox_base_url
+
+        try:
+            file_id = param['vault_id']
+            success, message, file_info = phantom_rules.vault_info(vault_id=file_id)
+            file_info = list(file_info)[0]
+        except IndexError:
+            return action_result.set_status(phantom.APP_ERROR, 'Vault file could not be found with supplied Vault ID')
+        except Exception as e:
+            error_msg = self._get_error_message_from_exception(e)
+            self.debug_print("Vault ID not valid. Error: {}".format(error_msg))
+            return action_result.set_status(phantom.APP_ERROR, 'Vault ID not valid')
+
+        params = {
+            'force': 1 if param.get('force', False) else 0,
+            'api_token': self._sandbox_api_token
+        }
+
+        with open(file_info.get('path'), 'rb') as f:
+            data = f.read()
+
+        ret_val, resp_json = self._make_rest_call_helper('/zscsb/submit',
+            action_result, params=params, data=data, method='post', use_json=False)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if resp_json.get('code') != 200:
+            return action_result.set_status(phantom.APP_ERROR,
+                "Status code: {} Details: {}. Please make sure ZScaler Sandbox Base URL and API token are configured correctly"
+                .format(resp_json.get('code'), resp_json.get('message')))
+
+        action_result.add_data(resp_json)
+
+        if resp_json.get('message') == '/submit response OK':
+            message = ZSCALER_SANDBOX_SUBMIT_FILE_MSG
+        else:
+            if resp_json.get('message').lower() != resp_json.get('sandboxSubmission').lower():
+                message = 'Status Code: {}. Data from server: {}. {}.'.format(resp_json.get('code'), resp_json.get('sandboxSubmission'),
+                    resp_json.get('message'))
+            else:
+                message = 'Status Code: {}. Data from server: {}'.format(resp_json.get('code'), resp_json.get('message'))
+
+        return action_result.set_status(phantom.APP_SUCCESS, message)
 
     def _handle_list_url_categories(self, param):
         """
@@ -747,11 +830,14 @@ class ZscalerConnector(BaseConnector):
         elif action_id == 'unallow_url':
             ret_val = self._handle_unallow_url(param)
 
-        elif action_id == "lookup_ip":
+        elif action_id == 'lookup_ip':
             ret_val = self._handle_lookup_ip(param)
 
         elif action_id == 'lookup_url':
             ret_val = self._handle_lookup_url(param)
+
+        elif action_id == 'submit_file':
+            ret_val = self._handle_submit_file(param)
 
         return ret_val
 
@@ -770,6 +856,10 @@ class ZscalerConnector(BaseConnector):
         self._base_url = config['base_url'].rstrip('/')
         self._username = config['username']
         self._password = config['password']
+        self._sandbox_base_url = config.get('sandbox_base_url', None)
+        if self._sandbox_base_url:
+            self._sandbox_base_url = self._sandbox_base_url.rstrip('/')
+        self._sandbox_api_token = config.get('sandbox_api_token', None)
         self._headers = {}
 
         self.set_validator('ipv6', self._is_ip)
@@ -784,8 +874,9 @@ class ZscalerConnector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import pudb
     import argparse
+
+    import pudb
     pudb.set_trace()
 
     argparser = argparse.ArgumentParser()
@@ -793,30 +884,34 @@ if __name__ == '__main__':
     argparser.add_argument('input_test_json', help='Input Test JSON file')
     argparser.add_argument('-u', '--username', help='username', required=False)
     argparser.add_argument('-p', '--password', help='password', required=False)
+    argparser.add_argument('-v', '--verify', action='store_true', help='verify', required=False, default=False)
 
     args = argparser.parse_args()
+    verify = args.verify
     session_id = None
 
     if (args.username and args.password):
         login_url = BaseConnector._get_phantom_base_url() + "login"
         try:
             print("Accessing the Login page")
-            r = requests.get(login_url, verify=False)
+            r = requests.get(  # nosemgrep: python.requests.best-practice.use-timeout.use-timeout
+                login_url, verify=verify)
             csrftoken = r.cookies['csrftoken']
             data = {'username': args.username, 'password': args.password, 'csrfmiddlewaretoken': csrftoken}
             headers = {'Cookie': 'csrftoken={0}'.format(csrftoken), 'Referer': login_url}
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(login_url, verify=False, data=data, headers=headers)
+            r2 = requests.post(  # nosemgrep: python.requests.best-practice.use-timeout.use-timeout
+                login_url, verify=verify, data=data, headers=headers)
             session_id = r2.cookies['sessionid']
 
         except Exception as e:
             print(("Unable to get session id from the platform. Error: {0}".format(str(e))))
-            exit(1)
+            sys.exit(1)
 
     if (len(sys.argv) < 2):
         print("No test json specified as input")
-        exit(0)
+        sys.exit(0)
 
     with open(args.input_test_json) as f:
         in_json = f.read()
@@ -832,4 +927,4 @@ if __name__ == '__main__':
         ret_val = connector._handle_action(json.dumps(in_json), None)
         print(json.dumps(json.loads(ret_val), indent=4))
 
-    exit(0)
+    sys.exit(0)
