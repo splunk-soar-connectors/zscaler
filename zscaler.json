@@ -10,12 +10,12 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2017-2022 Splunk Inc.",
-    "app_version": "2.2.2",
+    "app_version": "2.3.2",
     "utctime_updated": "2022-01-24T06:29:48.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.py",
     "python_version": "3",
-    "min_phantom_version": "5.0.0",
+    "min_phantom_version": "5.1.0",
     "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud v6.0"
@@ -2005,31 +2005,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "Successfully submitted the file to Sandbox"
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.md5",
                     "data_type": "string",
                     "example_values": [
@@ -2080,6 +2055,32 @@
                     "example_values": [
                         "Virus"
                     ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Successfully submitted the file to Sandbox"
+                    ]
+                },
+
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
                 }
             ],
             "versions": "EQ(*)",
@@ -2094,7 +2095,7 @@
             "identifier": "get_admin_users",
             "description": "Get a list of admin users",
             "type": "investigate",
-			"parameters": {},
+            "parameters": {},
             "read_only": true,
             "output": [
                 {
@@ -2105,20 +2106,20 @@
                         "failed"
                     ]
                 },
-				{
+                {
                     "data_path": "action_result.data.*.id",
                     "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.loginName",
                     "data_type": "string",
-					"example_values": [
+                    "example_values": [
                         "first.last@domain.com"
                     ],
                     "column_name": "Login Name",
                     "column_order": 0
                 },
-				{
+                {
                     "data_path": "action_result.data.*.userName",
                     "data_type": "string",
                     "example_values": [
@@ -2130,7 +2131,7 @@
                 {
                     "data_path": "action_result.data.*.email",
                     "data_type": "string",
-					"example_values": [
+                    "example_values": [
                         "first.last@emaildomain.com"
                     ],
                     "column_name": "Email",
@@ -2163,14 +2164,18 @@
                 },
                 {
                     "data_path": "action_result.data.*.isNonEditable",
-                    "data_type": "boolean"
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.isPasswordLoginAllowed",
                     "data_type": "boolean",
-					"example_values": [
-                        "True",
-						"False"
+                    "example_values": [
+                        true,
+                        false
                     ],
                     "column_name": "Password Login",
                     "column_order": 4
@@ -2178,6 +2183,17 @@
                 {
                     "data_path": "action_result.data.*.pwdLastModifiedTime",
                     "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Successfully completed lookup"
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -2191,17 +2207,6 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "Successfully completed lookup"
                     ]
                 }
             ],
