@@ -21,4 +21,11 @@ ZSCALER_STATE_FILE_CORRUPT_ERR = (
     "Error occurred while loading the state file due to its unexpected format. "
     "Resetting the state file with the default format. Please try again."
 )
+ZSCALER_MAX_PAGESIZE = 1000
 ZSCALER_DEFAULT_TIMEOUT = 30
+
+# Constants relating to '_validate_integer'
+ZSCALER_VALID_INTEGER_MSG = "Please provide a valid integer value in the {param}"
+ZSCALER_NON_NEGATIVE_INTEGER_MSG = "Please provide a valid non-negative integer value in the {param}"
+ZSCALER_POSITIVE_INTEGER_MSG = "Please provide a valid non-zero positive integer value in the {param}"
+ZSCALER_LIMIT_KEY = "'limit' action parameter"

@@ -18,7 +18,7 @@
     "min_phantom_version": "5.1.0",
     "fips_compliant": true,
     "latest_tested_versions": [
-        "Cloud v6.0"
+        "Cloud v6.1"
     ],
     "app_wizard_version": "1.0.0",
     "configuration": {
@@ -2095,7 +2095,14 @@
             "identifier": "get_admin_users",
             "description": "Get a list of admin users",
             "type": "investigate",
-            "parameters": {},
+            "parameters": {
+                "limit": {
+                    "data_type": "numeric",
+                    "description": "Maximum number of records to fetch",
+                    "default": 1000,
+                    "order": 0
+                }
+            },
             "read_only": true,
             "output": [
                 {
@@ -2104,6 +2111,13 @@
                     "example_values": [
                         "success",
                         "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.limit",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1000
                     ]
                 },
                 {
@@ -2192,7 +2206,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Successfully completed lookup"
+                        "Total admin users: 100"
                     ]
                 },
                 {

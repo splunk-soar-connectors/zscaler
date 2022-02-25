@@ -73,6 +73,32 @@ class ZscalerConnector(BaseConnector):
 
         return error_text
 
+    def _validate_integer(self, action_result, parameter, key, allow_zero=False):
+        """
+        Validate an integer.
+
+        :param action_result: Action result or BaseConnector object
+        :param parameter: input parameter
+        :param key: input parameter message key
+        :allow_zero: whether zero should be considered as valid value or not
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS, integer value of the parameter or None in case of failure
+        """
+        if parameter is not None:
+            try:
+                if not float(parameter).is_integer():
+                    return action_result.set_status(phantom.APP_ERROR, ZSCALER_VALID_INTEGER_MSG.format(param=key)), None
+
+                parameter = int(parameter)
+            except Exception:
+                return action_result.set_status(phantom.APP_ERROR, ZSCALER_VALID_INTEGER_MSG.format(param=key)), None
+
+            if parameter < 0:
+                return action_result.set_status(phantom.APP_ERROR, ZSCALER_NON_NEGATIVE_INTEGER_MSG.format(param=key)), None
+            if not allow_zero and parameter == 0:
+                return action_result.set_status(phantom.APP_ERROR, ZSCALER_POSITIVE_INTEGER_MSG.format(param=key)), None
+
+        return phantom.APP_SUCCESS, parameter
+
     def _process_empty_response(self, response, action_result):
         if response.status_code == 200 or response.status_code == 204:
             return RetVal(phantom.APP_SUCCESS, {})
@@ -768,14 +794,29 @@ class ZscalerConnector(BaseConnector):
         """
 
         action_result = self.add_action_result(ActionResult(dict(param)))
-        ret_val, get_admin_users = self._make_rest_call_helper('/api/v1/adminUsers', action_result)
-
+        ret_val, limit = self._validate_integer(action_result, param.get('limit', ZSCALER_MAX_PAGESIZE), ZSCALER_LIMIT_KEY)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
+        params = {}
+        admin_users = []
+        params['page'] = 1
+        while True:
+            if limit < ZSCALER_MAX_PAGESIZE:
+                params['pageSize'] = limit
+            else:
+                params['pageSize'] = ZSCALER_MAX_PAGESIZE
+            ret_val, get_admin_users = self._make_rest_call_helper('/api/v1/adminUsers', action_result, params=params)
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+            for admin_user in get_admin_users:
+                admin_users.append(admin_user)
+            limit = limit - params['pageSize']
+            if limit <= 0 or len(get_admin_users) == 0:
+                break
+            params['page'] += 1
 
-        for admin_users in get_admin_users:
-            action_result.add_data(admin_users)
-
+        for user in admin_users:
+            action_result.add_data(user)
         summary = action_result.update_summary({})
         summary['total_admin_users'] = action_result.get_data_size()
 
