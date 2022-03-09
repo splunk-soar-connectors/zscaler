@@ -121,7 +121,6 @@ class ZscalerConnector(BaseConnector):
         except:
             error_text = "Cannot parse error details"
 
-        # Handling of error_text for both the Python 2 and Python 3 versions
         error_text = error_text
 
         message = "Please check the asset configuration parameters (the base_url should not end with "\
@@ -355,6 +354,7 @@ class ZscalerConnector(BaseConnector):
     def _handle_test_connectivity(self, param):
         # If we are here we have successfully initialized a session
         self.save_progress("Test Connectivity Passed")
+        self.debug_print("Test Connectivity Passed.")
         return self.set_status(phantom.APP_SUCCESS)
 
     def _filter_endpoints(self, action_result, to_add, existing, action, name):

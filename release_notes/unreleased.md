@@ -1,2 +1,2 @@
 **Unreleased**
-* Added new action 'get admin users'
+* Added new action 'get admin users'. [PAPP-24395]
