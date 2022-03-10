@@ -2,11 +2,11 @@
 # Zscaler
 
 Publisher: Splunk  
-Connector Version: 2\.2\.2  
+Connector Version: 2\.3\.0  
 Product Vendor: Zscaler  
 Product Name: Zscaler  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 5\.0\.0  
+Minimum Product Version: 5\.1\.0  
 
 This app implements containment and investigative actions on Zscaler
 
@@ -61,8 +61,8 @@ The above steps would help run the Lookup URL action as expected.
 The Sandbox Submission API requires a separate API key and uses a different host
 (csbapi.\[zscaler-cloud-name\]). For the **submit_file** action, the **sandbox_base_url** and
 **sandbox_api_token** asset configuration parameters should be configured. These two asset
-parameters, wont affect test_connectivity. Follow the below steps to fetch these credentials for the
-**submit_file** action
+parameters, won't affect test_connectivity. Follow the below steps to fetch these credentials for
+the **submit_file** action
 
 -   Log in to the ZIA Admin Portal using your **admin** credentials.
 -   Once logged in, go to **Administration -> Cloud Service API Key Management** section. In order
@@ -115,6 +115,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [lookup ip](#action-lookup-ip) - Lookup the categories related to an IP  
 [lookup url](#action-lookup-url) - Lookup the categories related to a URL  
 [submit file](#action-submit-file) - Submit a file to Zscaler Sandbox  
+[get admin users](#action-get-admin-users) - Get a list of admin users  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -540,10 +541,6 @@ DATA PATH | TYPE | CONTAINS
 action\_result\.status | string | 
 action\_result\.parameter\.vault\_id | string |  `vault id`  `sha1` 
 action\_result\.parameter\.force | boolean | 
-action\_result\.summary | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric | 
 action\_result\.data\.\*\.md5 | string |  `md5` 
 action\_result\.data\.\*\.code | numeric | 
 action\_result\.data\.\*\.message | string | 
@@ -551,9 +548,13 @@ action\_result\.data\.\*\.fileType | string |
 action\_result\.data\.\*\.virusName | string | 
 action\_result\.data\.\*\.virusType | string | 
 action\_result\.data\.\*\.sandboxSubmission | string | 
+action\_result\.summary | string | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
 
 ## action: 'get admin users'
-Retrieve Zscaler portal administrative users and their roles
+Get a list of admin users
 
 Type: **investigate**  
 Read only: **True**
@@ -561,11 +562,13 @@ Read only: **True**
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
+**limit** |  optional  | Maximum number of records to fetch | numeric | 
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
+action\_result\.parameter\.limit | numeric | 
 action\_result\.data\.\*\.id | string | 
 action\_result\.data\.\*\.loginName | string | 
 action\_result\.data\.\*\.userName | string | 
@@ -574,9 +577,11 @@ action\_result\.data\.\*\.role\.id | string |
 action\_result\.data\.\*\.role\.name | string | 
 action\_result\.data\.\*\.role\.extensions\.adminRank | string | 
 action\_result\.data\.\*\.role\.extensions\.roleType | string | 
-action\_result\.data\.\*\.role\.adminScopeType | string | 
-action\_result\.data\.\*\.role\.isNonEditable | boolean | 
-action\_result\.data\.\*\.role\.isPasswordLoginAllowed | boolean | 
-action\_result\.data\.\*\.role\.pwdLastModifiedTime | numeric | 
+action\_result\.data\.\*\.adminScopeType | string | 
+action\_result\.data\.\*\.isNonEditable | boolean | 
+action\_result\.data\.\*\.isPasswordLoginAllowed | boolean | 
+action\_result\.data\.\*\.pwdLastModifiedTime | numeric | 
+action\_result\.summary\.total\_admin\_users | numeric | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric | 
