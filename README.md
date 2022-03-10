@@ -551,3 +551,32 @@ action\_result\.data\.\*\.fileType | string |
 action\_result\.data\.\*\.virusName | string | 
 action\_result\.data\.\*\.virusType | string | 
 action\_result\.data\.\*\.sandboxSubmission | string | 
+
+## action: 'get admin users'
+Retrieve Zscaler portal administrative users and their roles
+
+Type: **investigate**  
+Read only: **True**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.data\.\*\.id | string | 
+action\_result\.data\.\*\.loginName | string | 
+action\_result\.data\.\*\.userName | string | 
+action\_result\.data\.\*\.email | string | 
+action\_result\.data\.\*\.role\.id | string | 
+action\_result\.data\.\*\.role\.name | string | 
+action\_result\.data\.\*\.role\.extensions\.adminRank | string | 
+action\_result\.data\.\*\.role\.extensions\.roleType | string | 
+action\_result\.data\.\*\.role\.adminScopeType | string | 
+action\_result\.data\.\*\.role\.isNonEditable | boolean | 
+action\_result\.data\.\*\.role\.isPasswordLoginAllowed | boolean | 
+action\_result\.data\.\*\.role\.pwdLastModifiedTime | numeric | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric | 

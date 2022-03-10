@@ -12,7 +12,7 @@
 # the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 # either express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
-def get_ctx_result(result):
+def get_ctx_result(result, submit_file=False):
 
     ctx_result = {}
     param = result.get_param()
@@ -22,7 +22,10 @@ def get_ctx_result(result):
     ctx_result['param'] = param
 
     if data:
-        ctx_result['data'] = data[0]
+        if submit_file:
+            ctx_result['data'] = data[0]
+        else:
+            ctx_result['data'] = data
 
     if summary:
         ctx_result['summary'] = summary
@@ -36,9 +39,23 @@ def display_view(provides, all_app_runs, context):
     for summary, action_results in all_app_runs:
         for result in action_results:
 
-            ctx_result = get_ctx_result(result)
+            ctx_result = get_ctx_result(result, submit_file=True)
             if not ctx_result:
                 continue
             results.append(ctx_result)
 
     return 'zscaler_submit_file.html'
+
+
+def display_users(provides, all_app_runs, context):
+
+    context['results'] = results = []
+
+    for summary, action_results in all_app_runs:
+        for result in action_results:
+            ctx_result = get_ctx_result(result)
+            if (not ctx_result):
+                continue
+            results.append(ctx_result)
+
+    return 'zscaler_get_admin_users.html'
