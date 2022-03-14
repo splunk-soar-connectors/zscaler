@@ -22,7 +22,7 @@ import time
 import phantom.app as phantom
 import phantom.rules as phantom_rules
 import requests
-from bs4 import BeautifulSoup, UnicodeDammit
+from bs4 import BeautifulSoup
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 
@@ -46,63 +46,58 @@ class ZscalerConnector(BaseConnector):
         self._headers = None
         self._category = None
 
-    def _handle_py_ver_compat_for_input_str(self, input_str):
-        """
-        This method returns the encoded|original string based on the Python version.
-
-        :param python_version: Information of the Python version
-        :param input_str: Input string to be processed
-        :return: input_str (Processed input string based on following logic 'input_str - Python 3; encoded input_str - Python 2')
-        """
-
-        try:
-            if input_str and self._python_version == 2:
-                input_str = UnicodeDammit(input_str).unicode_markup.encode('utf-8')
-        except:
-            self.debug_print("Error occurred while handling python 2to3 compatibility for the input string")
-
-        return input_str
-
     def _get_error_message_from_exception(self, e):
-        """ This method is used to get appropriate error message from the exception.
+        """
+        Get appropriate error message from the exception.
         :param e: Exception object
         :return: error message
         """
 
-        error_msg = ZSCALER_ERROR_MESSAGE
-        error_code = ZSCALER_ERROR_CODE_MESSAGE
+        error_code = None
+        error_msg = ZSCALER_ERR_MSG_UNAVAILABLE
+
         try:
             if hasattr(e, "args"):
                 if len(e.args) > 1:
                     error_code = e.args[0]
                     error_msg = e.args[1]
                 elif len(e.args) == 1:
-                    error_code = ZSCALER_ERROR_CODE_MESSAGE
                     error_msg = e.args[0]
-            else:
-                error_code = ZSCALER_ERROR_CODE_MESSAGE
-                error_msg = ZSCALER_ERROR_MESSAGE
-        except:
-            error_code = ZSCALER_ERROR_CODE_MESSAGE
-            error_msg = ZSCALER_ERROR_MESSAGE
+        except Exception:
+            pass
 
-        try:
-            error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
-        except TypeError:
-            error_msg = TYPE_ERROR_MSG
-        except:
-            error_msg = ZSCALER_ERROR_MESSAGE
-
-        try:
-            if error_code in ZSCALER_ERROR_CODE_MESSAGE:
-                error_text = "Error Message: {0}".format(error_msg)
-            else:
-                error_text = "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
-        except:
-            self.debug_print("Error occurred while parsing error message")
-            error_text = PARSE_ERROR_MSG
+        if not error_code:
+            error_text = "Error Message: {}".format(error_msg)
+        else:
+            error_text = "Error Code: {}. Error Message: {}".format(error_code, error_msg)
 
         return error_text
+
+    def _validate_integer(self, action_result, parameter, key, allow_zero=False):
+        """
+        Validate an integer.
+
+        :param action_result: Action result or BaseConnector object
+        :param parameter: input parameter
+        :param key: input parameter message key
+        :allow_zero: whether zero should be considered as valid value or not
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS, integer value of the parameter or None in case of failure
+        """
+        if parameter is not None:
+            try:
+                if not float(parameter).is_integer():
+                    return action_result.set_status(phantom.APP_ERROR, ZSCALER_VALID_INTEGER_MSG.format(param=key)), None
+
+                parameter = int(parameter)
+            except Exception:
+                return action_result.set_status(phantom.APP_ERROR, ZSCALER_VALID_INTEGER_MSG.format(param=key)), None
+
+            if parameter < 0:
+                return action_result.set_status(phantom.APP_ERROR, ZSCALER_NON_NEGATIVE_INTEGER_MSG.format(param=key)), None
+            if not allow_zero and parameter == 0:
+                return action_result.set_status(phantom.APP_ERROR, ZSCALER_POSITIVE_INTEGER_MSG.format(param=key)), None
+
+        return phantom.APP_SUCCESS, parameter
 
     def _process_empty_response(self, response, action_result):
         if response.status_code == 200 or response.status_code == 204:
@@ -116,6 +111,9 @@ class ZscalerConnector(BaseConnector):
 
         try:
             soup = BeautifulSoup(response.text, "html.parser")
+            # Remove the script, style, footer and navigation part from the HTML message
+            for element in soup(["script", "style", "footer", "nav"]):
+                element.extract()
             error_text = soup.text
             split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
@@ -123,8 +121,7 @@ class ZscalerConnector(BaseConnector):
         except:
             error_text = "Cannot parse error details"
 
-        # Handling of error_text for both the Python 2 and Python 3 versions
-        error_text = self._handle_py_ver_compat_for_input_str(error_text)
+        error_text = error_text
 
         message = "Please check the asset configuration parameters (the base_url should not end with "\
             "/api/v1 e.g. https://admin.zscaler_instance.net)."
@@ -224,7 +221,7 @@ class ZscalerConnector(BaseConnector):
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid method: {0}".format(method)), resp_json)
 
         # Create a URL to connect to
-        url = '{}{}'.format(self._handle_py_ver_compat_for_input_str(self._base_url), endpoint)
+        url = '{}{}'.format(self._base_url, endpoint)
 
         try:
             if use_json:
@@ -357,6 +354,7 @@ class ZscalerConnector(BaseConnector):
     def _handle_test_connectivity(self, param):
         # If we are here we have successfully initialized a session
         self.save_progress("Test Connectivity Passed")
+        self.debug_print("Test Connectivity Passed.")
         return self.set_status(phantom.APP_SUCCESS)
 
     def _filter_endpoints(self, action_result, to_add, existing, action, name):
@@ -405,8 +403,8 @@ class ZscalerConnector(BaseConnector):
         summary['updated'] = filtered_endpoints
         summary['ignored'] = list(set(endpoints) - set(filtered_endpoints))
         # Encode the unicode IP or URL strings
-        summary['updated'] = [self._handle_py_ver_compat_for_input_str(element) for element in summary['updated']]
-        summary['ignored'] = [self._handle_py_ver_compat_for_input_str(element) for element in summary['ignored']]
+        summary['updated'] = [element for element in summary['updated']]
+        summary['ignored'] = [element for element in summary['ignored']]
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_allowlist(self, action_result):
@@ -447,8 +445,8 @@ class ZscalerConnector(BaseConnector):
         summary['updated'] = filtered_endpoints
         summary['ignored'] = list(set(endpoints) - set(filtered_endpoints))
         # Encode the unicode IP or URL strings
-        summary['updated'] = [self._handle_py_ver_compat_for_input_str(element) for element in summary['updated']]
-        summary['ignored'] = [self._handle_py_ver_compat_for_input_str(element) for element in summary['ignored']]
+        summary['updated'] = [element for element in summary['updated']]
+        summary['ignored'] = [element for element in summary['ignored']]
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_category(self, action_result, category):
@@ -505,13 +503,13 @@ class ZscalerConnector(BaseConnector):
         summary['updated'] = filtered_endpoints
         summary['ignored'] = list(set(endpoints) - set(filtered_endpoints))
         # Encode the unicode IP or URL strings
-        summary['updated'] = [self._handle_py_ver_compat_for_input_str(element) for element in summary['updated']]
-        summary['ignored'] = [self._handle_py_ver_compat_for_input_str(element) for element in summary['ignored']]
+        summary['updated'] = [element for element in summary['updated']]
+        summary['ignored'] = [element for element in summary['ignored']]
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _block_endpoint(self, action_result, endpoints, category):
         list_endpoints = list()
-        list_endpoints = [self._handle_py_ver_compat_for_input_str(x.strip()) for x in endpoints.split(',')]
+        list_endpoints = [x.strip() for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
@@ -527,7 +525,7 @@ class ZscalerConnector(BaseConnector):
 
     def _unblock_endpoint(self, action_result, endpoints, category):
         list_endpoints = list()
-        list_endpoints = [self._handle_py_ver_compat_for_input_str(x.strip()) for x in endpoints.split(',')]
+        list_endpoints = [x.strip() for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
@@ -559,7 +557,7 @@ class ZscalerConnector(BaseConnector):
 
     def _allowlist_endpoint(self, action_result, endpoints, category):
         list_endpoints = list()
-        list_endpoints = [self._handle_py_ver_compat_for_input_str(x.strip()) for x in endpoints.split(',')]
+        list_endpoints = [x.strip() for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
@@ -575,7 +573,7 @@ class ZscalerConnector(BaseConnector):
 
     def _unallow_endpoint(self, action_result, endpoints, category):
         list_endpoints = list()
-        list_endpoints = [self._handle_py_ver_compat_for_input_str(x.strip()) for x in endpoints.split(',')]
+        list_endpoints = [x.strip() for x in endpoints.split(',')]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
@@ -742,7 +740,7 @@ class ZscalerConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         list_endpoints = list()
-        list_endpoints = [self._handle_py_ver_compat_for_input_str(x.strip()) for x in param['ip'].split(',')]
+        list_endpoints = [x.strip() for x in param['ip'].split(',')]
         endpoints = list(filter(None, list_endpoints))
 
         return self._lookup_endpoint(action_result, endpoints)
@@ -752,7 +750,7 @@ class ZscalerConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         list_endpoints = list()
-        list_endpoints = [self._handle_py_ver_compat_for_input_str(x.strip()) for x in param['url'].split(',')]
+        list_endpoints = [x.strip() for x in param['url'].split(',')]
         endpoints = list(filter(None, list_endpoints))
 
         endpoints = self._truncate_protocol(endpoints)
@@ -787,6 +785,42 @@ class ZscalerConnector(BaseConnector):
                 return action_result.set_status(phantom.APP_ERROR,
                         "Please provide valid comma-separated values in the action parameter. Max allowed length for each value is 1024.")
         return phantom.APP_SUCCESS
+
+    def _handle_get_admin_users(self, param):
+        """
+        This action is used to fetch all admin users
+        :param: No parameters
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        ret_val, limit = self._validate_integer(action_result, param.get('limit', ZSCALER_MAX_PAGESIZE), ZSCALER_LIMIT_KEY)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+        params = {}
+        admin_users = []
+        params['page'] = 1
+        while True:
+            if limit < ZSCALER_MAX_PAGESIZE:
+                params['pageSize'] = limit
+            else:
+                params['pageSize'] = ZSCALER_MAX_PAGESIZE
+            ret_val, get_admin_users = self._make_rest_call_helper('/api/v1/adminUsers', action_result, params=params)
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+            for admin_user in get_admin_users:
+                admin_users.append(admin_user)
+            limit = limit - params['pageSize']
+            if limit <= 0 or len(get_admin_users) == 0:
+                break
+            params['page'] += 1
+
+        for user in admin_users:
+            action_result.add_data(user)
+        summary = action_result.update_summary({})
+        summary['total_admin_users'] = action_result.get_data_size()
+
+        return action_result.set_status(phantom.APP_SUCCESS)
 
     def handle_action(self, param):
 
@@ -839,19 +873,21 @@ class ZscalerConnector(BaseConnector):
         elif action_id == 'submit_file':
             ret_val = self._handle_submit_file(param)
 
+        elif action_id == 'get_admin_users':
+            ret_val = self._handle_get_admin_users(param)
+
         return ret_val
 
     def initialize(self):
 
-        # Fetching the Python major version
-        try:
-            self._python_version = int(sys.version_info[0])
-        except:
-            return self.set_status(phantom.APP_ERROR, "Error occurred while getting the Phantom server's Python major version.")
-
         # Load the state in initialize, use it to store data
         # that needs to be accessed across actions
         self._state = self.load_state()
+        if not isinstance(self._state, dict):
+            self.debug_print("Resetting the state file with the default format")
+            self._state = {"app_version": self.get_app_json().get("app_version")}
+            return self.set_status(phantom.APP_ERROR, ZSCALER_STATE_FILE_CORRUPT_ERR)
+
         config = self.get_config()
         self._base_url = config['base_url'].rstrip('/')
         self._username = config['username']
@@ -894,15 +930,15 @@ if __name__ == '__main__':
         login_url = BaseConnector._get_phantom_base_url() + "login"
         try:
             print("Accessing the Login page")
-            r = requests.get(  # nosemgrep: python.requests.best-practice.use-timeout.use-timeout
-                login_url, verify=verify)
+            r = requests.get(
+                login_url, verify=verify, timeout=ZSCALER_DEFAULT_TIMEOUT)
             csrftoken = r.cookies['csrftoken']
             data = {'username': args.username, 'password': args.password, 'csrfmiddlewaretoken': csrftoken}
             headers = {'Cookie': 'csrftoken={0}'.format(csrftoken), 'Referer': login_url}
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(  # nosemgrep: python.requests.best-practice.use-timeout.use-timeout
-                login_url, verify=verify, data=data, headers=headers)
+            r2 = requests.post(
+                login_url, verify=verify, data=data, headers=headers, timeout=ZSCALER_DEFAULT_TIMEOUT)
             session_id = r2.cookies['sessionid']
 
         except Exception as e:

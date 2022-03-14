@@ -10,15 +10,15 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2017-2022 Splunk Inc.",
-    "app_version": "2.2.2",
+    "app_version": "2.3.0",
     "utctime_updated": "2022-01-24T06:29:48.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.py",
     "python_version": "3",
-    "min_phantom_version": "5.0.0",
+    "min_phantom_version": "5.1.0",
     "fips_compliant": true,
     "latest_tested_versions": [
-        "Cloud v6.0"
+        "Cloud v6.1"
     ],
     "app_wizard_version": "1.0.0",
     "configuration": {
@@ -2005,31 +2005,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "Successfully submitted the file to Sandbox"
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.md5",
                     "data_type": "string",
                     "example_values": [
@@ -2080,6 +2055,31 @@
                     "example_values": [
                         "Virus"
                     ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Successfully submitted the file to Sandbox"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
                 }
             ],
             "versions": "EQ(*)",
@@ -2088,37 +2088,171 @@
                 "type": "custom",
                 "view": "zscaler_view.display_view"
             }
+        },
+        {
+            "action": "get admin users",
+            "identifier": "get_admin_users",
+            "description": "Get a list of admin users",
+            "type": "investigate",
+            "parameters": {
+                "limit": {
+                    "data_type": "numeric",
+                    "description": "Maximum number of records to fetch",
+                    "default": 1000,
+                    "order": 0
+                }
+            },
+            "read_only": true,
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.limit",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1000
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.loginName",
+                    "data_type": "string",
+                    "example_values": [
+                        "first.last@domain.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.userName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Last, First"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.email",
+                    "data_type": "string",
+                    "example_values": [
+                        "first.last@emaildomain.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.role.id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.role.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "Super Admin"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.role.extensions.adminRank",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.role.extensions.roleType",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.adminScopeType",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.isNonEditable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.isPasswordLoginAllowed",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.pwdLastModifiedTime",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary.total_admin_users",
+                    "data_type": "numeric",
+                    "example_values": [
+                        10
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Total admin users: 100"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "title": "Get Admin Users",
+                "type": "custom",
+                "view": "zscaler_view.display_users"
+            },
+            "versions": "EQ(*)"
         }
     ],
     "pip_dependencies": {
         "wheel": [
             {
                 "module": "beautifulsoup4",
-                "input_file": "wheels/beautifulsoup4-4.9.1-py3-none-any.whl"
+                "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
             },
             {
                 "module": "certifi",
-                "input_file": "wheels/certifi-2021.10.8-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/certifi-2021.10.8-py2.py3-none-any.whl"
             },
             {
                 "module": "chardet",
-                "input_file": "wheels/chardet-3.0.4-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
             },
             {
                 "module": "idna",
-                "input_file": "wheels/idna-2.10-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
             },
             {
                 "module": "requests",
-                "input_file": "wheels/requests-2.25.0-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/requests-2.25.0-py2.py3-none-any.whl"
             },
             {
                 "module": "soupsieve",
-                "input_file": "wheels/soupsieve-2.3.1-py3-none-any.whl"
+                "input_file": "wheels/py3/soupsieve-2.3.1-py3-none-any.whl"
             },
             {
                 "module": "urllib3",
-                "input_file": "wheels/urllib3-1.26.7-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/urllib3-1.26.8-py2.py3-none-any.whl"
             }
         ]
     }
