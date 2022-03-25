@@ -301,9 +301,9 @@ class ZscalerConnector(BaseConnector):
 
     def _init_session(self):
         config = self.get_config()
-        username = config['username']
-        password = config['password']
-        api_key = config['api_key']
+        username = self._username
+        password = self._password
+        api_key = self._api_key
         self._base_url = config['base_url'].rstrip('/')
         try:
             timestamp, obf_api_key = self._obfuscate_api_key(api_key)
@@ -822,6 +822,60 @@ class ZscalerConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _handle_get_users(self, param):
+        """
+        This action is used to fetch all users
+        :param name: User name  
+        :param dept: User department
+        :param group: User group
+        :param limit: Max number of users to retrieve
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+
+        # Add an action result object to self (BaseConnector) to represent the action for this param
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        
+        if not param:
+            return action_result.set_status(phantom.APP_ERROR, "No filters provided")
+
+        ret_val, limit = self._validate_integer(action_result, param.get('limit', ZSCALER_MAX_PAGESIZE), ZSCALER_LIMIT_KEY)
+
+        params = {
+            "name": param.get('name'), 
+            "dept": param.get('dept'), 
+            "group": param.get('group'),
+            'page': 1
+        }
+        params = {}
+        users = []
+        params['page'] = 1
+        while True:
+            if limit < ZSCALER_MAX_PAGESIZE:
+                params['pageSize'] = limit
+            else:
+                params['pageSize'] = ZSCALER_MAX_PAGESIZE
+            ret_val, get_users = self._make_rest_call_helper('/api/v1/users', action_result, params=params)
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+            for user in get_users:
+                users.append(user)
+            limit = limit - params['pageSize']
+            if limit <= 0 or len(get_users) == 0:
+                break
+            params['page'] += 1
+
+        # Add the response into the data section
+        for user in users:
+            action_result.add_data(user)
+
+        # Add a dictionary that is made up of the most important values from data into the summary
+        summary = action_result.update_summary({})
+        summary['total_users'] = action_result.get_data_size()
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+    
+
     def handle_action(self, param):
 
         ret_val = phantom.APP_SUCCESS
@@ -875,6 +929,19 @@ class ZscalerConnector(BaseConnector):
 
         elif action_id == 'get_admin_users':
             ret_val = self._handle_get_admin_users(param)
+        
+        elif action_id == 'get_users':
+            ret_val = self._handle_get_users(param)
+            
+        elif action_id == 'get_groups':
+            ret_val = self._handle_get_groups(param)
+            
+        elif action_id == 'add_user_to_group':
+            ret_val = self._handle_add_user_to_group(param)
+            
+        elif action_id == 'remove_user_from_group':
+            ret_val = self._handle_remove_user_from_group(param)
+    
 
         return ret_val
 
@@ -892,6 +959,7 @@ class ZscalerConnector(BaseConnector):
         self._base_url = config['base_url'].rstrip('/')
         self._username = config['username']
         self._password = config['password']
+        self._api_key = config['api_key']
         self._sandbox_base_url = config.get('sandbox_base_url', None)
         if self._sandbox_base_url:
             self._sandbox_base_url = self._sandbox_base_url.rstrip('/')

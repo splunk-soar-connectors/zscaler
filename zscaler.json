@@ -10,7 +10,7 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2017-2022 Splunk Inc.",
-    "app_version": "2.3.0",
+    "app_version": "2.3.1",
     "utctime_updated": "2022-01-24T06:29:48.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.py",
@@ -2121,7 +2121,13 @@
                 },
                 {
                     "data_path": "action_result.data.*.id",
-                    "data_type": "string"
+                    "data_type": "numeric",
+                    "contains": [
+                        "zscaler id"
+                    ],
+                    "example_values": [
+                        889814
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.loginName",
@@ -2140,6 +2146,9 @@
                 {
                     "data_path": "action_result.data.*.email",
                     "data_type": "string",
+                    "contains": [
+                        "email"
+                    ],
                     "example_values": [
                         "first.last@emaildomain.com"
                     ]
@@ -2220,6 +2229,211 @@
                 "title": "Get Admin Users",
                 "type": "custom",
                 "view": "zscaler_view.display_users"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get users",
+            "identifier": "get_users",
+            "description": "Gets a list of all users and allows user filtering by name, department, or group",
+            "verbose": "Gets a list of all users and allows user filtering by name, department, or group. The name search parameter performs a partial match. The dept and group parameters perform a 'starts with' match.",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "name": {
+                    "description": "user name",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": true,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 0,
+                    "name": "name",
+                    "id": 1,
+                    "param_name": "name"
+                },
+                "dept": {
+                    "description": "user department",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": true,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 1,
+                    "name": "dept",
+                    "id": 2,
+                    "param_name": "dept"
+                },
+                "group": {
+                    "description": "user group",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": true,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 2,
+                    "name": "group",
+                    "id": 3,
+                    "param_name": "group"
+                },
+                "limit": {
+                    "data_type": "numeric",
+                    "description": "Maximum number of records to fetch",
+                    "default": 1000,
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.name",
+                    "data_type": "string",
+                    "contains": []
+                },
+                {
+                    "data_path": "action_result.parameter.dept",
+                    "data_type": "string",
+                    "contains": []
+                },
+                {
+                    "data_path": "action_result.parameter.group",
+                    "data_type": "string",
+                    "contains": []
+                },
+                {
+                    "data_path": "action_result.parameter.limit",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1000
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "zscaler id"
+                    ],
+                    "example_values": [
+                        889814
+                    ],
+                    "column_name": "ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "First Last"
+                    ],
+                    "column_name": "NAME",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.email",
+                    "data_type": "string",
+                    "contains": [
+                        "email"
+                    ],
+                    "example_values": [
+                        "first.last@domain.com"
+                    ],
+                    "column_name": "EMAIL",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.groups.*.id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "zscaler group id"
+                    ],
+                    "example_values": [
+                        8894813
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.groups.*.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "Super Admin"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.department.id",
+                    "data_type": "numeric",
+                    "example_values": [
+                        81896690
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.department.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "IT"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.adminUser",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.isNonEditable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.deleted",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.total_users",
+                    "data_type": "numeric",
+                    "example_values": [
+                        10
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "title": "Get Users",
+                "type": "table"
             },
             "versions": "EQ(*)"
         }
