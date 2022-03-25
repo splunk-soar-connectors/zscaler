@@ -300,11 +300,9 @@ class ZscalerConnector(BaseConnector):
         return now, key
 
     def _init_session(self):
-        config = self.get_config()
         username = self._username
         password = self._password
         api_key = self._api_key
-        self._base_url = config['base_url'].rstrip('/')
         try:
             timestamp, obf_api_key = self._obfuscate_api_key(api_key)
         except:
@@ -825,7 +823,7 @@ class ZscalerConnector(BaseConnector):
     def _handle_get_users(self, param):
         """
         This action is used to fetch all users
-        :param name: User name  
+        :param name: User name
         :param dept: User department
         :param group: User group
         :param limit: Max number of users to retrieve
@@ -835,15 +833,15 @@ class ZscalerConnector(BaseConnector):
 
         # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
-        
+
         if not param:
             return action_result.set_status(phantom.APP_ERROR, "No filters provided")
 
         ret_val, limit = self._validate_integer(action_result, param.get('limit', ZSCALER_MAX_PAGESIZE), ZSCALER_LIMIT_KEY)
 
         params = {
-            "name": param.get('name'), 
-            "dept": param.get('dept'), 
+            "name": param.get('name'),
+            "dept": param.get('dept'),
             "group": param.get('group'),
             'page': 1
         }
@@ -874,7 +872,31 @@ class ZscalerConnector(BaseConnector):
         summary['total_users'] = action_result.get_data_size()
 
         return action_result.set_status(phantom.APP_SUCCESS)
-    
+
+    def _handle_get_groups(self, param):
+        """
+        This action is used to fetch groups based on search parameter
+        :param search: Search string to match
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        params = {"search": param.get('search')}
+        ret_val, response = self._make_rest_call_helper('/api/v1/groups', action_result, params=params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        # Add the response into the data section
+        for data in response:
+            action_result.add_data(data)
+
+        summary = action_result.update_summary({})
+        summary['total_groups'] = action_result.get_data_size()
+
+        return action_result.set_status(phantom.APP_SUCCESS)
 
     def handle_action(self, param):
 
@@ -929,19 +951,18 @@ class ZscalerConnector(BaseConnector):
 
         elif action_id == 'get_admin_users':
             ret_val = self._handle_get_admin_users(param)
-        
+
         elif action_id == 'get_users':
             ret_val = self._handle_get_users(param)
-            
+
         elif action_id == 'get_groups':
             ret_val = self._handle_get_groups(param)
-            
-        elif action_id == 'add_user_to_group':
-            ret_val = self._handle_add_user_to_group(param)
-            
-        elif action_id == 'remove_user_from_group':
-            ret_val = self._handle_remove_user_from_group(param)
-    
+
+        # elif action_id == 'add_user_to_group':
+        #    ret_val = self._handle_add_user_to_group(param)
+
+        # elif action_id == 'remove_user_from_group':
+        #    ret_val = self._handle_remove_user_from_group(param)
 
         return ret_val
 
