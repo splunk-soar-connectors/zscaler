@@ -845,7 +845,6 @@ class ZscalerConnector(BaseConnector):
             "group": param.get('group'),
             'page': 1
         }
-        params = {}
         users = []
         params['page'] = 1
         while True:
@@ -882,16 +881,29 @@ class ZscalerConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
 
         action_result = self.add_action_result(ActionResult(dict(param)))
+        ret_val, limit = self._validate_integer(action_result, param.get('limit', ZSCALER_MAX_PAGESIZE), ZSCALER_LIMIT_KEY)
 
         params = {"search": param.get('search')}
-        ret_val, response = self._make_rest_call_helper('/api/v1/groups', action_result, params=params)
+        groups = []
+        while True:
+            if limit < ZSCALER_MAX_PAGESIZE:
+                params['pageSize'] = limit
+            else:
+                params['pageSize'] = ZSCALER_MAX_PAGESIZE
+            ret_val, get_groups = self._make_rest_call_helper('/api/v1/groups', action_result, params=params)
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+            for group in get_groups:
+                groups.append(group)
+            limit = limit - params['pageSize']
+            if limit <= 0 or len(get_groups) == 0:
+                break
+            params['page'] += 1
 
-        if phantom.is_fail(ret_val):
-            return action_result.get_status()
 
         # Add the response into the data section
-        for data in response:
-            action_result.add_data(data)
+        for group in groups:
+            action_result.add_data(group)
 
         summary = action_result.update_summary({})
         summary['total_groups'] = action_result.get_data_size()
