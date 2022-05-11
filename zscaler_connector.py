@@ -900,8 +900,6 @@ class ZscalerConnector(BaseConnector):
                 break
             params['page'] += 1
 
-
-        # Add the response into the data section
         for group in groups:
             action_result.add_data(group)
 
