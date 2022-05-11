@@ -898,6 +898,81 @@ class ZscalerConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _handle_add_user_to_group(self, param):
+        """
+        This action is used to add users to a group based on user id and group id
+        :param user_id: User ID to add
+        :param group_id: Group to add user tio
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        user_id = param['user_id']
+        group_id = param['group_id']
+        ret_val, user_response = self._make_rest_call_helper(f'/api/v1/users/{user_id}', action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+        ret_val, group_response = self._make_rest_call_helper(f'/api/v1/groups/{group_id}', action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+        if group_response in user_response['groups']:
+            summary = action_result.update_summary({})
+            summary['message'] = "User already in group"
+            action_result.add_data(group_response)
+            return action_result.set_status(phantom.APP_SUCCESS, "User already in group")
+        user_response['groups'].append(group_response)
+        data = user_response
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/users/{user_id}', action_result, data=data, method='put')
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+
+        summary = action_result.update_summary({})
+        summary['message'] = "User succesfully added to group"
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_remove_user_from_group(self, param):
+        """
+        This action is used to remove users from a group based on user id and group id
+        :param user_id: User ID to remove
+        :param group_id: Group to remove user from
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        user_id = param['user_id']
+        group_id = param['group_id']
+        ret_val, user_response = self._make_rest_call_helper(f'/api/v1/users/{user_id}', action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if group_id not in [item['id'] for item in user_response['groups']]:
+            summary = action_result.update_summary({})
+            summary['message'] = "User already removed from group"
+            action_result.add_data(user_response)
+            return action_result.set_status(phantom.APP_SUCCESS, "User already removed from group")
+
+        for index, group in enumerate(user_response['groups']):
+            if group_id == group['id']:
+                user_response['groups'].pop(index)
+
+        data = user_response
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/users/{user_id}', action_result, data=data, method='put')
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary['message'] = "User removed from group"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
     def handle_action(self, param):
 
         ret_val = phantom.APP_SUCCESS
@@ -958,11 +1033,11 @@ class ZscalerConnector(BaseConnector):
         elif action_id == 'get_groups':
             ret_val = self._handle_get_groups(param)
 
-        # elif action_id == 'add_user_to_group':
-        #    ret_val = self._handle_add_user_to_group(param)
+        elif action_id == 'add_user_to_group':
+            ret_val = self._handle_add_user_to_group(param)
 
-        # elif action_id == 'remove_user_from_group':
-        #    ret_val = self._handle_remove_user_from_group(param)
+        elif action_id == 'remove_user_from_group':
+            ret_val = self._handle_remove_user_from_group(param)
 
         return ret_val
 

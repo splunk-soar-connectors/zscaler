@@ -2123,7 +2123,7 @@
                     "data_path": "action_result.data.*.id",
                     "data_type": "numeric",
                     "contains": [
-                        "zscaler id"
+                        "zscaler user id"
                     ],
                     "example_values": [
                         889814
@@ -2321,7 +2321,7 @@
                     "data_path": "action_result.data.*.id",
                     "data_type": "numeric",
                     "contains": [
-                        "zscaler id"
+                        "zscaler user id"
                     ],
                     "example_values": [
                         889814
@@ -2534,6 +2534,178 @@
             ],
             "render": {
                 "title": "Get Groups",
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "add user to group",
+            "identifier": "add_user_to_group",
+            "description": "Add user to group",
+            "verbose": "Add a group to the user's profile.",
+            "type": "generic",
+            "read_only": false,
+            "undo": "remove user from group",
+            "parameters": {
+                "user_id": {
+                    "description": "ZScaler User ID",
+                    "data_type": "numeric",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "zscaler user id"
+                    ],
+                    "example_values": [
+                        889814
+                    ],
+                    "value_list": [],
+                    "default": "",
+                    "order": 0,
+                    "name": "user_id",
+                    "id": 1,
+                    "param_name": "user_id"
+                },
+                "group_id": {
+                    "description": "ZScaler Group ID",
+                    "data_type": "numeric",
+                    "required": true,
+                    "primary": false,
+                    "contains": [
+                        "zscaler group id"
+                    ],
+                    "example_values": [
+                        8894813
+                    ],
+                    "value_list": [],
+                    "default": "",
+                    "order": 1,
+                    "name": "group_id",
+                    "id": 2,
+                    "param_name": "group_id"
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.user_id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "zscaler user id"
+                    ],
+                    "example_values": [
+                        889814
+                    ],
+                    "column_name": "user_id",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.parameter.group_id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "zscaler group id"
+                    ],
+                    "example_values": [
+                        8894813
+                    ],
+                    "column_name": "group_id",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "remove user from group",
+            "identifier": "remove_user_from_group",
+            "description": "Remove user from group",
+            "verbose": "Remove a group from the user's profile.",
+            "type": "correct",
+            "read_only": false,
+            "undo": "add user to group",
+            "parameters": {
+                "user_id": {
+                    "description": "ZScaler User Id",
+                    "data_type": "numeric",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "zscaler user id"
+                    ],
+                    "example_values": [
+                        889814
+                    ],
+                    "value_list": [],
+                    "default": "",
+                    "order": 0,
+                    "name": "user_id"
+                },
+                "group_id": {
+                    "description": "ZScaler Group Id",
+                    "data_type": "numeric",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "zscaler group id"
+                    ],
+                    "example_values": [
+                        8894813
+                    ],
+                    "value_list": [],
+                    "default": "",
+                    "order": 1,
+                    "name": "group_id"
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.user_id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "zscaler user id"
+                    ],
+                    "column_name": "user_id",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.parameter.group_id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "zscaler group id"
+                    ],
+                    "column_name": "group_id",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
                 "type": "table"
             },
             "versions": "EQ(*)"
