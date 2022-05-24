@@ -118,7 +118,7 @@ class ZscalerConnector(BaseConnector):
             split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
             error_text = '\n'.join(split_lines)
-        except:
+        except Exception:
             error_text = "Cannot parse error details"
 
         error_text = error_text
@@ -148,7 +148,7 @@ class ZscalerConnector(BaseConnector):
         # You should process the error returned in the json
         try:
             message = resp_json['message']
-        except:
+        except Exception:
             message = "Error from server. Status Code: {0} Data from server: {1}".format(
                 r.status_code, r.text.replace('{', '{{').replace('}', '}}')
             )
@@ -200,7 +200,7 @@ class ZscalerConnector(BaseConnector):
                 ipaddress.ip_address(unicode(ip_address_input))
             except NameError:
                 ipaddress.ip_address(str(ip_address_input))
-        except:
+        except Exception:
             return False
 
         return True
@@ -222,7 +222,10 @@ class ZscalerConnector(BaseConnector):
 
         # Create a URL to connect to
         url = '{}{}'.format(self._base_url, endpoint)
-
+        self.debug_print("use_json ---> {}".format(use_json))
+        self.debug_print("URL ---> {}".format(url))
+        self.debug_print("data ---> {}".format(data))
+        self.debug_print("params ---> {}".format(params))
         try:
             if use_json:
                 r = request_func(
@@ -305,7 +308,7 @@ class ZscalerConnector(BaseConnector):
         api_key = self._api_key
         try:
             timestamp, obf_api_key = self._obfuscate_api_key(api_key)
-        except:
+        except Exception:
             return self.set_status(
                 phantom.APP_ERROR,
                 "Error obfuscating API key"
@@ -838,7 +841,8 @@ class ZscalerConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, "No filters provided")
 
         ret_val, limit = self._validate_integer(action_result, param.get('limit', ZSCALER_MAX_PAGESIZE), ZSCALER_LIMIT_KEY)
-
+        if phantom.is_fail(ret_val):
+                return action_result.get_status()
         params = {
             "name": param.get('name'),
             "dept": param.get('dept'),
@@ -882,7 +886,8 @@ class ZscalerConnector(BaseConnector):
 
         action_result = self.add_action_result(ActionResult(dict(param)))
         ret_val, limit = self._validate_integer(action_result, param.get('limit', ZSCALER_MAX_PAGESIZE), ZSCALER_LIMIT_KEY)
-
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
         params = {"search": param.get('search')}
         groups = []
         while True:
