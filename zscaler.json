@@ -2387,15 +2387,24 @@
                 },
                 {
                     "data_path": "action_result.parameter.name",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "phantom test"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.dept",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "Service Admin"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.group",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "Service Admin"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.limit",
@@ -2870,13 +2879,19 @@
                         "zscaler user id"
                     ],
                     "column_name": "User ID",
-                    "column_order": 0
+                    "column_order": 0,
+                    "example_values": [
+                        889814
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.group_id",
                     "data_type": "numeric",
                     "contains": [
                         "zscaler group id"
+                    ],
+                    "example_values": [
+                        8894813
                     ],
                     "column_name": "Group ID",
                     "column_order": 1
