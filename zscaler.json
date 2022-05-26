@@ -2169,7 +2169,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.role.id",
-                    "data_type": "string"
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.data.*.role.name",
@@ -2346,7 +2346,7 @@
             "read_only": true,
             "parameters": {
                 "name": {
-                    "description": "User name",
+                    "description": "User Name/ID",
                     "data_type": "string",
                     "order": 0,
                     "name": "name",
@@ -2422,7 +2422,7 @@
                     "example_values": [
                         889814
                     ],
-                    "column_name": "ID",
+                    "column_name": "User ID",
                     "column_order": 0
                 },
                 {
@@ -2431,7 +2431,7 @@
                     "example_values": [
                         "First Last"
                     ],
-                    "column_name": "Name",
+                    "column_name": "User Name",
                     "column_order": 1
                 },
                 {
@@ -2443,7 +2443,7 @@
                     "example_values": [
                         "first.last@domain.com"
                     ],
-                    "column_name": "Email",
+                    "column_name": "User Email",
                     "column_order": 2
                 },
                 {
@@ -2454,14 +2454,18 @@
                     ],
                     "example_values": [
                         8894813
-                    ]
+                    ],
+                    "column_name": "Group ID",
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.groups.*.name",
                     "data_type": "string",
                     "example_values": [
                         "Super Admin"
-                    ]
+                    ],
+                    "column_name": "Group Name",
+                    "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.department.id",
@@ -2510,7 +2514,10 @@
                 },
                 {
                     "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -2664,13 +2671,13 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "add user to group",
-            "identifier": "add_user_to_group",
+            "action": "add group user",
+            "identifier": "add_group_user",
             "description": "Add user to group",
             "verbose": "Add a group to the user's profile.",
             "type": "generic",
             "read_only": false,
-            "undo": "remove user from group",
+            "undo": "remove group user",
             "parameters": {
                 "user_id": {
                     "description": "ZScaler User ID",
@@ -2837,13 +2844,13 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "remove user from group",
-            "identifier": "remove_user_from_group",
+            "action": "remove group user",
+            "identifier": "remove_group_user",
             "description": "Remove user from group",
             "verbose": "Remove a group from the user's profile.",
             "type": "correct",
             "read_only": false,
-            "undo": "add user to group",
+            "undo": "add group user",
             "parameters": {
                 "user_id": {
                     "description": "ZScaler User Id",
@@ -3017,7 +3024,7 @@
             },
             {
                 "module": "certifi",
-                "input_file": "wheels/shared/certifi-2021.10.8-py2.py3-none-any.whl"
+                "input_file": "wheels/py3/certifi-2022.5.18.1-py3-none-any.whl"
             },
             {
                 "module": "chardet",
@@ -3033,11 +3040,11 @@
             },
             {
                 "module": "soupsieve",
-                "input_file": "wheels/py3/soupsieve-2.3.1-py3-none-any.whl"
+                "input_file": "wheels/py3/soupsieve-2.3.2.post1-py3-none-any.whl"
             },
             {
                 "module": "urllib3",
-                "input_file": "wheels/shared/urllib3-1.26.8-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/urllib3-1.26.9-py2.py3-none-any.whl"
             }
         ]
     }

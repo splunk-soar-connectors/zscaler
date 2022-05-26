@@ -16,7 +16,6 @@
 #
 # Phantom App imports
 import json
-import sys
 import time
 
 import phantom.app as phantom
@@ -64,7 +63,8 @@ class ZscalerConnector(BaseConnector):
                 elif len(e.args) == 1:
                     error_msg = e.args[0]
         except Exception:
-            pass
+            self.debug_print("Error occurred while getting message from response")
+
 
         if not error_code:
             error_text = "Error Message: {}".format(error_msg)
@@ -222,30 +222,29 @@ class ZscalerConnector(BaseConnector):
 
         # Create a URL to connect to
         url = '{}{}'.format(self._base_url, endpoint)
-        self.debug_print("use_json ---> {}".format(use_json))
-        self.debug_print("URL ---> {}".format(url))
-        self.debug_print("data ---> {}".format(data))
-        self.debug_print("params ---> {}".format(params))
         try:
             if use_json:
                 r = request_func(
                     url,
                     json=data,
                     headers=headers,
-                    params=params
+                    params=params,
+                    timeout=ZSCALER_DEFAULT_TIMEOUT
                 )
             else:
                 r = request_func(
                     url,
                     data=data,
                     headers=headers,
-                    params=params
+                    params=params,
+                    timeout=ZSCALER_DEFAULT_TIMEOUT
                 )
         except Exception as e:
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to Zscaler server. {}"
                     .format(self._get_error_message_from_exception(e))), resp_json)
 
         self._response = r
+        self.debug_print("self._response ---> {}".format(self._process_response(r, action_result)))
 
         return self._process_response(r, action_result)
 
@@ -890,6 +889,7 @@ class ZscalerConnector(BaseConnector):
             return action_result.get_status()
         params = {"search": param.get('search')}
         groups = []
+        params['page'] = 1
         while True:
             if limit < ZSCALER_MAX_PAGESIZE:
                 params['pageSize'] = limit
@@ -913,7 +913,7 @@ class ZscalerConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _handle_add_user_to_group(self, param):
+    def _handle_add_group_user(self, param):
         """
         This action is used to add users to a group based on user id and group id
         :param user_id: User ID to add
@@ -950,7 +950,7 @@ class ZscalerConnector(BaseConnector):
         summary['message'] = "User succesfully added to group"
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _handle_remove_user_from_group(self, param):
+    def _handle_remove_group_user(self, param):
         """
         This action is used to remove users from a group based on user id and group id
         :param user_id: User ID to remove
@@ -1048,11 +1048,11 @@ class ZscalerConnector(BaseConnector):
         elif action_id == 'get_groups':
             ret_val = self._handle_get_groups(param)
 
-        elif action_id == 'add_user_to_group':
-            ret_val = self._handle_add_user_to_group(param)
+        elif action_id == 'add_group_user':
+            ret_val = self._handle_add_group_user(param)
 
-        elif action_id == 'remove_user_from_group':
-            ret_val = self._handle_remove_user_from_group(param)
+        elif action_id == 'remove_group_user':
+            ret_val = self._handle_remove_group_user(param)
 
         return ret_val
 
@@ -1064,7 +1064,6 @@ class ZscalerConnector(BaseConnector):
         if not isinstance(self._state, dict):
             self.debug_print("Resetting the state file with the default format")
             self._state = {"app_version": self.get_app_json().get("app_version")}
-            return self.set_status(phantom.APP_ERROR, ZSCALER_STATE_FILE_CORRUPT_ERR)
 
         config = self.get_config()
         self._base_url = config['base_url'].rstrip('/')
@@ -1092,6 +1091,8 @@ if __name__ == '__main__':
     import argparse
 
     import pudb
+    import sys
+
     pudb.set_trace()
 
     argparser = argparse.ArgumentParser()
