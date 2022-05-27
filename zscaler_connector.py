@@ -847,7 +847,6 @@ class ZscalerConnector(BaseConnector):
             'page': 1
         }
         users = []
-        params['page'] = 1
         while True:
             if limit < ZSCALER_MAX_PAGESIZE:
                 params['pageSize'] = limit
@@ -930,8 +929,8 @@ class ZscalerConnector(BaseConnector):
         ret_val, group_response = self._make_rest_call_helper(f'/api/v1/groups/{group_id}', action_result)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
+        summary = action_result.update_summary({})
         if group_response in user_response['groups']:
-            summary = action_result.update_summary({})
             summary['message'] = "User already in group"
             action_result.add_data(group_response)
             return action_result.set_status(phantom.APP_SUCCESS, "User already in group")
@@ -944,7 +943,6 @@ class ZscalerConnector(BaseConnector):
 
         action_result.add_data(response)
 
-        summary = action_result.update_summary({})
         summary['message'] = "User succesfully added to group"
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -964,8 +962,8 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
+        summary = action_result.update_summary({})
         if group_id not in [item['id'] for item in user_response['groups']]:
-            summary = action_result.update_summary({})
             summary['message'] = "User already removed from group"
             action_result.add_data(user_response)
             return action_result.set_status(phantom.APP_SUCCESS, "User already removed from group")
@@ -981,7 +979,6 @@ class ZscalerConnector(BaseConnector):
             return action_result.get_status()
 
         action_result.add_data(response)
-        summary = action_result.update_summary({})
         summary['message'] = "User removed from group"
 
         return action_result.set_status(phantom.APP_SUCCESS)

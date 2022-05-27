@@ -2256,7 +2256,7 @@
                     "data_path": "action_result.data.*.comments",
                     "data_type": "string",
                     "example_values": [
-                        "\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153"
+                        "This is test user"
                     ]
                 },
                 {
@@ -2270,7 +2270,7 @@
                     "data_path": "action_result.data.*.adminScopeScopeEntities.*.name",
                     "data_type": "string",
                     "example_values": [
-                        "Phantom App"
+                        "Example App"
                     ]
                 },
                 {
@@ -2389,7 +2389,7 @@
                     "data_path": "action_result.parameter.name",
                     "data_type": "string",
                     "example_values": [
-                        "phantom test"
+                        "Example test"
                     ]
                 },
                 {
@@ -2537,7 +2537,7 @@
                     "data_path": "action_result.data.*.comments",
                     "data_type": "string",
                     "example_values": [
-                        "\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153\u20ac\u00e9\u00ee\u00e7syst\u00e8mes\u00e6\u00fc\u0153"
+                        "This is test user"
                     ]
                 },
                 {
@@ -2582,7 +2582,7 @@
                     "data_path": "action_result.parameter.search",
                     "data_type": "string",
                     "example_values": [
-                        "phantom_test"
+                        "Example_test"
                     ]
                 },
                 {
@@ -2785,7 +2785,7 @@
                     "data_path": "action_result.data.*.email",
                     "data_type": "string",
                     "example_values": [
-                        "134@phantom.us"
+                        "134@example.us"
                     ]
                 },
                 {
@@ -2799,7 +2799,7 @@
                     "data_path": "action_result.data.*.groups.*.name",
                     "data_type": "string",
                     "example_values": [
-                        "Phantom App"
+                        "Example App"
                     ]
                 },
                 {
@@ -2957,7 +2957,7 @@
                     "data_path": "action_result.data.*.email",
                     "data_type": "string",
                     "example_values": [
-                        "134@phantom.us"
+                        "134@example.us"
                     ]
                 },
                 {
