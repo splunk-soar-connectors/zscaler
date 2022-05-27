@@ -65,7 +65,6 @@ class ZscalerConnector(BaseConnector):
         except Exception:
             self.debug_print("Error occurred while getting message from response")
 
-
         if not error_code:
             error_text = "Error Message: {}".format(error_msg)
         else:
@@ -244,7 +243,6 @@ class ZscalerConnector(BaseConnector):
                     .format(self._get_error_message_from_exception(e))), resp_json)
 
         self._response = r
-        self.debug_print("self._response ---> {}".format(self._process_response(r, action_result)))
 
         return self._process_response(r, action_result)
 
@@ -841,7 +839,7 @@ class ZscalerConnector(BaseConnector):
 
         ret_val, limit = self._validate_integer(action_result, param.get('limit', ZSCALER_MAX_PAGESIZE), ZSCALER_LIMIT_KEY)
         if phantom.is_fail(ret_val):
-                return action_result.get_status()
+            return action_result.get_status()
         params = {
             "name": param.get('name'),
             "dept": param.get('dept'),
@@ -1089,9 +1087,9 @@ class ZscalerConnector(BaseConnector):
 if __name__ == '__main__':
 
     import argparse
+    import sys
 
     import pudb
-    import sys
 
     pudb.set_trace()
 
