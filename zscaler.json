@@ -327,34 +327,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.type",
-                    "data_type": "string",
-                    "example_values": [
-                        "URL_CATEGORY"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customUrlsCount",
-                    "data_type": "numeric",
-                    "example_values": [
-                        0
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
-                    "data_type": "numeric",
-                    "example_values": [
-                        0
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.scopes.*.Type",
-                    "data_type": "string",
-                    "example_values": [
-                        "ORGANIZATION"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
@@ -369,6 +341,20 @@
                     "example_values": [
                         true,
                         false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customIpRangesCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customUrlsCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
                     ]
                 },
                 {
@@ -410,6 +396,34 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.ipRangesRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.scopes.*.Type",
+                    "data_type": "string",
+                    "example_values": [
+                        "ORGANIZATION"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "URL_CATEGORY"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.val",
                     "data_type": "numeric",
                     "example_values": [
@@ -442,20 +456,6 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customIpRangesCount",
-                    "data_type": "numeric",
-                    "example_values": [
-                        0
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.ipRangesRetainingParentCategoryCount",
-                    "data_type": "numeric",
-                    "example_values": [
-                        0
                     ]
                 }
             ],
@@ -679,35 +679,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.type",
-                    "data_type": "string",
-                    "example_values": [
-                        "URL_CATEGORY"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.editable",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customUrlsCount",
-                    "data_type": "numeric",
-                    "example_values": [
-                        0
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
-                    "data_type": "numeric",
-                    "example_values": [
-                        3
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
@@ -723,6 +694,13 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.customUrlsCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.dbCategorizedUrls",
                     "data_type": "string"
                 },
@@ -731,10 +709,32 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.editable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
                     "example_values": [
                         "CUSTOM_01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "URL_CATEGORY"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        3
                     ]
                 },
                 {
@@ -1005,35 +1005,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.type",
-                    "data_type": "string",
-                    "example_values": [
-                        "URL_CATEGORY"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.editable",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customUrlsCount",
-                    "data_type": "numeric",
-                    "example_values": [
-                        0
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
@@ -1049,6 +1020,13 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.customUrlsCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.dbCategorizedUrls",
                     "data_type": "string"
                 },
@@ -1057,10 +1035,32 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.editable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
                     "example_values": [
                         "CUSTOM_01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "URL_CATEGORY"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
                     ]
                 },
                 {
@@ -1335,35 +1335,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.type",
-                    "data_type": "string",
-                    "example_values": [
-                        "URL_CATEGORY"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.editable",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.customUrlsCount",
-                    "data_type": "numeric",
-                    "example_values": [
-                        0
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
-                    "data_type": "numeric",
-                    "example_values": [
-                        3
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
                     "example_values": [
@@ -1379,6 +1350,13 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.customUrlsCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.dbCategorizedUrls",
                     "data_type": "string"
                 },
@@ -1387,10 +1365,32 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.editable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
                     "example_values": [
                         "CUSTOM_01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "URL_CATEGORY"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        3
                     ]
                 },
                 {
@@ -2000,6 +2000,14 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.parameter.force",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
                     "data_path": "action_result.parameter.vault_id",
                     "data_type": "string",
                     "example_values": [
@@ -2011,11 +2019,17 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.force",
-                    "data_type": "boolean",
+                    "data_path": "action_result.data.*.code",
+                    "data_type": "numeric",
                     "example_values": [
-                        true,
-                        false
+                        200
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.fileType",
+                    "data_type": "string",
+                    "example_values": [
+                        "zip"
                     ]
                 },
                 {
@@ -2029,13 +2043,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.code",
-                    "data_type": "numeric",
-                    "example_values": [
-                        200
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.message",
                     "data_type": "string",
                     "example_values": [
@@ -2043,10 +2050,10 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.fileType",
+                    "data_path": "action_result.data.*.sandboxSubmission",
                     "data_type": "string",
                     "example_values": [
-                        "zip"
+                        "Virus"
                     ]
                 },
                 {
@@ -2058,13 +2065,6 @@
                 },
                 {
                     "data_path": "action_result.data.*.virusType",
-                    "data_type": "string",
-                    "example_values": [
-                        "Virus"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.sandboxSubmission",
                     "data_type": "string",
                     "example_values": [
                         "Virus"
@@ -2134,27 +2134,42 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.id",
+                    "data_path": "action_result.data.*.adminScopeScopeEntities.*.id",
                     "data_type": "numeric",
-                    "contains": [
-                        "zscaler user id"
-                    ],
                     "example_values": [
-                        889814
+                        4460340
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.loginName",
+                    "data_path": "action_result.data.*.adminScopeScopeEntities.*.name",
                     "data_type": "string",
                     "example_values": [
-                        "first.last@domain.com"
+                        "Example App"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.userName",
+                    "data_path": "action_result.data.*.adminScopeType",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.adminScopescopeGroupMemberEntities.*.id",
+                    "data_type": "numeric",
+                    "example_values": [
+                        8035054
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.comments",
                     "data_type": "string",
                     "example_values": [
-                        "Last, First"
+                        "This is test user"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.disabled",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true
                     ]
                 },
                 {
@@ -2168,27 +2183,35 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.role.id",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.role.name",
-                    "data_type": "string",
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "zscaler user id"
+                    ],
                     "example_values": [
-                        "Super Admin"
+                        889814
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.role.extensions.adminRank",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.isDefaultAdmin",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true
+                    ]
                 },
                 {
-                    "data_path": "action_result.data.*.role.extensions.roleType",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.isDeprecatedDefaultAdmin",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true
+                    ]
                 },
                 {
-                    "data_path": "action_result.data.*.adminScopeType",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.isExecMobileAppEnabled",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.isNonEditable",
@@ -2207,8 +2230,76 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.isProductUpdateCommEnabled",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.isSecurityReportCommEnabled",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.isServiceUpdateCommEnabled",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.loginName",
+                    "data_type": "string",
+                    "example_values": [
+                        "first.last@domain.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "new_test_long_email_id_new_test_long_email_id_new_test_long_email_id_new_test_long_email"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.pwdLastModifiedTime",
                     "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.role.extensions.adminRank",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.role.extensions.roleType",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.role.id",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.role.isNameL10nTag",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.role.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "Super Admin"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.userName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Last, First"
+                    ]
                 },
                 {
                     "data_path": "action_result.summary.total_admin_users",
@@ -2236,97 +2327,6 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "new_test_long_email_id_new_test_long_email_id_new_test_long_email_id_new_test_long_email"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.role.isNameL10nTag",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.comments",
-                    "data_type": "string",
-                    "example_values": [
-                        "This is test user"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.adminScopeScopeEntities.*.id",
-                    "data_type": "numeric",
-                    "example_values": [
-                        4460340
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.adminScopeScopeEntities.*.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "Example App"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.isDefaultAdmin",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.disabled",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.isDeprecatedDefaultAdmin",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.isExecMobileAppEnabled",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.adminScopescopeGroupMemberEntities.*.id",
-                    "data_type": "numeric",
-                    "example_values": [
-                        8035054
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.isProductUpdateCommEnabled",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.isServiceUpdateCommEnabled",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.isSecurityReportCommEnabled",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true
                     ]
                 }
             ],
@@ -2386,13 +2386,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "Example test"
-                    ]
-                },
-                {
                     "data_path": "action_result.parameter.dept",
                     "data_type": "string",
                     "example_values": [
@@ -2414,25 +2407,55 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "numeric",
-                    "contains": [
-                        "zscaler user id"
-                    ],
-                    "example_values": [
-                        889814
-                    ],
-                    "column_name": "User ID",
-                    "column_order": 0
-                },
-                {
-                    "data_path": "action_result.data.*.name",
+                    "data_path": "action_result.parameter.name",
                     "data_type": "string",
                     "example_values": [
-                        "First Last"
-                    ],
-                    "column_name": "User Name",
-                    "column_order": 1
+                        "Example test"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.adminUser",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.comments",
+                    "data_type": "string",
+                    "example_values": [
+                        "This is test user"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.deleted",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.department.id",
+                    "data_type": "numeric",
+                    "example_values": [
+                        81896690
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.department.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "IT"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.disabled",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.email",
@@ -2468,26 +2491,16 @@
                     "column_order": 4
                 },
                 {
-                    "data_path": "action_result.data.*.department.id",
+                    "data_path": "action_result.data.*.id",
                     "data_type": "numeric",
+                    "contains": [
+                        "zscaler user id"
+                    ],
                     "example_values": [
-                        81896690
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.department.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "IT"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.adminUser",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
+                        889814
+                    ],
+                    "column_name": "User ID",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.isNonEditable",
@@ -2498,12 +2511,13 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.deleted",
-                    "data_type": "boolean",
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
                     "example_values": [
-                        true,
-                        false
-                    ]
+                        "First Last"
+                    ],
+                    "column_name": "User Name",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.summary.total_users",
@@ -2531,20 +2545,6 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.comments",
-                    "data_type": "string",
-                    "example_values": [
-                        "This is test user"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.disabled",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true
                     ]
                 }
             ],
@@ -2579,10 +2579,11 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.parameter.search",
+                    "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "Example_test"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -2593,11 +2594,52 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.parameter.search",
                     "data_type": "string",
                     "example_values": [
-                        "success",
-                        "failed"
+                        "Example_test"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.comments",
+                    "data_type": "string",
+                    "example_values": [
+                        "This is for testing"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "zscaler group id"
+                    ],
+                    "example_values": [
+                        8894813
+                    ],
+                    "column_name": "ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.isNonEditable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "Frothly Internet Access"
+                    ],
+                    "column_name": "Group Name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.summary.total_groups",
+                    "data_type": "numeric",
+                    "example_values": [
+                        4
                     ]
                 },
                 {
@@ -2619,48 +2661,6 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "numeric",
-                    "contains": [
-                        "zscaler group id"
-                    ],
-                    "example_values": [
-                        8894813
-                    ],
-                    "column_name": "ID",
-                    "column_order": 0
-                },
-                {
-                    "data_path": "action_result.data.*.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "Frothly Internet Access"
-                    ],
-                    "column_name": "Group Name",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.data.*.isNonEditable",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.total_groups",
-                    "data_type": "numeric",
-                    "example_values": [
-                        4
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.comments",
-                    "data_type": "string",
-                    "example_values": [
-                        "This is for testing"
                     ]
                 }
             ],
@@ -2708,16 +2708,14 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.parameter.user_id",
-                    "data_type": "numeric",
-                    "contains": [
-                        "zscaler user id"
-                    ],
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "column_order": 2,
                     "example_values": [
-                        889814
-                    ],
-                    "column_name": "User ID",
-                    "column_order": 0
+                        "success",
+                        "failed"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.group_id",
@@ -2732,53 +2730,43 @@
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "Status",
-                    "column_order": 2,
+                    "data_path": "action_result.parameter.user_id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "zscaler user id"
+                    ],
                     "example_values": [
-                        "success",
-                        "failed"
+                        889814
+                    ],
+                    "column_name": "User ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.adminUser",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true
                     ]
                 },
                 {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.deleted",
+                    "data_type": "boolean",
+                    "example_values": [
+                        false
+                    ]
                 },
                 {
-                    "data_path": "summary.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "summary.total_objects",
+                    "data_path": "action_result.data.*.department.id",
                     "data_type": "numeric",
                     "example_values": [
-                        1
+                        4459551
                     ]
                 },
                 {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "numeric",
-                    "example_values": [
-                        9840695
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.name",
+                    "data_path": "action_result.data.*.department.name",
                     "data_type": "string",
                     "example_values": [
-                        "Elsie"
+                        "Service Admin"
                     ]
                 },
                 {
@@ -2803,38 +2791,50 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.deleted",
-                    "data_type": "boolean",
-                    "example_values": [
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.adminUser",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.department.id",
+                    "data_path": "action_result.data.*.id",
                     "data_type": "numeric",
                     "example_values": [
-                        4459551
+                        9840695
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.department.name",
+                    "data_path": "action_result.data.*.name",
                     "data_type": "string",
                     "example_values": [
-                        "Service Admin"
+                        "Test user"
                     ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary.message",
                     "data_type": "string",
                     "example_values": [
-                        "User succesfully added to group"
+                        "User successfully added to group"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
                     ]
                 }
             ],
@@ -2880,15 +2880,13 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.parameter.user_id",
-                    "data_type": "numeric",
-                    "contains": [
-                        "zscaler user id"
-                    ],
-                    "column_name": "User ID",
-                    "column_order": 0,
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "column_order": 2,
                     "example_values": [
-                        889814
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -2904,53 +2902,43 @@
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "Status",
-                    "column_order": 2,
+                    "data_path": "action_result.parameter.user_id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "zscaler user id"
+                    ],
+                    "column_name": "User ID",
+                    "column_order": 0,
                     "example_values": [
-                        "success",
-                        "failed"
+                        889814
                     ]
                 },
                 {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.adminUser",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true
+                    ]
                 },
                 {
-                    "data_path": "summary.message",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.deleted",
+                    "data_type": "boolean",
+                    "example_values": [
+                        false
+                    ]
                 },
                 {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "summary.total_objects",
+                    "data_path": "action_result.data.*.department.id",
                     "data_type": "numeric",
                     "example_values": [
-                        1
+                        4459551
                     ]
                 },
                 {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "numeric",
-                    "example_values": [
-                        9840695
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.name",
+                    "data_path": "action_result.data.*.department.name",
                     "data_type": "string",
                     "example_values": [
-                        "Elsie"
+                        "Service Admin"
                     ]
                 },
                 {
@@ -2975,38 +2963,50 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.deleted",
-                    "data_type": "boolean",
-                    "example_values": [
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.adminUser",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.department.id",
+                    "data_path": "action_result.data.*.id",
                     "data_type": "numeric",
                     "example_values": [
-                        4459551
+                        9840695
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.department.name",
+                    "data_path": "action_result.data.*.name",
                     "data_type": "string",
                     "example_values": [
-                        "Service Admin"
+                        "Elsie"
                     ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary.message",
                     "data_type": "string",
                     "example_values": [
                         "User removed from group"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
                     ]
                 }
             ],

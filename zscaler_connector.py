@@ -943,7 +943,7 @@ class ZscalerConnector(BaseConnector):
 
         action_result.add_data(response)
 
-        summary['message'] = "User succesfully added to group"
+        summary['message'] = "User successfully added to group"
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_remove_group_user(self, param):
