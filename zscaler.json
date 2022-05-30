@@ -1802,7 +1802,7 @@
                         "ip",
                         "ipv6"
                     ],
-                    "column_name": "IP/URL",
+                    "column_name": "Ip/Url",
                     "column_order": 0
                 },
                 {
@@ -2348,26 +2348,17 @@
                 "name": {
                     "description": "User Name/ID",
                     "data_type": "string",
-                    "order": 0,
-                    "name": "name",
-                    "id": 1,
-                    "param_name": "name"
+                    "order": 0
                 },
                 "dept": {
                     "description": "User department",
                     "data_type": "string",
-                    "order": 1,
-                    "name": "dept",
-                    "id": 2,
-                    "param_name": "dept"
+                    "order": 1
                 },
                 "group": {
                     "description": "User group",
                     "data_type": "string",
-                    "order": 2,
-                    "name": "group",
-                    "id": 3,
-                    "param_name": "group"
+                    "order": 2
                 },
                 "limit": {
                     "data_type": "numeric",
@@ -2530,7 +2521,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        ""
+                        "Total users: 0"
                     ]
                 },
                 {
@@ -2565,10 +2556,7 @@
                 "search": {
                     "description": "The search string used to match against a group's name or comments attributes",
                     "data_type": "string",
-                    "order": 0,
-                    "name": "search",
-                    "id": 1,
-                    "param_name": "search"
+                    "order": 0
                 },
                 "limit": {
                     "data_type": "numeric",
@@ -2687,10 +2675,7 @@
                     "contains": [
                         "zscaler user id"
                     ],
-                    "order": 0,
-                    "name": "user_id",
-                    "id": 1,
-                    "param_name": "user_id"
+                    "order": 0
                 },
                 "group_id": {
                     "description": "ZScaler Group ID",
@@ -2700,9 +2685,6 @@
                         "zscaler group id"
                     ],
                     "order": 1,
-                    "name": "group_id",
-                    "id": 2,
-                    "param_name": "group_id",
                     "primary": true
                 }
             },
@@ -2817,7 +2799,10 @@
                 },
                 {
                     "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "User successfully added to group"
+                    ]
                 },
                 {
                     "data_path": "summary.message",
@@ -2863,8 +2848,7 @@
                     "example_values": [
                         889814
                     ],
-                    "order": 0,
-                    "name": "user_id"
+                    "order": 0
                 },
                 "group_id": {
                     "description": "ZScaler Group Id",
@@ -2874,8 +2858,7 @@
                     "contains": [
                         "zscaler group id"
                     ],
-                    "order": 1,
-                    "name": "group_id"
+                    "order": 1
                 }
             },
             "output": [
@@ -2989,7 +2972,10 @@
                 },
                 {
                     "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values":[
+                        "User removed from group"
+                    ]
                 },
                 {
                     "data_path": "summary.message",
