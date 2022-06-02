@@ -44,6 +44,7 @@ class ZscalerConnector(BaseConnector):
         self._response = None  # The most recent response object
         self._headers = None
         self._category = None
+        self._retry_rest_call = None  # Retry rest call when get status_code 409 or 429
 
     def _get_error_message_from_exception(self, e):
         """
@@ -266,13 +267,14 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             if self._response is None:
                 return ret_val, response
-            if self._response.status_code == 409:  # Lock not available
+            if self._response.status_code == 409 and self._retry_rest_call:  # Lock not available
                 # This basically just means we need to try again
                 self.debug_print("Error 409: Lock not available")
                 self.send_progress("Error 409: Lock not available: Retrying in 1 second")
                 time.sleep(1)
+                self._retry_rest_call = False  # make it to false to avoid extra rest call
                 return self._make_rest_call_helper(*args, **kwargs)
-            if self._response.status_code == 429:  # Rate limit exceeded
+            if self._response.status_code == 429 and self._retry_rest_call:  # Rate limit exceeded
                 try:
                     retry_time = self._response.json()['Retry-After']
                 except KeyError:
@@ -284,6 +286,7 @@ class ZscalerConnector(BaseConnector):
                     return retry_time, response
                 self.send_progress("Exceeded rate limit: Retrying after {}".format(retry_time))
                 time.sleep(seconds_to_wait)
+                self._retry_rest_call = False  # make it to false to avoid extra rest call
                 return self._make_rest_call_helper(*args, **kwargs)
         return ret_val, response
 
@@ -1070,7 +1073,7 @@ class ZscalerConnector(BaseConnector):
             self._sandbox_base_url = self._sandbox_base_url.rstrip('/')
         self._sandbox_api_token = config.get('sandbox_api_token', None)
         self._headers = {}
-
+        self._retry_rest_call = True
         self.set_validator('ipv6', self._is_ip)
 
         return self._init_session()
