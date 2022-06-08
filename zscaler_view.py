@@ -19,23 +19,23 @@ def get_ctx_result(result, submit_file=False):
     summary = result.get_summary()
     data = result.get_data()
 
-    ctx_result['param'] = param
+    ctx_result["param"] = param
 
     if data:
         if submit_file:
-            ctx_result['data'] = data[0]
+            ctx_result["data"] = data[0]
         else:
-            ctx_result['data'] = data
+            ctx_result["data"] = data
 
     if summary:
-        ctx_result['summary'] = summary
+        ctx_result["summary"] = summary
 
     return ctx_result
 
 
 def display_view(provides, all_app_runs, context):
 
-    context['results'] = results = []
+    context["results"] = results = []
     for summary, action_results in all_app_runs:
         for result in action_results:
 
@@ -44,18 +44,18 @@ def display_view(provides, all_app_runs, context):
                 continue
             results.append(ctx_result)
 
-    return 'zscaler_submit_file.html'
+    return "zscaler_submit_file.html"
 
 
 def display_users(provides, all_app_runs, context):
 
-    context['results'] = results = []
+    context["results"] = results = []
 
     for summary, action_results in all_app_runs:
         for result in action_results:
             ctx_result = get_ctx_result(result)
-            if (not ctx_result):
+            if not ctx_result:
                 continue
             results.append(ctx_result)
 
-    return 'zscaler_get_admin_users.html'
+    return "zscaler_get_admin_users.html"
