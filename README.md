@@ -2,11 +2,11 @@
 # Zscaler
 
 Publisher: Splunk  
-Connector Version: 2\.3\.0  
+Connector Version: 2\.3\.1  
 Product Vendor: Zscaler  
 Product Name: Zscaler  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 5\.1\.0  
+Minimum Product Version: 5\.2\.0  
 
 This app implements containment and investigative actions on Zscaler
 
@@ -116,6 +116,10 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [lookup url](#action-lookup-url) - Lookup the categories related to a URL  
 [submit file](#action-submit-file) - Submit a file to Zscaler Sandbox  
 [get admin users](#action-get-admin-users) - Get a list of admin users  
+[get users](#action-get-users) - Gets a list of all users and allows user filtering by name, department, or group  
+[get groups](#action-get-groups) - Gets a list of groups  
+[add group user](#action-add-group-user) - Add user to group  
+[remove group user](#action-remove-group-user) - Remove user from group  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -187,16 +191,18 @@ No parameters are required for this action
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.customUrlsCount | numeric | 
-action\_result\.data\.\*\.urlsRetainingParentCategoryCount | numeric | 
-action\_result\.data\.\*\.scopes\.\*\.Type | string | 
 action\_result\.data\.\*\.configuredName | string | 
 action\_result\.data\.\*\.customCategory | boolean | 
+action\_result\.data\.\*\.customIpRangesCount | numeric | 
+action\_result\.data\.\*\.customUrlsCount | numeric | 
 action\_result\.data\.\*\.dbCategorizedUrls | string | 
 action\_result\.data\.\*\.description | string | 
 action\_result\.data\.\*\.editable | boolean | 
 action\_result\.data\.\*\.id | string |  `zscaler url category` 
+action\_result\.data\.\*\.ipRangesRetainingParentCategoryCount | numeric | 
+action\_result\.data\.\*\.scopes\.\*\.Type | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.urlsRetainingParentCategoryCount | numeric | 
 action\_result\.data\.\*\.val | numeric | 
 action\_result\.summary\.total\_url\_categories | numeric | 
 action\_result\.message | string | 
@@ -255,15 +261,15 @@ DATA PATH | TYPE | CONTAINS
 action\_result\.status | string | 
 action\_result\.parameter\.url | string |  `url`  `domain`  `url list` 
 action\_result\.parameter\.url\_category | string |  `zscaler url category` 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.editable | boolean | 
-action\_result\.data\.\*\.customUrlsCount | numeric | 
-action\_result\.data\.\*\.urlsRetainingParentCategoryCount | numeric | 
 action\_result\.data\.\*\.configuredName | string | 
 action\_result\.data\.\*\.customCategory | boolean | 
+action\_result\.data\.\*\.customUrlsCount | numeric | 
 action\_result\.data\.\*\.dbCategorizedUrls | string | 
 action\_result\.data\.\*\.description | string | 
+action\_result\.data\.\*\.editable | boolean | 
 action\_result\.data\.\*\.id | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.urlsRetainingParentCategoryCount | numeric | 
 action\_result\.data\.\*\.val | numeric | 
 action\_result\.summary\.ignored | string | 
 action\_result\.summary\.updated | string | 
@@ -323,15 +329,15 @@ DATA PATH | TYPE | CONTAINS
 action\_result\.status | string | 
 action\_result\.parameter\.url | string |  `url`  `domain`  `url list` 
 action\_result\.parameter\.url\_category | string |  `zscaler url category` 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.editable | boolean | 
-action\_result\.data\.\*\.customUrlsCount | numeric | 
-action\_result\.data\.\*\.urlsRetainingParentCategoryCount | numeric | 
 action\_result\.data\.\*\.configuredName | string | 
 action\_result\.data\.\*\.customCategory | boolean | 
+action\_result\.data\.\*\.customUrlsCount | numeric | 
 action\_result\.data\.\*\.dbCategorizedUrls | string | 
 action\_result\.data\.\*\.description | string | 
+action\_result\.data\.\*\.editable | boolean | 
 action\_result\.data\.\*\.id | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.urlsRetainingParentCategoryCount | numeric | 
 action\_result\.data\.\*\.val | numeric | 
 action\_result\.summary\.ignored | string | 
 action\_result\.summary\.updated | string | 
@@ -391,15 +397,15 @@ DATA PATH | TYPE | CONTAINS
 action\_result\.status | string | 
 action\_result\.parameter\.url | string |  `url`  `domain`  `url list` 
 action\_result\.parameter\.url\_category | string |  `zscaler url category` 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.editable | boolean | 
-action\_result\.data\.\*\.customUrlsCount | numeric | 
-action\_result\.data\.\*\.urlsRetainingParentCategoryCount | numeric | 
 action\_result\.data\.\*\.configuredName | string | 
 action\_result\.data\.\*\.customCategory | boolean | 
+action\_result\.data\.\*\.customUrlsCount | numeric | 
 action\_result\.data\.\*\.dbCategorizedUrls | string | 
 action\_result\.data\.\*\.description | string | 
+action\_result\.data\.\*\.editable | boolean | 
 action\_result\.data\.\*\.id | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.urlsRetainingParentCategoryCount | numeric | 
 action\_result\.data\.\*\.val | numeric | 
 action\_result\.summary\.ignored | string | 
 action\_result\.summary\.updated | string | 
@@ -539,15 +545,15 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.parameter\.vault\_id | string |  `vault id`  `sha1` 
 action\_result\.parameter\.force | boolean | 
-action\_result\.data\.\*\.md5 | string |  `md5` 
+action\_result\.parameter\.vault\_id | string |  `vault id`  `sha1` 
 action\_result\.data\.\*\.code | numeric | 
-action\_result\.data\.\*\.message | string | 
 action\_result\.data\.\*\.fileType | string | 
+action\_result\.data\.\*\.md5 | string |  `md5` 
+action\_result\.data\.\*\.message | string | 
+action\_result\.data\.\*\.sandboxSubmission | string | 
 action\_result\.data\.\*\.virusName | string | 
 action\_result\.data\.\*\.virusType | string | 
-action\_result\.data\.\*\.sandboxSubmission | string | 
 action\_result\.summary | string | 
 action\_result\.message | string | 
 summary\.total\_objects | numeric | 
@@ -569,19 +575,174 @@ DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
 action\_result\.parameter\.limit | numeric | 
-action\_result\.data\.\*\.id | string | 
-action\_result\.data\.\*\.loginName | string | 
-action\_result\.data\.\*\.userName | string | 
-action\_result\.data\.\*\.email | string | 
-action\_result\.data\.\*\.role\.id | string | 
-action\_result\.data\.\*\.role\.name | string | 
-action\_result\.data\.\*\.role\.extensions\.adminRank | string | 
-action\_result\.data\.\*\.role\.extensions\.roleType | string | 
+action\_result\.data\.\*\.adminScopeScopeEntities\.\*\.id | numeric | 
+action\_result\.data\.\*\.adminScopeScopeEntities\.\*\.name | string | 
 action\_result\.data\.\*\.adminScopeType | string | 
+action\_result\.data\.\*\.adminScopescopeGroupMemberEntities\.\*\.id | numeric | 
+action\_result\.data\.\*\.comments | string | 
+action\_result\.data\.\*\.disabled | boolean | 
+action\_result\.data\.\*\.email | string |  `email` 
+action\_result\.data\.\*\.id | numeric |  `zscaler user id` 
+action\_result\.data\.\*\.isDefaultAdmin | boolean | 
+action\_result\.data\.\*\.isDeprecatedDefaultAdmin | boolean | 
+action\_result\.data\.\*\.isExecMobileAppEnabled | boolean | 
 action\_result\.data\.\*\.isNonEditable | boolean | 
 action\_result\.data\.\*\.isPasswordLoginAllowed | boolean | 
+action\_result\.data\.\*\.isProductUpdateCommEnabled | boolean | 
+action\_result\.data\.\*\.isSecurityReportCommEnabled | boolean | 
+action\_result\.data\.\*\.isServiceUpdateCommEnabled | boolean | 
+action\_result\.data\.\*\.loginName | string | 
+action\_result\.data\.\*\.name | string | 
 action\_result\.data\.\*\.pwdLastModifiedTime | numeric | 
+action\_result\.data\.\*\.role\.extensions\.adminRank | string | 
+action\_result\.data\.\*\.role\.extensions\.roleType | string | 
+action\_result\.data\.\*\.role\.id | numeric | 
+action\_result\.data\.\*\.role\.isNameL10nTag | boolean | 
+action\_result\.data\.\*\.role\.name | string | 
+action\_result\.data\.\*\.userName | string | 
 action\_result\.summary\.total\_admin\_users | numeric | 
 action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'get users'
+Gets a list of all users and allows user filtering by name, department, or group
+
+Type: **investigate**  
+Read only: **True**
+
+Gets a list of all users and allows user filtering by name, department, or group\. The name search parameter performs a partial match\. The dept and group parameters perform a 'starts with' match\.
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**name** |  optional  | User Name/ID | string | 
+**dept** |  optional  | User department | string | 
+**group** |  optional  | User group | string | 
+**limit** |  optional  | Maximum number of records to fetch | numeric | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.dept | string | 
+action\_result\.parameter\.group | string | 
+action\_result\.parameter\.limit | numeric | 
+action\_result\.parameter\.name | string | 
+action\_result\.data\.\*\.adminUser | boolean | 
+action\_result\.data\.\*\.comments | string | 
+action\_result\.data\.\*\.deleted | boolean | 
+action\_result\.data\.\*\.department\.id | numeric | 
+action\_result\.data\.\*\.department\.name | string | 
+action\_result\.data\.\*\.disabled | boolean | 
+action\_result\.data\.\*\.email | string |  `email` 
+action\_result\.data\.\*\.groups\.\*\.id | numeric |  `zscaler group id` 
+action\_result\.data\.\*\.groups\.\*\.name | string | 
+action\_result\.data\.\*\.id | numeric |  `zscaler user id` 
+action\_result\.data\.\*\.isNonEditable | boolean | 
+action\_result\.data\.\*\.name | string | 
+action\_result\.summary\.total\_users | numeric | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'get groups'
+Gets a list of groups
+
+Type: **investigate**  
+Read only: **True**
+
+Gets a list of groups\. The search parameters find matching values in the name or comments attributes\.
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**search** |  optional  | The search string used to match against a group's name or comments attributes | string | 
+**limit** |  optional  | Maximum number of records to fetch | numeric | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.limit | numeric | 
+action\_result\.parameter\.search | string | 
+action\_result\.data\.\*\.comments | string | 
+action\_result\.data\.\*\.id | numeric |  `zscaler group id` 
+action\_result\.data\.\*\.isNonEditable | boolean | 
+action\_result\.data\.\*\.name | string | 
+action\_result\.summary\.total\_groups | numeric | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'add group user'
+Add user to group
+
+Type: **generic**  
+Read only: **False**
+
+Add a group to the user's profile\.
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**user\_id** |  required  | ZScaler User ID | numeric |  `zscaler user id` 
+**group\_id** |  required  | ZScaler Group ID | numeric |  `zscaler group id` 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.group\_id | numeric |  `zscaler group id` 
+action\_result\.parameter\.user\_id | numeric |  `zscaler user id` 
+action\_result\.data\.\*\.adminUser | boolean | 
+action\_result\.data\.\*\.deleted | boolean | 
+action\_result\.data\.\*\.department\.id | numeric | 
+action\_result\.data\.\*\.department\.name | string | 
+action\_result\.data\.\*\.email | string | 
+action\_result\.data\.\*\.groups\.\*\.id | numeric | 
+action\_result\.data\.\*\.groups\.\*\.name | string | 
+action\_result\.data\.\*\.id | numeric | 
+action\_result\.data\.\*\.name | string | 
+action\_result\.summary | string | 
+action\_result\.summary\.message | string | 
+action\_result\.message | string | 
+summary\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'remove group user'
+Remove user from group
+
+Type: **correct**  
+Read only: **False**
+
+Remove a group from the user's profile\.
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**user\_id** |  required  | ZScaler User Id | numeric |  `zscaler user id` 
+**group\_id** |  required  | ZScaler Group Id | numeric |  `zscaler group id` 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.group\_id | numeric |  `zscaler group id` 
+action\_result\.parameter\.user\_id | numeric |  `zscaler user id` 
+action\_result\.data\.\*\.adminUser | boolean | 
+action\_result\.data\.\*\.deleted | boolean | 
+action\_result\.data\.\*\.department\.id | numeric | 
+action\_result\.data\.\*\.department\.name | string | 
+action\_result\.data\.\*\.email | string | 
+action\_result\.data\.\*\.groups\.\*\.id | numeric | 
+action\_result\.data\.\*\.groups\.\*\.name | string | 
+action\_result\.data\.\*\.id | numeric | 
+action\_result\.data\.\*\.name | string | 
+action\_result\.summary | string | 
+action\_result\.summary\.message | string | 
+action\_result\.message | string | 
+summary\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric | 
