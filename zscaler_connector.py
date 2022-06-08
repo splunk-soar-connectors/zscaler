@@ -63,8 +63,8 @@ class ZscalerConnector(BaseConnector):
                     error_msg = e.args[1]
                 elif len(e.args) == 1:
                     error_msg = e.args[0]
-        except Exception:
-            self.debug_print("Error occurred while getting message from response")
+        except Exception as e:
+            self.debug_print("Error occurred while getting message from response. Error : {}".format(e))
 
         if not error_code:
             error_text = "Error Message: {}".format(error_msg)
@@ -118,8 +118,9 @@ class ZscalerConnector(BaseConnector):
             split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
             error_text = '\n'.join(split_lines)
-        except Exception:
+        except Exception as e:
             error_text = "Cannot parse error details"
+            self.debug_print("{}. Error: {}".format(error_text, e))
 
         error_text = error_text
 
@@ -851,10 +852,7 @@ class ZscalerConnector(BaseConnector):
         }
         users = []
         while True:
-            if limit < ZSCALER_MAX_PAGESIZE:
-                params['pageSize'] = limit
-            else:
-                params['pageSize'] = ZSCALER_MAX_PAGESIZE
+            params['pageSize'] = min(limit, ZSCALER_MAX_PAGESIZE)
             ret_val, get_users = self._make_rest_call_helper('/api/v1/users', action_result, params=params)
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
@@ -891,10 +889,7 @@ class ZscalerConnector(BaseConnector):
         groups = []
         params['page'] = 1
         while True:
-            if limit < ZSCALER_MAX_PAGESIZE:
-                params['pageSize'] = limit
-            else:
-                params['pageSize'] = ZSCALER_MAX_PAGESIZE
+            params['pageSize'] = min(limit, ZSCALER_MAX_PAGESIZE)
             ret_val, get_groups = self._make_rest_call_helper('/api/v1/groups', action_result, params=params)
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
