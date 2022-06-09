@@ -16,7 +16,6 @@
 #
 # Phantom App imports
 import json
-import sys
 import time
 
 import phantom.app as phantom
@@ -45,6 +44,7 @@ class ZscalerConnector(BaseConnector):
         self._response = None  # The most recent response object
         self._headers = None
         self._category = None
+        self._retry_rest_call = None  # Retry rest call when get status_code 409 or 429
 
     def _get_error_message_from_exception(self, e):
         """
@@ -63,8 +63,8 @@ class ZscalerConnector(BaseConnector):
                     error_msg = e.args[1]
                 elif len(e.args) == 1:
                     error_msg = e.args[0]
-        except Exception:
-            pass
+        except Exception as e:
+            self.debug_print("Error occurred while getting message from response. Error : {}".format(e))
 
         if not error_code:
             error_text = "Error Message: {}".format(error_msg)
@@ -118,8 +118,9 @@ class ZscalerConnector(BaseConnector):
             split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
             error_text = '\n'.join(split_lines)
-        except:
+        except Exception as e:
             error_text = "Cannot parse error details"
+            self.debug_print("{}. Error: {}".format(error_text, e))
 
         error_text = error_text
 
@@ -148,7 +149,7 @@ class ZscalerConnector(BaseConnector):
         # You should process the error returned in the json
         try:
             message = resp_json['message']
-        except:
+        except Exception:
             message = "Error from server. Status Code: {0} Data from server: {1}".format(
                 r.status_code, r.text.replace('{', '{{').replace('}', '}}')
             )
@@ -200,7 +201,7 @@ class ZscalerConnector(BaseConnector):
                 ipaddress.ip_address(unicode(ip_address_input))
             except NameError:
                 ipaddress.ip_address(str(ip_address_input))
-        except:
+        except Exception:
             return False
 
         return True
@@ -222,21 +223,22 @@ class ZscalerConnector(BaseConnector):
 
         # Create a URL to connect to
         url = '{}{}'.format(self._base_url, endpoint)
-
         try:
             if use_json:
                 r = request_func(
                     url,
                     json=data,
                     headers=headers,
-                    params=params
+                    params=params,
+                    timeout=ZSCALER_DEFAULT_TIMEOUT
                 )
             else:
                 r = request_func(
                     url,
                     data=data,
                     headers=headers,
-                    params=params
+                    params=params,
+                    timeout=ZSCALER_DEFAULT_TIMEOUT
                 )
         except Exception as e:
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to Zscaler server. {}"
@@ -266,13 +268,14 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             if self._response is None:
                 return ret_val, response
-            if self._response.status_code == 409:  # Lock not available
+            if self._response.status_code == 409 and self._retry_rest_call:  # Lock not available
                 # This basically just means we need to try again
                 self.debug_print("Error 409: Lock not available")
                 self.send_progress("Error 409: Lock not available: Retrying in 1 second")
                 time.sleep(1)
+                self._retry_rest_call = False  # make it to false to avoid extra rest call
                 return self._make_rest_call_helper(*args, **kwargs)
-            if self._response.status_code == 429:  # Rate limit exceeded
+            if self._response.status_code == 429 and self._retry_rest_call:  # Rate limit exceeded
                 try:
                     retry_time = self._response.json()['Retry-After']
                 except KeyError:
@@ -284,6 +287,7 @@ class ZscalerConnector(BaseConnector):
                     return retry_time, response
                 self.send_progress("Exceeded rate limit: Retrying after {}".format(retry_time))
                 time.sleep(seconds_to_wait)
+                self._retry_rest_call = False  # make it to false to avoid extra rest call
                 return self._make_rest_call_helper(*args, **kwargs)
         return ret_val, response
 
@@ -300,14 +304,12 @@ class ZscalerConnector(BaseConnector):
         return now, key
 
     def _init_session(self):
-        config = self.get_config()
-        username = config['username']
-        password = config['password']
-        api_key = config['api_key']
-        self._base_url = config['base_url'].rstrip('/')
+        username = self._username
+        password = self._password
+        api_key = self._api_key
         try:
             timestamp, obf_api_key = self._obfuscate_api_key(api_key)
-        except:
+        except Exception:
             return self.set_status(
                 phantom.APP_ERROR,
                 "Error obfuscating API key"
@@ -822,6 +824,163 @@ class ZscalerConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _handle_get_users(self, param):
+        """
+        This action is used to fetch all users
+        :param name: User name
+        :param dept: User department
+        :param group: User group
+        :param limit: Max number of users to retrieve
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+
+        # Add an action result object to self (BaseConnector) to represent the action for this param
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        if not param:
+            return action_result.set_status(phantom.APP_ERROR, "No filters provided")
+
+        ret_val, limit = self._validate_integer(action_result, param.get('limit', ZSCALER_MAX_PAGESIZE), ZSCALER_LIMIT_KEY)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+        params = {
+            "name": param.get('name'),
+            "dept": param.get('dept'),
+            "group": param.get('group'),
+            'page': 1
+        }
+        users = []
+        while True:
+            params['pageSize'] = min(limit, ZSCALER_MAX_PAGESIZE)
+            ret_val, get_users = self._make_rest_call_helper('/api/v1/users', action_result, params=params)
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+            for user in get_users:
+                users.append(user)
+            limit = limit - params['pageSize']
+            if limit <= 0 or len(get_users) == 0:
+                break
+            params['page'] += 1
+
+        # Add the response into the data section
+        for user in users:
+            action_result.add_data(user)
+
+        # Add a dictionary that is made up of the most important values from data into the summary
+        summary = action_result.update_summary({})
+        summary['total_users'] = action_result.get_data_size()
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_get_groups(self, param):
+        """
+        This action is used to fetch groups based on search parameter
+        :param search: Search string to match
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        ret_val, limit = self._validate_integer(action_result, param.get('limit', ZSCALER_MAX_PAGESIZE), ZSCALER_LIMIT_KEY)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+        params = {"search": param.get('search')}
+        groups = []
+        params['page'] = 1
+        while True:
+            params['pageSize'] = min(limit, ZSCALER_MAX_PAGESIZE)
+            ret_val, get_groups = self._make_rest_call_helper('/api/v1/groups', action_result, params=params)
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+            for group in get_groups:
+                groups.append(group)
+            limit = limit - params['pageSize']
+            if limit <= 0 or len(get_groups) == 0:
+                break
+            params['page'] += 1
+
+        for group in groups:
+            action_result.add_data(group)
+
+        summary = action_result.update_summary({})
+        summary['total_groups'] = action_result.get_data_size()
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_add_group_user(self, param):
+        """
+        This action is used to add users to a group based on user id and group id
+        :param user_id: User ID to add
+        :param group_id: Group to add user tio
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        user_id = param['user_id']
+        group_id = param['group_id']
+        ret_val, user_response = self._make_rest_call_helper(f'/api/v1/users/{user_id}', action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+        ret_val, group_response = self._make_rest_call_helper(f'/api/v1/groups/{group_id}', action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+        summary = action_result.update_summary({})
+        if group_response in user_response['groups']:
+            summary['message'] = "User already in group"
+            action_result.add_data(group_response)
+            return action_result.set_status(phantom.APP_SUCCESS, "User already in group")
+        user_response['groups'].append(group_response)
+        data = user_response
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/users/{user_id}', action_result, data=data, method='put')
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+
+        summary['message'] = "User successfully added to group"
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_remove_group_user(self, param):
+        """
+        This action is used to remove users from a group based on user id and group id
+        :param user_id: User ID to remove
+        :param group_id: Group to remove user from
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        user_id = param['user_id']
+        group_id = param['group_id']
+        ret_val, user_response = self._make_rest_call_helper(f'/api/v1/users/{user_id}', action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        summary = action_result.update_summary({})
+        if group_id not in [item['id'] for item in user_response['groups']]:
+            summary['message'] = "User already removed from group"
+            action_result.add_data(user_response)
+            return action_result.set_status(phantom.APP_SUCCESS, "User already removed from group")
+
+        for index, group in enumerate(user_response['groups']):
+            if group_id == group['id']:
+                user_response['groups'].pop(index)
+
+        data = user_response
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/users/{user_id}', action_result, data=data, method='put')
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary['message'] = "User removed from group"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
     def handle_action(self, param):
 
         ret_val = phantom.APP_SUCCESS
@@ -876,6 +1035,18 @@ class ZscalerConnector(BaseConnector):
         elif action_id == 'get_admin_users':
             ret_val = self._handle_get_admin_users(param)
 
+        elif action_id == 'get_users':
+            ret_val = self._handle_get_users(param)
+
+        elif action_id == 'get_groups':
+            ret_val = self._handle_get_groups(param)
+
+        elif action_id == 'add_group_user':
+            ret_val = self._handle_add_group_user(param)
+
+        elif action_id == 'remove_group_user':
+            ret_val = self._handle_remove_group_user(param)
+
         return ret_val
 
     def initialize(self):
@@ -886,18 +1057,18 @@ class ZscalerConnector(BaseConnector):
         if not isinstance(self._state, dict):
             self.debug_print("Resetting the state file with the default format")
             self._state = {"app_version": self.get_app_json().get("app_version")}
-            return self.set_status(phantom.APP_ERROR, ZSCALER_STATE_FILE_CORRUPT_ERR)
 
         config = self.get_config()
         self._base_url = config['base_url'].rstrip('/')
         self._username = config['username']
         self._password = config['password']
+        self._api_key = config['api_key']
         self._sandbox_base_url = config.get('sandbox_base_url', None)
         if self._sandbox_base_url:
             self._sandbox_base_url = self._sandbox_base_url.rstrip('/')
         self._sandbox_api_token = config.get('sandbox_api_token', None)
         self._headers = {}
-
+        self._retry_rest_call = True
         self.set_validator('ipv6', self._is_ip)
 
         return self._init_session()
@@ -911,8 +1082,10 @@ class ZscalerConnector(BaseConnector):
 if __name__ == '__main__':
 
     import argparse
+    import sys
 
     import pudb
+
     pudb.set_trace()
 
     argparser = argparse.ArgumentParser()
