@@ -15,7 +15,7 @@
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.py",
     "python_version": "3",
-    "min_phantom_version": "5.2.0",
+    "min_phantom_version": "5.5.0",
     "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud v6.1"
@@ -658,8 +658,8 @@
                     "data_type": "string",
                     "contains": [
                         "url",
-                        "domain",
-                        "url list"
+                        "url list",
+                        "domain"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
@@ -984,8 +984,8 @@
                     "data_type": "string",
                     "contains": [
                         "url",
-                        "domain",
-                        "url list"
+                        "url list",
+                        "domain"
                     ],
                     "column_name": "URL",
                     "column_order": 0,
