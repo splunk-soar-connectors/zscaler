@@ -1,6 +1,6 @@
 # File: zscaler_connector.py
 #
-# Copyright (c) 2017-2022 Splunk Inc.
+# Copyright (c) 2017-2023 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -206,7 +206,7 @@ class ZscalerConnector(BaseConnector):
 
         return True
 
-    def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get", use_json=True):
+    def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get", use_json=True, timeout_flag=0):
 
         resp_json = None
 
@@ -221,6 +221,11 @@ class ZscalerConnector(BaseConnector):
         except AttributeError:
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid method: {0}".format(method)), resp_json)
 
+        req_timeout = ZSCALER_DEFAULT_TIMEOUT
+
+        if timeout_flag == 1:
+            req_timeout = None
+
         # Create a URL to connect to
         url = '{}{}'.format(self._base_url, endpoint)
         try:
@@ -230,7 +235,7 @@ class ZscalerConnector(BaseConnector):
                     json=data,
                     headers=headers,
                     params=params,
-                    timeout=ZSCALER_DEFAULT_TIMEOUT
+                    timeout=req_timeout
                 )
             else:
                 r = request_func(
@@ -238,7 +243,7 @@ class ZscalerConnector(BaseConnector):
                     data=data,
                     headers=headers,
                     params=params,
-                    timeout=ZSCALER_DEFAULT_TIMEOUT
+                    timeout=req_timeout
                 )
         except Exception as e:
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to Zscaler server. {}"
@@ -486,17 +491,18 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val) or filtered_endpoints is None:
             return ret_val
 
-        data = self._category
+        params = {'action': action }
 
-        if action == "ADD_TO_LIST":
-            to_add_endpoints = list(set(data.get('dbCategorizedUrls', []) + filtered_endpoints))
-        else:
-            to_add_endpoints = list(set(data.get('dbCategorizedUrls', [])) - set(filtered_endpoints))
+        data = {
+            "configuredName": self._category.get('configuredName'),
+            "keywordsRetainingParentCategory": self._category.get("keywordsRetainingParentCategory", []),
+            "urls": [],
+            "dbCategorizedUrls": filtered_endpoints
+        }
 
-        data['dbCategorizedUrls'] = to_add_endpoints
         ret_val, response = self._make_rest_call_helper(
             '/api/v1/urlCategories/{}'.format(self._category['id']),
-            action_result, data=data, method='put'
+            action_result, data=data, method='put', params=params, timeout_flag=1
         )
         if phantom.is_fail(ret_val):
             return ret_val
