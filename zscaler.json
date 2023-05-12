@@ -18,7 +18,7 @@
     "min_phantom_version": "5.5.0",
     "fips_compliant": true,
     "latest_tested_versions": [
-        "Cloud v6.1"
+        "Cloud v6.2"
     ],
     "app_wizard_version": "1.0.0",
     "configuration": {
