@@ -6,7 +6,7 @@ Connector Version: 2.4.0
 Product Vendor: Zscaler  
 Product Name: Zscaler  
 Product Version Supported (regex): ".\*"  
-Minimum Product Version: 5.2.0  
+Minimum Product Version: 5.5.0  
 
 This app implements containment and investigative actions on Zscaler
 
@@ -259,7 +259,7 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string |  |   success  failed 
-action_result.parameter.url | string |  `url`  `domain`  `url list`  |   www.test.com  www.test.com, www.test123.com 
+action_result.parameter.url | string |  `url`  `url list`  `domain`  |   www.test.com  www.test.com, www.test123.com 
 action_result.parameter.url_category | string |  `zscaler url category`  |   CUSTOM_01 
 action_result.data.\*.configuredName | string |  |   Test-Block 
 action_result.data.\*.customCategory | boolean |  |   True  False 
@@ -327,7 +327,7 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string |  |   success  failed 
-action_result.parameter.url | string |  `url`  `domain`  `url list`  |   www.test.com  www.test.com, www.test123.com 
+action_result.parameter.url | string |  `url`  `url list`  `domain`  |   www.test.com  www.test.com, www.test123.com 
 action_result.parameter.url_category | string |  `zscaler url category`  |   CUSTOM_01 
 action_result.data.\*.configuredName | string |  |   Test-Block 
 action_result.data.\*.customCategory | boolean |  |   True  False 
