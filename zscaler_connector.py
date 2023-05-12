@@ -46,7 +46,7 @@ class ZscalerConnector(BaseConnector):
         self._category = None
         self._retry_rest_call = None  # Retry rest call when get status_code 409 or 429
 
-    def _get_error_message_from_exception(self, e):
+    def _get_err_msg_from_exception(self, e):
         """
         Get appropriate error message from the exception.
         :param e: Exception object
@@ -114,24 +114,24 @@ class ZscalerConnector(BaseConnector):
             # Remove the script, style, footer and navigation part from the HTML message
             for element in soup(["script", "style", "footer", "nav"]):
                 element.extract()
-            error_text = soup.text
-            split_lines = error_text.split('\n')
+            err_text = soup.text
+            split_lines = err_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
-            error_text = '\n'.join(split_lines)
+            err_text = '\n'.join(split_lines)
         except Exception as e:
-            error_text = "Cannot parse error details"
-            self.debug_print("{}. Error: {}".format(error_text, e))
+            err_text = "Cannot parse err details"
+            self.debug_print("{}. Error: {}".format(err_text, e))
 
-        error_text = error_text
+        err_text = err_text
 
-        message = "Please check the asset configuration parameters (the base_url should not end with "\
+        msg = "Please check the asset configuration parameters (the base_url should not end with "\
             "/api/v1 e.g. https://admin.zscaler_instance.net)."
 
-        if len(error_text) <= 500:
-            message += "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
+        if len(err_text) <= 500:
+            msg += "Status Code: {0}. Data from server:\n{1}\n".format(status_code, err_text)
 
-        message = message.replace('{', '{{').replace('}', '}}')
-        return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
+        msg = msg.replace('{', '{{').replace('}', '}}')
+        return RetVal(action_result.set_status(phantom.APP_ERROR, msg), None)
 
     def _process_json_response(self, r, action_result):
 
@@ -140,7 +140,7 @@ class ZscalerConnector(BaseConnector):
             resp_json = r.json()
         except Exception as e:
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}"
-                .format(self._get_error_message_from_exception(e))), None)
+                .format(self._get_err_msg_from_exception(e))), None)
 
         # Please specify the status codes here
         if 200 <= r.status_code < 399:
@@ -148,12 +148,12 @@ class ZscalerConnector(BaseConnector):
 
         # You should process the error returned in the json
         try:
-            message = resp_json['message']
+            msg = resp_json['message']
         except Exception:
-            message = "Error from server. Status Code: {0} Data from server: {1}".format(
+            msg = "Error from server. Status Code: {0} Data from server: {1}".format(
                 r.status_code, r.text.replace('{', '{{').replace('}', '}}')
             )
-        return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
+        return RetVal(action_result.set_status(phantom.APP_ERROR, msg), None)
 
     def _process_response(self, r, action_result):
 
@@ -181,11 +181,11 @@ class ZscalerConnector(BaseConnector):
             return self._process_empty_response(r, action_result)
 
         # everything else is actually an error at this point
-        message = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
+        msg = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
             r.status_code, r.text.replace('{', '{{').replace('}', '}}')
         )
 
-        return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
+        return RetVal(action_result.set_status(phantom.APP_ERROR, msg), None)
 
     def _is_ip(self, input_ip_address):
         """ Function that checks given address and return True if address is valid IPv4 or IPV6 address.
@@ -247,7 +247,7 @@ class ZscalerConnector(BaseConnector):
                 )
         except Exception as e:
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to Zscaler server. {}"
-                    .format(self._get_error_message_from_exception(e))), resp_json)
+                    .format(self._get_err_msg_from_exception(e))), resp_json)
 
         self._response = r
 
@@ -682,13 +682,13 @@ class ZscalerConnector(BaseConnector):
 
         try:
             file_id = param['vault_id']
-            success, message, file_info = phantom_rules.vault_info(vault_id=file_id)
+            success, msg, file_info = phantom_rules.vault_info(vault_id=file_id)
             file_info = list(file_info)[0]
         except IndexError:
             return action_result.set_status(phantom.APP_ERROR, 'Vault file could not be found with supplied Vault ID')
         except Exception as e:
-            error_msg = self._get_error_message_from_exception(e)
-            self.debug_print("Vault ID not valid. Error: {}".format(error_msg))
+            err_msg = self._get_err_msg_from_exception(e)
+            self.debug_print("Vault ID not valid. Error: {}".format(err_msg))
             return action_result.set_status(phantom.APP_ERROR, 'Vault ID not valid')
 
         params = {
@@ -713,15 +713,15 @@ class ZscalerConnector(BaseConnector):
         action_result.add_data(resp_json)
 
         if resp_json.get('message') == '/submit response OK':
-            message = ZSCALER_SANDBOX_SUBMIT_FILE_MSG
+            msg = ZSCALER_SANDBOX_SUBMIT_FILE_MSG
         else:
             if resp_json.get('message').lower() != resp_json.get('sandboxSubmission').lower():
-                message = 'Status Code: {}. Data from server: {}. {}.'.format(resp_json.get('code'), resp_json.get('sandboxSubmission'),
+                msg = 'Status Code: {}. Data from server: {}. {}.'.format(resp_json.get('code'), resp_json.get('sandboxSubmission'),
                     resp_json.get('message'))
             else:
-                message = 'Status Code: {}. Data from server: {}'.format(resp_json.get('code'), resp_json.get('message'))
+                msg = 'Status Code: {}. Data from server: {}'.format(resp_json.get('code'), resp_json.get('message'))
 
-        return action_result.set_status(phantom.APP_SUCCESS, message)
+        return action_result.set_status(phantom.APP_SUCCESS, msg)
 
     def _handle_list_url_categories(self, param):
         """
