@@ -624,8 +624,7 @@ class ZscalerConnector(BaseConnector):
             return ret_val
 
         ret_val, blocklist_response = self._make_rest_call_helper(
-            '/api/v1/security/advanced', action_result,
-            data=endpoints, method='get'
+            '/api/v1/security/advanced', action_result, method='get'
         )
 
         if phantom.is_fail(ret_val):
