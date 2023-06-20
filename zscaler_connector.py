@@ -16,6 +16,7 @@
 #
 # Phantom App imports
 import json
+import re
 import time
 
 import phantom.app as phantom
@@ -246,8 +247,10 @@ class ZscalerConnector(BaseConnector):
                     timeout=req_timeout
                 )
         except Exception as e:
+            error_message = self._get_err_msg_from_exception(e)
+            error_message = re.sub(ZSCALER_MATCH_REGEX, ZSCALER_REPLACE_REGEX, error_message)
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to Zscaler server. {}"
-                    .format(self._get_err_msg_from_exception(e))), resp_json)
+                                                   .format(error_message)), resp_json)
 
         self._response = r
 
@@ -858,7 +861,7 @@ class ZscalerConnector(BaseConnector):
         users = []
         while True:
             params['pageSize'] = min(limit, ZSCALER_MAX_PAGESIZE)
-            ret_val, get_users = self._make_rest_call_helper('/api/v1/users', action_result, params=params)
+            ret_val, get_users = self._make_rest_call_helper('/api/v1/users', action_result, params=params, timeout_flag=1)
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
             for user in get_users:
