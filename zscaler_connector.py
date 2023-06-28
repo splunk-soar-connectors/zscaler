@@ -57,6 +57,7 @@ class ZscalerConnector(BaseConnector):
         err_code = None
         err_msg = ZSCALER_ERR_MSG_UNAVAILABLE
 
+        self.error_print("Error occurred: ", e)
         try:
             if hasattr(e, "args"):
                 if len(e.args) > 1:
@@ -103,7 +104,11 @@ class ZscalerConnector(BaseConnector):
     def _process_empty_response(self, response, action_result):
         if response.status_code == 200 or response.status_code == 204:
             return RetVal(phantom.APP_SUCCESS, {})
-        return RetVal(action_result.set_status(phantom.APP_ERROR, "Empty response and no information in the header"), None)
+        return RetVal(action_result.set_status(
+            phantom.APP_ERROR,
+            "Status code : {}. Empty response and no information in the header".format(response.status_code)),
+            None
+        )
 
     def _process_html_response(self, response, action_result):
 
@@ -207,7 +212,8 @@ class ZscalerConnector(BaseConnector):
 
         return True
 
-    def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get", use_json=True, timeout_flag=0):
+    def _make_rest_call(self, endpoint, action_result, headers=None, params=None,
+                        data=None, method="get", use_json=True, timeout=ZSCALER_DEFAULT_TIMEOUT):
 
         resp_json = None
 
@@ -222,11 +228,6 @@ class ZscalerConnector(BaseConnector):
         except AttributeError:
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid method: {0}".format(method)), resp_json)
 
-        req_timeout = ZSCALER_DEFAULT_TIMEOUT
-
-        if timeout_flag == 1:
-            req_timeout = None
-
         # Create a URL to connect to
         url = '{}{}'.format(self._base_url, endpoint)
         try:
@@ -236,7 +237,7 @@ class ZscalerConnector(BaseConnector):
                     json=data,
                     headers=headers,
                     params=params,
-                    timeout=req_timeout
+                    timeout=timeout
                 )
             else:
                 r = request_func(
@@ -244,7 +245,7 @@ class ZscalerConnector(BaseConnector):
                     data=data,
                     headers=headers,
                     params=params,
-                    timeout=req_timeout
+                    timeout=timeout
                 )
         except Exception as e:
             error_message = self._get_err_msg_from_exception(e)
@@ -331,7 +332,7 @@ class ZscalerConnector(BaseConnector):
         }
 
         action_result = ActionResult()
-        ret_val, response = self._make_rest_call_helper(
+        ret_val, _ = self._make_rest_call_helper(
             '/api/v1/authenticatedSession',
             action_result, data=body,
             method='post'
@@ -505,7 +506,7 @@ class ZscalerConnector(BaseConnector):
 
         ret_val, response = self._make_rest_call_helper(
             '/api/v1/urlCategories/{}'.format(self._category['id']),
-            action_result, data=data, method='put', params=params, timeout_flag=1
+            action_result, data=data, method='put', params=params, timeout=None
         )
         if phantom.is_fail(ret_val):
             return ret_val
@@ -861,7 +862,7 @@ class ZscalerConnector(BaseConnector):
         users = []
         while True:
             params['pageSize'] = min(limit, ZSCALER_MAX_PAGESIZE)
-            ret_val, get_users = self._make_rest_call_helper('/api/v1/users', action_result, params=params, timeout_flag=1)
+            ret_val, get_users = self._make_rest_call_helper('/api/v1/users', action_result, params=params, timeout=None)
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
             for user in get_users:
