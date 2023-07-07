@@ -1,1 +1,2 @@
 **Unreleased**
+* Bug fix for the block url action [PAPP-30167]
