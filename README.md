@@ -2,16 +2,16 @@
 # Zscaler
 
 Publisher: Splunk  
-Connector Version: 2\.3\.1  
+Connector Version: 2.4.0  
 Product Vendor: Zscaler  
 Product Name: Zscaler  
-Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 5\.2\.0  
+Product Version Supported (regex): ".\*"  
+Minimum Product Version: 6.0.0  
 
 This app implements containment and investigative actions on Zscaler
 
 [comment]: # " File: README.md"
-[comment]: # "  Copyright (c) 2017-2022 Splunk Inc."
+[comment]: # "  Copyright (c) 2017-2023 Splunk Inc."
 [comment]: # ""
 [comment]: # "Licensed under the Apache License, Version 2.0 (the 'License');"
 [comment]: # "you may not use this file except in compliance with the License."
@@ -93,12 +93,12 @@ The below configuration variables are required for this Connector to operate.  T
 
 VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
-**base\_url** |  required  | string | Base URL \(e\.g\. https\://admin\.zscaler\_instance\.net\)
-**api\_key** |  required  | password | API Key
+**base_url** |  required  | string | Base URL (e.g. https://admin.zscaler_instance.net)
+**api_key** |  required  | password | API Key
 **username** |  required  | string | Username
 **password** |  required  | password | Password
-**sandbox\_base\_url** |  optional  | string | Sandbox Base URL
-**sandbox\_api\_token** |  optional  | password | Sandbox API Token
+**sandbox_base_url** |  optional  | string | Sandbox Base URL
+**sandbox_api_token** |  optional  | password | Sandbox API Token
 
 ### Supported Actions  
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
@@ -142,41 +142,41 @@ Read only: **True**
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**file\_hash** |  required  | The md5 file hash | string |  `md5` 
+**file_hash** |  required  | The md5 file hash | string |  `md5` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.file\_hash | string |  `md5` 
-action\_result\.data\.\*\.Full Details\.Classification\.Category | string | 
-action\_result\.data\.\*\.Full Details\.Classification\.DetectedMalware | string | 
-action\_result\.data\.\*\.Full Details\.Classification\.Score | numeric | 
-action\_result\.data\.\*\.Full Details\.Classification\.Type | string | 
-action\_result\.data\.\*\.Full Details\.FileProperties\.DigitalCerificate | string | 
-action\_result\.data\.\*\.Full Details\.FileProperties\.FileSize | numeric | 
-action\_result\.data\.\*\.Full Details\.FileProperties\.FileType | string | 
-action\_result\.data\.\*\.Full Details\.FileProperties\.Issuer | string | 
-action\_result\.data\.\*\.Full Details\.FileProperties\.MD5 | string |  `md5` 
-action\_result\.data\.\*\.Full Details\.FileProperties\.RootCA | string | 
-action\_result\.data\.\*\.Full Details\.FileProperties\.SHA1 | string |  `sha1` 
-action\_result\.data\.\*\.Full Details\.FileProperties\.SSDeep | string | 
-action\_result\.data\.\*\.Full Details\.FileProperties\.Sha256 | string |  `sha256` 
-action\_result\.data\.\*\.Full Details\.Origin\.Country | string | 
-action\_result\.data\.\*\.Full Details\.Origin\.Language | string | 
-action\_result\.data\.\*\.Full Details\.Origin\.Risk | string | 
-action\_result\.data\.\*\.Full Details\.Summary\.Category | string | 
-action\_result\.data\.\*\.Full Details\.Summary\.Duration | numeric | 
-action\_result\.data\.\*\.Full Details\.Summary\.FileType | string | 
-action\_result\.data\.\*\.Full Details\.Summary\.StartTime | numeric | 
-action\_result\.data\.\*\.Full Details\.Summary\.Status | string | 
-action\_result\.data\.\*\.Full Details\.SystemSummary\.\*\.Risk | string | 
-action\_result\.data\.\*\.Full Details\.SystemSummary\.\*\.Signature | string | 
-action\_result\.data\.\*\.Full Details\.SystemSummary\.\*\.SignatureSources | string | 
-action\_result\.summary | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.file_hash | string |  `md5`  |   test 1043ca3fc2e83f0c6f100e46d2ea16be 
+action_result.data.\*.Full Details.Classification.Category | string |  |   test BENIGN 
+action_result.data.\*.Full Details.Classification.DetectedMalware | string |  |  
+action_result.data.\*.Full Details.Classification.Score | numeric |  |   10 
+action_result.data.\*.Full Details.Classification.Type | string |  |   test BENIGN 
+action_result.data.\*.Full Details.FileProperties.DigitalCerificate | string |  |  
+action_result.data.\*.Full Details.FileProperties.FileSize | numeric |  |   350084 
+action_result.data.\*.Full Details.FileProperties.FileType | string |  |   test EXE 
+action_result.data.\*.Full Details.FileProperties.Issuer | string |  |  
+action_result.data.\*.Full Details.FileProperties.MD5 | string |  `md5`  |   test 1043ca3fc2e83f0c6f100e46d2ea16be 
+action_result.data.\*.Full Details.FileProperties.RootCA | string |  |  
+action_result.data.\*.Full Details.FileProperties.SHA1 | string |  `sha1`  |   test efbd493b33543341d43df6db4c92de2473cf49f3 
+action_result.data.\*.Full Details.FileProperties.SSDeep | string |  |   test 6144:IFkS+8dpN9EtEnROO4T0LbTbHiXuFW0XPBGunX9v62HCTAA1PSahJj3zDbSJ8:CkMy4TGWXuFR5JAxS6Lnbu8 
+action_result.data.\*.Full Details.FileProperties.Sha256 | string |  `sha256`  |   test 0e7fd4dde827a7f0bda82bbfbce4b92a551d0cd296f72e936b8968310d2181cd 
+action_result.data.\*.Full Details.Origin.Country | string |  |   test United States 
+action_result.data.\*.Full Details.Origin.Language | string |  |   test English 
+action_result.data.\*.Full Details.Origin.Risk | string |  |   test LOW 
+action_result.data.\*.Full Details.Summary.Category | string |  |   test EXECS 
+action_result.data.\*.Full Details.Summary.Duration | numeric |  |   524114 
+action_result.data.\*.Full Details.Summary.FileType | string |  |   test EXE 
+action_result.data.\*.Full Details.Summary.StartTime | numeric |  |   1520334357 
+action_result.data.\*.Full Details.Summary.Status | string |  |   test COMPLETED 
+action_result.data.\*.Full Details.SystemSummary.\*.Risk | string |  |   test LOW 
+action_result.data.\*.Full Details.SystemSummary.\*.Signature | string |  |   test Binary contains paths to development resources 
+action_result.data.\*.Full Details.SystemSummary.\*.SignatureSources | string |  |   test no activity detected 
+action_result.summary | string |  |  
+action_result.message | string |  |   test Sandbox report successfully fetched for the provided md5 hash 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'list url categories'
 List all URL categories
@@ -188,26 +188,26 @@ Read only: **True**
 No parameters are required for this action
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.data\.\*\.configuredName | string | 
-action\_result\.data\.\*\.customCategory | boolean | 
-action\_result\.data\.\*\.customIpRangesCount | numeric | 
-action\_result\.data\.\*\.customUrlsCount | numeric | 
-action\_result\.data\.\*\.dbCategorizedUrls | string | 
-action\_result\.data\.\*\.description | string | 
-action\_result\.data\.\*\.editable | boolean | 
-action\_result\.data\.\*\.id | string |  `zscaler url category` 
-action\_result\.data\.\*\.ipRangesRetainingParentCategoryCount | numeric | 
-action\_result\.data\.\*\.scopes\.\*\.Type | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.urlsRetainingParentCategoryCount | numeric | 
-action\_result\.data\.\*\.val | numeric | 
-action\_result\.summary\.total\_url\_categories | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.data.\*.configuredName | string |  |   test Test-Caution 
+action_result.data.\*.customCategory | boolean |  |   True  False 
+action_result.data.\*.customIpRangesCount | numeric |  |   0 
+action_result.data.\*.customUrlsCount | numeric |  |   0 
+action_result.data.\*.dbCategorizedUrls | string |  |   test 6.5.3.2.4 
+action_result.data.\*.description | string |  |   test OTHER_RESTRICTED_WEBSITE_DESC 
+action_result.data.\*.editable | boolean |  |   True  False 
+action_result.data.\*.id | string |  `zscaler url category`  |   test OTHER_RESTRICTED_WEBSITE 
+action_result.data.\*.ipRangesRetainingParentCategoryCount | numeric |  |   0 
+action_result.data.\*.scopes.\*.Type | string |  |   test ORGANIZATION 
+action_result.data.\*.type | string |  |   test URL_CATEGORY 
+action_result.data.\*.urlsRetainingParentCategoryCount | numeric |  |   0 
+action_result.data.\*.val | numeric |  |   1 
+action_result.summary.total_url_categories | numeric |  |   97 
+action_result.message | string |  |   test Total url categories: 97 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'block ip'
 Block an IP
@@ -215,31 +215,31 @@ Block an IP
 Type: **contain**  
 Read only: **False**
 
-If a <b>url\_category</b> is specified, it will add the IP\(s\) as a rule to that category\. If it is left blank, it will instead add the IP\(s\) to the global blocklist\.
+If a <b>url_category</b> is specified, it will add the IP(s) as a rule to that category. If it is left blank, it will instead add the IP(s) to the global blocklist.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **ip** |  required  | A list of IPs | string |  `ip`  `ipv6` 
-**url\_category** |  optional  | Add to this category | string |  `zscaler url category` 
+**url_category** |  optional  | Add to this category | string |  `zscaler url category` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.ip | string |  `ip`  `ipv6` 
-action\_result\.parameter\.url\_category | string |  `zscaler url category` 
-action\_result\.data\.\*\.configuredName | string | 
-action\_result\.data\.\*\.customCategory | boolean | 
-action\_result\.data\.\*\.dbCategorizedUrls | string | 
-action\_result\.data\.\*\.description | string | 
-action\_result\.data\.\*\.id | string | 
-action\_result\.data\.\*\.val | numeric | 
-action\_result\.summary\.ignored | string | 
-action\_result\.summary\.updated | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.ip | string |  `ip`  `ipv6`  |   test 8.8.8.8, 208.67.222.222  test aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa 
+action_result.parameter.url_category | string |  `zscaler url category`  |   test CUSTOM_01 
+action_result.data.\*.configuredName | string |  |   test Test-Block 
+action_result.data.\*.customCategory | boolean |  |   True  False 
+action_result.data.\*.dbCategorizedUrls | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.id | string |  |   test CUSTOM_01 
+action_result.data.\*.val | numeric |  |   128 
+action_result.summary.ignored | string |  |   test 8.8.8.8 
+action_result.summary.updated | string |  |   test 208.67.222.222 
+action_result.message | string |  |   test Ignored: ['8.8.8.8'], Updated: ['208.67.222.222'] 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'block url'
 Block a URL
@@ -247,35 +247,35 @@ Block a URL
 Type: **contain**  
 Read only: **False**
 
-If a <b>url\_category</b> is specified, it will add the URL\(s\) as a rule to that category\. If it is left blank, it will instead add the URL\(s\) to the global blocklist\.
+If a <b>url_category</b> is specified, it will add the URL(s) as a rule to that category. If it is left blank, it will instead add the URL(s) to the global blocklist.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**url** |  required  | A list of URLs | string |  `url`  `domain`  `url list` 
-**url\_category** |  optional  | Add to this category | string |  `zscaler url category` 
+**url** |  required  | A list of URLs | string |  `url`  `url list`  `domain` 
+**url_category** |  optional  | Add to this category | string |  `zscaler url category` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.url | string |  `url`  `domain`  `url list` 
-action\_result\.parameter\.url\_category | string |  `zscaler url category` 
-action\_result\.data\.\*\.configuredName | string | 
-action\_result\.data\.\*\.customCategory | boolean | 
-action\_result\.data\.\*\.customUrlsCount | numeric | 
-action\_result\.data\.\*\.dbCategorizedUrls | string | 
-action\_result\.data\.\*\.description | string | 
-action\_result\.data\.\*\.editable | boolean | 
-action\_result\.data\.\*\.id | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.urlsRetainingParentCategoryCount | numeric | 
-action\_result\.data\.\*\.val | numeric | 
-action\_result\.summary\.ignored | string | 
-action\_result\.summary\.updated | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.url | string |  `url`  `url list`  `domain`  |   test www.test.com  www.test.com, www.test123.com 
+action_result.parameter.url_category | string |  `zscaler url category`  |   test CUSTOM_01 
+action_result.data.\*.configuredName | string |  |   test Test-Block 
+action_result.data.\*.customCategory | boolean |  |   True  False 
+action_result.data.\*.customUrlsCount | numeric |  |   0 
+action_result.data.\*.dbCategorizedUrls | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.editable | boolean |  |   True  False 
+action_result.data.\*.id | string |  |   test CUSTOM_01 
+action_result.data.\*.type | string |  |   test URL_CATEGORY 
+action_result.data.\*.urlsRetainingParentCategoryCount | numeric |  |   3 
+action_result.data.\*.val | numeric |  |   128 
+action_result.summary.ignored | string |  |   test www.test.com 
+action_result.summary.updated | string |  |   test www.test123.com 
+action_result.message | string |  |   test Ignored: ['www.test.com'], Updated: ['www.test123.com'] 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'unblock ip'
 Unblock an IP
@@ -283,31 +283,31 @@ Unblock an IP
 Type: **correct**  
 Read only: **False**
 
-If a <b>url\_category</b> is specified, it will remove the IP\(s\) from that category\. If it is left blank, it will instead remove the IP\(s\) from the global blocklist\.
+If a <b>url_category</b> is specified, it will remove the IP(s) from that category. If it is left blank, it will instead remove the IP(s) from the global blocklist.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **ip** |  required  | A list of IPs | string |  `ip`  `ipv6` 
-**url\_category** |  optional  | Remove from this category | string |  `zscaler url category` 
+**url_category** |  optional  | Remove from this category | string |  `zscaler url category` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.ip | string |  `ip`  `ipv6` 
-action\_result\.parameter\.url\_category | string |  `zscaler url category` 
-action\_result\.data\.\*\.configuredName | string | 
-action\_result\.data\.\*\.customCategory | boolean | 
-action\_result\.data\.\*\.dbCategorizedUrls | string | 
-action\_result\.data\.\*\.description | string | 
-action\_result\.data\.\*\.id | string | 
-action\_result\.data\.\*\.val | numeric | 
-action\_result\.summary\.ignored | string | 
-action\_result\.summary\.updated | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.ip | string |  `ip`  `ipv6`  |   test 8.8.8.8  test 8.8.8.8, 208.67.222.222  test aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa 
+action_result.parameter.url_category | string |  `zscaler url category`  |   test CUSTOM_01 
+action_result.data.\*.configuredName | string |  |   test Test-Block 
+action_result.data.\*.customCategory | boolean |  |   True  False 
+action_result.data.\*.dbCategorizedUrls | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.id | string |  |   test CUSTOM_01 
+action_result.data.\*.val | numeric |  |   128 
+action_result.summary.ignored | string |  |   test 8.8.8.8 
+action_result.summary.updated | string |  |   test 208.67.222.222 
+action_result.message | string |  |   test Ignored: ['8.8.8.8'], Updated: ['208.67.222.222'] 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'unblock url'
 Unblock a URL
@@ -315,35 +315,35 @@ Unblock a URL
 Type: **correct**  
 Read only: **False**
 
-If a <b>url\_category</b> is specified, it will remove the URL\(s\) from that category\. If it is left blank, it will instead remove the URL\(s\) from the global blocklist\.
+If a <b>url_category</b> is specified, it will remove the URL(s) from that category. If it is left blank, it will instead remove the URL(s) from the global blocklist.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**url** |  required  | A list of URLs | string |  `url`  `domain`  `url list` 
-**url\_category** |  optional  | Remove from this category | string |  `zscaler url category` 
+**url** |  required  | A list of URLs | string |  `url`  `url list`  `domain` 
+**url_category** |  optional  | Remove from this category | string |  `zscaler url category` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.url | string |  `url`  `domain`  `url list` 
-action\_result\.parameter\.url\_category | string |  `zscaler url category` 
-action\_result\.data\.\*\.configuredName | string | 
-action\_result\.data\.\*\.customCategory | boolean | 
-action\_result\.data\.\*\.customUrlsCount | numeric | 
-action\_result\.data\.\*\.dbCategorizedUrls | string | 
-action\_result\.data\.\*\.description | string | 
-action\_result\.data\.\*\.editable | boolean | 
-action\_result\.data\.\*\.id | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.urlsRetainingParentCategoryCount | numeric | 
-action\_result\.data\.\*\.val | numeric | 
-action\_result\.summary\.ignored | string | 
-action\_result\.summary\.updated | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.url | string |  `url`  `url list`  `domain`  |   test www.test.com  www.test.com, www.test123.com 
+action_result.parameter.url_category | string |  `zscaler url category`  |   test CUSTOM_01 
+action_result.data.\*.configuredName | string |  |   test Test-Block 
+action_result.data.\*.customCategory | boolean |  |   True  False 
+action_result.data.\*.customUrlsCount | numeric |  |   0 
+action_result.data.\*.dbCategorizedUrls | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.editable | boolean |  |   True  False 
+action_result.data.\*.id | string |  |   test CUSTOM_01 
+action_result.data.\*.type | string |  |   test URL_CATEGORY 
+action_result.data.\*.urlsRetainingParentCategoryCount | numeric |  |   1 
+action_result.data.\*.val | numeric |  |   128 
+action_result.summary.ignored | string |  |   test www.test.com 
+action_result.summary.updated | string |  |   test www.test123.com 
+action_result.message | string |  |   test Ignored: ['www.test.com'], Updated: ['www.test123.com'] 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'allow ip'
 Add an IP address to the allowlist
@@ -351,31 +351,31 @@ Add an IP address to the allowlist
 Type: **contain**  
 Read only: **False**
 
-If a <b>url\_category</b> is specified, it will add the IP\(s\) as a rule to that category\. If it is left blank, it will instead add this IP\(s\) to the global allowlist\.
+If a <b>url_category</b> is specified, it will add the IP(s) as a rule to that category. If it is left blank, it will instead add this IP(s) to the global allowlist.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **ip** |  required  | A list of IPs | string |  `ip`  `ipv6` 
-**url\_category** |  optional  | Add to this category | string |  `zscaler url category` 
+**url_category** |  optional  | Add to this category | string |  `zscaler url category` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.ip | string |  `ip`  `ipv6` 
-action\_result\.parameter\.url\_category | string |  `zscaler url category` 
-action\_result\.data\.\*\.configuredName | string | 
-action\_result\.data\.\*\.customCategory | boolean | 
-action\_result\.data\.\*\.dbCategorizedUrls | string | 
-action\_result\.data\.\*\.description | string | 
-action\_result\.data\.\*\.id | string | 
-action\_result\.data\.\*\.val | numeric | 
-action\_result\.summary\.ignored | string | 
-action\_result\.summary\.updated | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.ip | string |  `ip`  `ipv6`  |   test 8.8.8.8  test 8.8.8.8, 208.67.222.222  test aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa 
+action_result.parameter.url_category | string |  `zscaler url category`  |   test CUSTOM_01 
+action_result.data.\*.configuredName | string |  |   test Test-Allowlist 
+action_result.data.\*.customCategory | boolean |  |   True  False 
+action_result.data.\*.dbCategorizedUrls | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.id | string |  |   test CUSTOM_01 
+action_result.data.\*.val | numeric |  |   128 
+action_result.summary.ignored | string |  |   test 8.8.8.8 
+action_result.summary.updated | string |  |   test 208.67.222.222 
+action_result.message | string |  |   test Ignored: ['8.8.8.8'], Updated: ['208.67.222.222'] 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'allow url'
 Add a URL to the allowed list
@@ -383,35 +383,35 @@ Add a URL to the allowed list
 Type: **contain**  
 Read only: **False**
 
-If a <b>url\_category</b> is specified, it will add the URL\(s\) as a rule to that category\. If it is left blank, it will instead add the URL\(s\) to the global allowed list\.
+If a <b>url_category</b> is specified, it will add the URL(s) as a rule to that category. If it is left blank, it will instead add the URL(s) to the global allowed list.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **url** |  required  | A list of URLs | string |  `url`  `domain`  `url list` 
-**url\_category** |  optional  | Add to this category | string |  `zscaler url category` 
+**url_category** |  optional  | Add to this category | string |  `zscaler url category` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.url | string |  `url`  `domain`  `url list` 
-action\_result\.parameter\.url\_category | string |  `zscaler url category` 
-action\_result\.data\.\*\.configuredName | string | 
-action\_result\.data\.\*\.customCategory | boolean | 
-action\_result\.data\.\*\.customUrlsCount | numeric | 
-action\_result\.data\.\*\.dbCategorizedUrls | string | 
-action\_result\.data\.\*\.description | string | 
-action\_result\.data\.\*\.editable | boolean | 
-action\_result\.data\.\*\.id | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.urlsRetainingParentCategoryCount | numeric | 
-action\_result\.data\.\*\.val | numeric | 
-action\_result\.summary\.ignored | string | 
-action\_result\.summary\.updated | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.url | string |  `url`  `domain`  `url list`  |   test www.test.com  test www.test.com, www.test123.com 
+action_result.parameter.url_category | string |  `zscaler url category`  |   test CUSTOM_01 
+action_result.data.\*.configuredName | string |  |   test Test-Allowlist 
+action_result.data.\*.customCategory | boolean |  |   True  False 
+action_result.data.\*.customUrlsCount | numeric |  |   0 
+action_result.data.\*.dbCategorizedUrls | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.editable | boolean |  |   True  False 
+action_result.data.\*.id | string |  |   test CUSTOM_01 
+action_result.data.\*.type | string |  |   test URL_CATEGORY 
+action_result.data.\*.urlsRetainingParentCategoryCount | numeric |  |   3 
+action_result.data.\*.val | numeric |  |   128 
+action_result.summary.ignored | string |  |   test www.test.com 
+action_result.summary.updated | string |  |   test www.test123.com 
+action_result.message | string |  |   test Ignored: ['www.test.com'], Updated: ['www.test123.com'] 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'unallow ip'
 Remove an IP address from the allowlist
@@ -419,31 +419,31 @@ Remove an IP address from the allowlist
 Type: **correct**  
 Read only: **False**
 
-If a <b>url\_category</b> is specified, it will remove the IP\(s\) from that category\. If it is left blank, it will instead remove the IP\(s\) from the global allowlist\.
+If a <b>url_category</b> is specified, it will remove the IP(s) from that category. If it is left blank, it will instead remove the IP(s) from the global allowlist.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **ip** |  required  | A list of IPs | string |  `ip`  `ipv6` 
-**url\_category** |  optional  | Remove from this category | string |  `zscaler url category` 
+**url_category** |  optional  | Remove from this category | string |  `zscaler url category` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.ip | string |  `ip`  `ipv6` 
-action\_result\.parameter\.url\_category | string |  `zscaler url category` 
-action\_result\.data\.\*\.configuredName | string | 
-action\_result\.data\.\*\.customCategory | boolean | 
-action\_result\.data\.\*\.dbCategorizedUrls | string | 
-action\_result\.data\.\*\.description | string | 
-action\_result\.data\.\*\.id | string | 
-action\_result\.data\.\*\.val | numeric | 
-action\_result\.summary\.ignored | string | 
-action\_result\.summary\.updated | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.ip | string |  `ip`  `ipv6`  |   test 8.8.8.8  test 8.8.8.8, 208.67.222.222  test aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa 
+action_result.parameter.url_category | string |  `zscaler url category`  |   test CUSTOM_01 
+action_result.data.\*.configuredName | string |  |   test Test-Allowlist 
+action_result.data.\*.customCategory | boolean |  |   True  False 
+action_result.data.\*.dbCategorizedUrls | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.id | string |  |   test CUSTOM_01 
+action_result.data.\*.val | numeric |  |   128 
+action_result.summary.ignored | string |  |   test 8.8.8.8 
+action_result.summary.updated | string |  |   test 208.67.222.222 
+action_result.message | string |  |   test Ignored: ['8.8.8.8'], Updated: ['208.67.222.222'] 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'unallow url'
 Remove a URL from the allowed list
@@ -451,31 +451,31 @@ Remove a URL from the allowed list
 Type: **correct**  
 Read only: **False**
 
-If a <b>url\_category</b> is specified, it will remove the URL\(s\) from that category\. If it is left blank, it will instead remove the URL\(s\) from the global allowed list\.
+If a <b>url_category</b> is specified, it will remove the URL(s) from that category. If it is left blank, it will instead remove the URL(s) from the global allowed list.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **url** |  required  | A list of URLs | string |  `url`  `domain`  `url list` 
-**url\_category** |  optional  | Remove from this category | string |  `zscaler url category` 
+**url_category** |  optional  | Remove from this category | string |  `zscaler url category` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.url | string |  `url`  `domain`  `url list` 
-action\_result\.parameter\.url\_category | string |  `zscaler url category` 
-action\_result\.data\.\*\.configuredName | string | 
-action\_result\.data\.\*\.customCategory | boolean | 
-action\_result\.data\.\*\.dbCategorizedUrls | string | 
-action\_result\.data\.\*\.description | string | 
-action\_result\.data\.\*\.id | string | 
-action\_result\.data\.\*\.val | numeric | 
-action\_result\.summary\.ignored | string | 
-action\_result\.summary\.updated | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.url | string |  `url`  `domain`  `url list`  |   test www.test.com  test www.test.com, www.test123.com 
+action_result.parameter.url_category | string |  `zscaler url category`  |   test CUSTOM_01 
+action_result.data.\*.configuredName | string |  |   test Test-Allowlist 
+action_result.data.\*.customCategory | boolean |  |   True  False 
+action_result.data.\*.dbCategorizedUrls | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.id | string |  |   test CUSTOM_01 
+action_result.data.\*.val | numeric |  |   128 
+action_result.summary.ignored | string |  |   test www.test.com 
+action_result.summary.updated | string |  |   test www.test123.com 
+action_result.message | string |  |   test Ignored: ['www.test.com'], Updated: ['www.test123.com'] 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'lookup ip'
 Lookup the categories related to an IP
@@ -489,18 +489,18 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **ip** |  required  | A list of IPs | string |  `ip`  `ipv6` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.ip | string |  `ip`  `ipv6` 
-action\_result\.data\.\*\.blocklisted | boolean | 
-action\_result\.data\.\*\.url | string |  `ip`  `ipv6` 
-action\_result\.data\.\*\.urlClassifications | string | 
-action\_result\.data\.\*\.urlClassificationsWithSecurityAlert | string | 
-action\_result\.summary | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.ip | string |  `ip`  `ipv6`  |   test 8.8.8.8  test 208.67.222.222, 8.8.8.8  test aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa 
+action_result.data.\*.blocklisted | boolean |  |   True  False 
+action_result.data.\*.url | string |  `ip`  `ipv6`  |   test 208.67.222.222  test 8.8.8.8 
+action_result.data.\*.urlClassifications | string |  |   test WEB_SEARCH 
+action_result.data.\*.urlClassificationsWithSecurityAlert | string |  |  
+action_result.summary | string |  |  
+action_result.message | string |  |   test Successfully completed lookup 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'lookup url'
 Lookup the categories related to a URL
@@ -514,18 +514,18 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **url** |  required  | A list of URLs | string |  `url`  `domain`  `url list` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.url | string |  `url`  `domain`  `url list` 
-action\_result\.data\.\*\.blocklisted | boolean | 
-action\_result\.data\.\*\.url | string |  `url`  `domain`  `url list` 
-action\_result\.data\.\*\.urlClassifications | string | 
-action\_result\.data\.\*\.urlClassificationsWithSecurityAlert | string | 
-action\_result\.summary | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.url | string |  `url`  `domain`  `url list`  |   test www.test.com, www.test3.com, test2.tv 
+action_result.data.\*.blocklisted | boolean |  |   True  False 
+action_result.data.\*.url | string |  `url`  `domain`  `url list`  |   test www.test.com 
+action_result.data.\*.urlClassifications | string |  |   test MISCELLANEOUS_OR_UNKNOWN 
+action_result.data.\*.urlClassificationsWithSecurityAlert | string |  |  
+action_result.summary | string |  |  
+action_result.message | string |  |   test Successfully completed lookup 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'submit file'
 Submit a file to Zscaler Sandbox
@@ -533,31 +533,31 @@ Submit a file to Zscaler Sandbox
 Type: **generic**  
 Read only: **False**
 
-This action requires a Sandbox Submission API token\. By default, files are scanned by Zscaler antivirus \(AV\) and submitted directly to the sandbox in order to obtain a verdict\. However, if a verdict already exists for the file, you can use the 'force' parameter to make the sandbox to reanalyze it\. You can submit up to 100 files per day\.
+This action requires a Sandbox Submission API token. By default, files are scanned by Zscaler antivirus (AV) and submitted directly to the sandbox in order to obtain a verdict. However, if a verdict already exists for the file, you can use the 'force' parameter to make the sandbox to reanalyze it. You can submit up to 100 files per day.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**vault\_id** |  required  | Vault ID of file to submit | string |  `vault id`  `sha1` 
+**vault_id** |  required  | Vault ID of file to submit | string |  `vault id`  `sha1` 
 **force** |  optional  | Submit file to sandbox even if found malicious during AV scan and a verdict already exists | boolean | 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.force | boolean | 
-action\_result\.parameter\.vault\_id | string |  `vault id`  `sha1` 
-action\_result\.data\.\*\.code | numeric | 
-action\_result\.data\.\*\.fileType | string | 
-action\_result\.data\.\*\.md5 | string |  `md5` 
-action\_result\.data\.\*\.message | string | 
-action\_result\.data\.\*\.sandboxSubmission | string | 
-action\_result\.data\.\*\.virusName | string | 
-action\_result\.data\.\*\.virusType | string | 
-action\_result\.summary | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.force | boolean |  |   True  False 
+action_result.parameter.vault_id | string |  `vault id`  `sha1`  |   test 30c5e524e975816fbce1d958150e394efc219772 
+action_result.data.\*.code | numeric |  |   200 
+action_result.data.\*.fileType | string |  |   test zip 
+action_result.data.\*.md5 | string |  `md5`  |   test 6CE6F415D8475545BE5BA114F208B0FF 
+action_result.data.\*.message | string |  |   test /submit response OK 
+action_result.data.\*.sandboxSubmission | string |  |   test Virus 
+action_result.data.\*.virusName | string |  |   test EICAR_Test_File 
+action_result.data.\*.virusType | string |  |   test Virus 
+action_result.summary | string |  |  
+action_result.message | string |  |   test Successfully submitted the file to Sandbox 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'get admin users'
 Get a list of admin users
@@ -571,39 +571,39 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **limit** |  optional  | Maximum number of records to fetch | numeric | 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.limit | numeric | 
-action\_result\.data\.\*\.adminScopeScopeEntities\.\*\.id | numeric | 
-action\_result\.data\.\*\.adminScopeScopeEntities\.\*\.name | string | 
-action\_result\.data\.\*\.adminScopeType | string | 
-action\_result\.data\.\*\.adminScopescopeGroupMemberEntities\.\*\.id | numeric | 
-action\_result\.data\.\*\.comments | string | 
-action\_result\.data\.\*\.disabled | boolean | 
-action\_result\.data\.\*\.email | string |  `email` 
-action\_result\.data\.\*\.id | numeric |  `zscaler user id` 
-action\_result\.data\.\*\.isDefaultAdmin | boolean | 
-action\_result\.data\.\*\.isDeprecatedDefaultAdmin | boolean | 
-action\_result\.data\.\*\.isExecMobileAppEnabled | boolean | 
-action\_result\.data\.\*\.isNonEditable | boolean | 
-action\_result\.data\.\*\.isPasswordLoginAllowed | boolean | 
-action\_result\.data\.\*\.isProductUpdateCommEnabled | boolean | 
-action\_result\.data\.\*\.isSecurityReportCommEnabled | boolean | 
-action\_result\.data\.\*\.isServiceUpdateCommEnabled | boolean | 
-action\_result\.data\.\*\.loginName | string | 
-action\_result\.data\.\*\.name | string | 
-action\_result\.data\.\*\.pwdLastModifiedTime | numeric | 
-action\_result\.data\.\*\.role\.extensions\.adminRank | string | 
-action\_result\.data\.\*\.role\.extensions\.roleType | string | 
-action\_result\.data\.\*\.role\.id | numeric | 
-action\_result\.data\.\*\.role\.isNameL10nTag | boolean | 
-action\_result\.data\.\*\.role\.name | string | 
-action\_result\.data\.\*\.userName | string | 
-action\_result\.summary\.total\_admin\_users | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.limit | numeric |  |   1000 
+action_result.data.\*.adminScopeScopeEntities.\*.id | numeric |  |   4460340 
+action_result.data.\*.adminScopeScopeEntities.\*.name | string |  |   test Example App 
+action_result.data.\*.adminScopeType | string |  |  
+action_result.data.\*.adminScopescopeGroupMemberEntities.\*.id | numeric |  |   8035054 
+action_result.data.\*.comments | string |  |   test This is test user 
+action_result.data.\*.disabled | boolean |  |   True 
+action_result.data.\*.email | string |  `email`  |   test first.last@emaildomain.com 
+action_result.data.\*.id | numeric |  `zscaler user id`  |   889814 
+action_result.data.\*.isDefaultAdmin | boolean |  |   True 
+action_result.data.\*.isDeprecatedDefaultAdmin | boolean |  |   True 
+action_result.data.\*.isExecMobileAppEnabled | boolean |  |   True 
+action_result.data.\*.isNonEditable | boolean |  |   True  False 
+action_result.data.\*.isPasswordLoginAllowed | boolean |  |   True  False 
+action_result.data.\*.isProductUpdateCommEnabled | boolean |  |   True 
+action_result.data.\*.isSecurityReportCommEnabled | boolean |  |   True 
+action_result.data.\*.isServiceUpdateCommEnabled | boolean |  |   True 
+action_result.data.\*.loginName | string |  |   test first.last@domain.com 
+action_result.data.\*.name | string |  |   test new_test_long_email_id_new_test_long_email_id_new_test_long_email_id_new_test_long_email 
+action_result.data.\*.pwdLastModifiedTime | numeric |  |  
+action_result.data.\*.role.extensions.adminRank | string |  |  
+action_result.data.\*.role.extensions.roleType | string |  |  
+action_result.data.\*.role.id | numeric |  |  
+action_result.data.\*.role.isNameL10nTag | boolean |  |   True 
+action_result.data.\*.role.name | string |  |   test Super Admin 
+action_result.data.\*.userName | string |  |   test Last, First 
+action_result.summary.total_admin_users | numeric |  |   10 
+action_result.message | string |  |   test Total admin users: 100 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'get users'
 Gets a list of all users and allows user filtering by name, department, or group
@@ -611,7 +611,7 @@ Gets a list of all users and allows user filtering by name, department, or group
 Type: **investigate**  
 Read only: **True**
 
-Gets a list of all users and allows user filtering by name, department, or group\. The name search parameter performs a partial match\. The dept and group parameters perform a 'starts with' match\.
+Gets a list of all users and allows user filtering by name, department, or group. The name search parameter performs a partial match. The dept and group parameters perform a 'starts with' match.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
@@ -622,29 +622,29 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **limit** |  optional  | Maximum number of records to fetch | numeric | 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.dept | string | 
-action\_result\.parameter\.group | string | 
-action\_result\.parameter\.limit | numeric | 
-action\_result\.parameter\.name | string | 
-action\_result\.data\.\*\.adminUser | boolean | 
-action\_result\.data\.\*\.comments | string | 
-action\_result\.data\.\*\.deleted | boolean | 
-action\_result\.data\.\*\.department\.id | numeric | 
-action\_result\.data\.\*\.department\.name | string | 
-action\_result\.data\.\*\.disabled | boolean | 
-action\_result\.data\.\*\.email | string |  `email` 
-action\_result\.data\.\*\.groups\.\*\.id | numeric |  `zscaler group id` 
-action\_result\.data\.\*\.groups\.\*\.name | string | 
-action\_result\.data\.\*\.id | numeric |  `zscaler user id` 
-action\_result\.data\.\*\.isNonEditable | boolean | 
-action\_result\.data\.\*\.name | string | 
-action\_result\.summary\.total\_users | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.dept | string |  |   test Service Admin 
+action_result.parameter.group | string |  |   test Service Admin 
+action_result.parameter.limit | numeric |  |   1000 
+action_result.parameter.name | string |  |   test Example test 
+action_result.data.\*.adminUser | boolean |  |   True  False 
+action_result.data.\*.comments | string |  |   test This is test user 
+action_result.data.\*.deleted | boolean |  |   True  False 
+action_result.data.\*.department.id | numeric |  |   81896690 
+action_result.data.\*.department.name | string |  |   test IT 
+action_result.data.\*.disabled | boolean |  |   True 
+action_result.data.\*.email | string |  `email`  |   test first.last@domain.com 
+action_result.data.\*.groups.\*.id | numeric |  `zscaler group id`  |   8894813 
+action_result.data.\*.groups.\*.name | string |  |   test Super Admin 
+action_result.data.\*.id | numeric |  `zscaler user id`  |   889814 
+action_result.data.\*.isNonEditable | boolean |  |   True  False 
+action_result.data.\*.name | string |  |   test First Last 
+action_result.summary.total_users | numeric |  |   10 
+action_result.message | string |  |   test Total users: 0 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'get groups'
 Gets a list of groups
@@ -652,7 +652,7 @@ Gets a list of groups
 Type: **investigate**  
 Read only: **True**
 
-Gets a list of groups\. The search parameters find matching values in the name or comments attributes\.
+Gets a list of groups. The search parameters find matching values in the name or comments attributes.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
@@ -661,19 +661,19 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **limit** |  optional  | Maximum number of records to fetch | numeric | 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.limit | numeric | 
-action\_result\.parameter\.search | string | 
-action\_result\.data\.\*\.comments | string | 
-action\_result\.data\.\*\.id | numeric |  `zscaler group id` 
-action\_result\.data\.\*\.isNonEditable | boolean | 
-action\_result\.data\.\*\.name | string | 
-action\_result\.summary\.total\_groups | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.limit | numeric |  |   100 
+action_result.parameter.search | string |  |   test Example_test 
+action_result.data.\*.comments | string |  |   test This is for testing 
+action_result.data.\*.id | numeric |  `zscaler group id`  |   8894813 
+action_result.data.\*.isNonEditable | boolean |  |   True 
+action_result.data.\*.name | string |  |   test Frothly Internet Access 
+action_result.summary.total_groups | numeric |  |   4 
+action_result.message | string |  |   test Total groups: 4 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'add group user'
 Add user to group
@@ -681,35 +681,35 @@ Add user to group
 Type: **generic**  
 Read only: **False**
 
-Add a group to the user's profile\.
+Add a group to the user's profile.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**user\_id** |  required  | ZScaler User ID | numeric |  `zscaler user id` 
-**group\_id** |  required  | ZScaler Group ID | numeric |  `zscaler group id` 
+**user_id** |  required  | ZScaler User ID | numeric |  `zscaler user id` 
+**group_id** |  required  | ZScaler Group ID | numeric |  `zscaler group id` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.group\_id | numeric |  `zscaler group id` 
-action\_result\.parameter\.user\_id | numeric |  `zscaler user id` 
-action\_result\.data\.\*\.adminUser | boolean | 
-action\_result\.data\.\*\.deleted | boolean | 
-action\_result\.data\.\*\.department\.id | numeric | 
-action\_result\.data\.\*\.department\.name | string | 
-action\_result\.data\.\*\.email | string | 
-action\_result\.data\.\*\.groups\.\*\.id | numeric | 
-action\_result\.data\.\*\.groups\.\*\.name | string | 
-action\_result\.data\.\*\.id | numeric | 
-action\_result\.data\.\*\.name | string | 
-action\_result\.summary | string | 
-action\_result\.summary\.message | string | 
-action\_result\.message | string | 
-summary\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.group_id | numeric |  `zscaler group id`  |   8894813 
+action_result.parameter.user_id | numeric |  `zscaler user id`  |   889814 
+action_result.data.\*.adminUser | boolean |  |   True 
+action_result.data.\*.deleted | boolean |  |   False 
+action_result.data.\*.department.id | numeric |  |   4459551 
+action_result.data.\*.department.name | string |  |   test Service Admin 
+action_result.data.\*.email | string |  |   test 134@example.us 
+action_result.data.\*.groups.\*.id | numeric |  |   4460341 
+action_result.data.\*.groups.\*.name | string |  |   test Example App 
+action_result.data.\*.id | numeric |  |   9840695 
+action_result.data.\*.name | string |  |   test Test user 
+action_result.summary | string |  |  
+action_result.summary.message | string |  |   test User successfully added to group 
+action_result.message | string |  |   test User successfully added to group 
+summary.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'remove group user'
 Remove user from group
@@ -717,32 +717,32 @@ Remove user from group
 Type: **correct**  
 Read only: **False**
 
-Remove a group from the user's profile\.
+Remove a group from the user's profile.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**user\_id** |  required  | ZScaler User Id | numeric |  `zscaler user id` 
-**group\_id** |  required  | ZScaler Group Id | numeric |  `zscaler group id` 
+**user_id** |  required  | ZScaler User Id | numeric |  `zscaler user id` 
+**group_id** |  required  | ZScaler Group Id | numeric |  `zscaler group id` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.group\_id | numeric |  `zscaler group id` 
-action\_result\.parameter\.user\_id | numeric |  `zscaler user id` 
-action\_result\.data\.\*\.adminUser | boolean | 
-action\_result\.data\.\*\.deleted | boolean | 
-action\_result\.data\.\*\.department\.id | numeric | 
-action\_result\.data\.\*\.department\.name | string | 
-action\_result\.data\.\*\.email | string | 
-action\_result\.data\.\*\.groups\.\*\.id | numeric | 
-action\_result\.data\.\*\.groups\.\*\.name | string | 
-action\_result\.data\.\*\.id | numeric | 
-action\_result\.data\.\*\.name | string | 
-action\_result\.summary | string | 
-action\_result\.summary\.message | string | 
-action\_result\.message | string | 
-summary\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric | 
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.group_id | numeric |  `zscaler group id`  |   8894813 
+action_result.parameter.user_id | numeric |  `zscaler user id`  |   889814 
+action_result.data.\*.adminUser | boolean |  |   True 
+action_result.data.\*.deleted | boolean |  |   False 
+action_result.data.\*.department.id | numeric |  |   4459551 
+action_result.data.\*.department.name | string |  |   test Service Admin 
+action_result.data.\*.email | string |  |   test 134@example.us 
+action_result.data.\*.groups.\*.id | numeric |  |   4459550 
+action_result.data.\*.groups.\*.name | string |  |   test Service Admin 
+action_result.data.\*.id | numeric |  |   9840695 
+action_result.data.\*.name | string |  |   test Elsie 
+action_result.summary | string |  |  
+action_result.summary.message | string |  |   test User removed from group 
+action_result.message | string |  |   test User removed from group 
+summary.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1 

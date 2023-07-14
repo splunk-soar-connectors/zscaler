@@ -1,6 +1,6 @@
 # File: zscaler_consts.py
 #
-# Copyright (c) 2017-2022 Splunk Inc.
+# Copyright (c) 2017-2023 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,3 +29,7 @@ ZSCALER_VALID_INTEGER_MSG = "Please provide a valid integer value in the {param}
 ZSCALER_NON_NEGATIVE_INTEGER_MSG = "Please provide a valid non-negative integer value in the {param}"
 ZSCALER_POSITIVE_INTEGER_MSG = "Please provide a valid non-zero positive integer value in the {param}"
 ZSCALER_LIMIT_KEY = "'limit' action parameter"
+
+# regex
+ZSCALER_MATCH_REGEX = r"api_token=([^\s]+)"
+ZSCALER_REPLACE_REGEX = "api_token=[MASKED]"
