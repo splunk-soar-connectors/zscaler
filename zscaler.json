@@ -3000,6 +3000,125 @@
                 "type": "table"
             },
             "versions": "EQ(*)"
+        },
+        {
+            "action": "get whitelist",
+            "identifier": "get_whitelist",
+            "description": "get urls on the allow list",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {},
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "test success",
+                        "test failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.whitelistUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "test Total url categories: 97"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "title": "List URL Categories",
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get blakclist",
+            "identifier": "get_blacklist",
+            "description": "get urls on the deny list",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "filter": {
+                    "description": "Filter results be url or ip",
+                    "data_type": "string",
+                    "primary": true,
+                    "contains": [
+                        "url",
+                        "ip"
+                    ],
+                    "example_values": [
+                        "127.0.0.1"
+                    ],
+                    "order": 0
+                },
+                "query": {
+                    "description": "Regular expression to match url or ip against",
+                    "data_type": "string",
+                    "primary": true,
+                    "example_values": [
+                        "8...8"
+                    ],
+                    "order": 1
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "test success",
+                        "test failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.whitelistUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "test Total url categories: 97"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "title": "List URL Categories",
+                "type": "table"
+            },
+            "versions": "EQ(*)"
         }
     ],
     "pip_dependencies": {

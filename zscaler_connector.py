@@ -25,7 +25,7 @@ import requests
 from bs4 import BeautifulSoup
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
-
+import socket
 from zscaler_consts import *
 
 
@@ -990,6 +990,55 @@ class ZscalerConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _handle_get_whitelist(self, param):
+        """
+        This action is used to get the default whitelist in zscalar
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        ret_val, response = self._make_rest_call_helper('/api/v1/settings', action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        self.debug_print(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_get_blacklist(self, param):
+        """
+        This action is used to get the blacklist in zscalar
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        ret_val, response = self._make_rest_call_helper('/api/v1/settings/advanced', action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        filter = param.get("filter")
+        query = param.get("query")
+
+        self.debug_print(response)
+        if not filter and not query:
+            return action_result.set_status(phantom.APP_SUCCESS)
+
+        parsed_data = []
+
+        self.debug_print(response)
+        for entry in response:
+            self.debug_print(entry)
+            url = entry.get(url, "")
+            ip = socket.socket.gethostbyname(url)
+            if url == filter or ip == filter:
+                parsed_data.append(entry)
+            elif query and (re.fullmatch(query, url) or re.fullmatch(query, ip)):
+                parsed_data.append(entry)
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
     def handle_action(self, param):
 
         ret_val = phantom.APP_SUCCESS
@@ -1055,6 +1104,12 @@ class ZscalerConnector(BaseConnector):
 
         elif action_id == 'remove_group_user':
             ret_val = self._handle_remove_group_user(param)
+
+        elif action_id == 'get_whitelist':
+            ret_val = self._handle_get_whitelist(param)
+
+        elif action_id == 'get_blacklist':
+            ret_val = self._handle_get_blacklist(param)
 
         return ret_val
 
