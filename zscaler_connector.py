@@ -990,6 +990,35 @@ class ZscalerConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _handle_create_destination_group(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        addresses = param.get("addresses", "")
+        ip_categories = param.get("ip_categories", "")
+        countries = param.get("countries", "")
+
+        data = {}
+        data["name"] = param["name"]
+        data["type"] = param["type"]
+        if addresses:
+            data["addresses"] = [item.strip() for item in addresses.split(',')]
+        data["description"] = param.get("description", "")
+        if ip_categories:
+            data["ip_categories"] = [item.strip() for item in ip_categories.split(',')]
+        if countries:
+            data["countries"] = [item.strip() for item in countries.split(',')]
+
+        ret_val, response = self._make_rest_call_helper('/api/v1/ipDestinationGroups', action_result, data=data, method='post')
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary['message'] = "Destination IP added"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
     def handle_action(self, param):
 
         ret_val = phantom.APP_SUCCESS
@@ -1055,6 +1084,9 @@ class ZscalerConnector(BaseConnector):
 
         elif action_id == 'remove_group_user':
             ret_val = self._handle_remove_group_user(param)
+
+        elif action_id == 'create_destination_group':
+            ret_val = self._handle_create_destination_group(param)
 
         return ret_val
 

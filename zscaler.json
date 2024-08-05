@@ -3000,6 +3000,385 @@
                 "type": "table"
             },
             "versions": "EQ(*)"
+        },
+        {
+            "action": "create destination group",
+            "identifier": "create_destination_group",
+            "description": "Create destination group",
+            "type": "generic",
+            "read_only": false,
+            "parameters": {
+                "name": {
+                    "description": "Destination IP group name",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "order": 0
+                },
+                "type": {
+                    "description": "Destination IP group type (i.e., the group can contain destination IP addresses, countries, URL categories or FQDNs)",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "example_values": [
+                        "DSTN_IP",
+                        "DSTN_FQDN",
+                        "DSTN_DOMAIN",
+                        "DSTN_OTHER"
+                    ],
+                    "order": 1
+                },
+                "addresses": {
+                    "description": "Comma seperated string of destination IP addresses, FQDNs, or wildcard FQDNs added to the group",
+                    "data_type": "string",
+                    "order": 2
+                },
+                "description": {
+                    "description": "Additional information about the destination IP group.",
+                    "data_type": "string",
+                    "order": 3
+                },
+                "ip_categories": {
+                    "description": "Destination IP address URL categories",
+                    "data_type": "string",
+                    "order": 4
+                },
+                "countries": {
+                    "description": "Destination IP address countries. You can identify destinations based on the location of a server.",
+                    "data_type": "string",
+                    "order": 5
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "column_order": 2,
+                    "example_values": [
+                        "test success",
+                        "test failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.countries",
+                    "data_type": "string",
+                    "column_name": "Countries",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.parameter.ip_categories",
+                    "data_type": "string",
+                    "column_name": "Ip Categories",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.parameter.addresses",
+                    "data_type": "string",
+                    "column_name": "Addresses",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.parameter.type",
+                    "data_type": "string",
+                    "column_name": "Type",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.parameter.name",
+                    "data_type": "string",
+                    "column_name": "Name",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "DSTN_IP",
+                        "DSTN_FQDN",
+                        "DSTN_DOMAIN",
+                        "DSTN_OTHER"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.addresses",
+                    "data_type": "string",
+                    "example_values": [
+                        "192.168.1.1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.countries",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.ipCategories",
+                    "data_type": "string",
+                    "example_values": [
+                        "TRADING_BROKARAGE_INSURANCE"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "test User removed from group"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "test User removed from group"
+                    ]
+                },
+                {
+                    "data_path": "summary.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "list destination group",
+            "identifier": "list_destination_group",
+            "description": "List destination group",
+            "type": "investigate",
+            "read_only": false,
+            "parameters": {
+                "ip_group_id": {
+                    "description": "A comma-separated list of unique identifiers for the IP destination groups",
+                    "data_type": "string",
+                    "primary": true,
+                    "order": 0
+                },
+                "exclude_type": {
+                    "description": "The IP group type to be excluded from the results",
+                    "data_type": "string",
+                    "primary": true,
+                    "example_values": [
+                        "DSTN_IP",
+                        "DSTN_FQDN",
+                        "DSTN_DOMAIN",
+                        "DSTN_OTHER"
+                    ],
+                    "order": 1
+                },
+                "category_type": {
+                    "description": "The IP group type to be filtered from results. This argument is only supported when the 'lite' argument is set to True",
+                    "data_type": "string",
+                    "example_values": [
+                        "DSTN_IP",
+                        "DSTN_FQDN",
+                        "DSTN_DOMAIN",
+                        "DSTN_OTHER"
+                    ],
+                    "order": 2
+                },
+                "include_ipv6": {
+                    "description": "Retrieve IPv6 destination groups",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true, 
+                        false
+                    ],
+                    "default": false, 
+                    "order": 3
+                },
+                "limit": {
+                    "description": "Limit of the results to be retrieved",
+                    "data_type": "numeric",
+                    "default": 50,
+                    "order": 4
+                },
+                "all_results": {
+                    "description": "Whether to retrieve all results at once",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true, 
+                        false
+                    ],
+                    "default": false,
+                    "order": 5
+                },
+                "lite": {
+                    "description": "Whether to retrieve only limited information of IP destination groups. Includes ID, name and type of the IP destination groups",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true, 
+                        false
+                    ],
+                    "default": false,
+                    "order": 6
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "column_order": 2,
+                    "example_values": [
+                        "test success",
+                        "test failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.lite",
+                    "data_type": "boolean",
+                    "column_name": "Lite",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.parameter.all_reuslts",
+                    "data_type": "boolean",
+                    "column_name": "All Results",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.parameter.limit",
+                    "data_type": "numeric",
+                    "column_name": "Limit",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.parameter.include_ipv6",
+                    "data_type": "boolean",
+                    "column_name": "Include Ipv6",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.parameter.category_type",
+                    "data_type": "string",
+                    "column_name": "Category Type",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.parameter.exclude_type",
+                    "data_type": "string",
+                    "column_name": "Exclude Type",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.parameter.ip_group_id",
+                    "data_type": "string",
+                    "column_name": "Ip Group ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "DSTN_IP",
+                        "DSTN_FQDN",
+                        "DSTN_DOMAIN",
+                        "DSTN_OTHER"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.addresses",
+                    "data_type": "string",
+                    "example_values": [
+                        "192.168.1.1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.countries",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.ipCategories",
+                    "data_type": "string",
+                    "example_values": [
+                        "TRADING_BROKARAGE_INSURANCE"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Retreived Destination Groups"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                         "Retreived Destination Groups"
+                    ]
+                },
+                {
+                    "data_path": "summary.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
         }
     ],
     "pip_dependencies": {
