@@ -990,6 +990,30 @@ class ZscalerConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _handle_update_user(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        user_id = param['user_id']
+
+        try:
+            data = json.loads(param["user"])
+        except Exception as e:
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                "User object needs to be valid json: {}".format(e)
+            )
+
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/users/{user_id}', action_result, data=data, method='put')
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        self.debug_print(response)
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary['message'] = "User updated"
+        return action_result.set_status(phantom.APP_SUCCESS)
+
     def handle_action(self, param):
 
         ret_val = phantom.APP_SUCCESS
@@ -1055,6 +1079,9 @@ class ZscalerConnector(BaseConnector):
 
         elif action_id == 'remove_group_user':
             ret_val = self._handle_remove_group_user(param)
+
+        elif action_id == "update_user":
+            ret_val = self._handle_update_user(param)
 
         return ret_val
 
