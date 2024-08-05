@@ -120,6 +120,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [get groups](#action-get-groups) - Gets a list of groups  
 [add group user](#action-add-group-user) - Add user to group  
 [remove group user](#action-remove-group-user) - Remove user from group  
+[update user](#action-update-user) - Update user with given id  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -740,6 +741,41 @@ action_result.data.\*.groups.\*.id | numeric |  |   4459550
 action_result.data.\*.groups.\*.name | string |  |   test Service Admin 
 action_result.data.\*.id | numeric |  |   9840695 
 action_result.data.\*.name | string |  |   test Elsie 
+action_result.summary | string |  |  
+action_result.summary.message | string |  |   test User removed from group 
+action_result.message | string |  |   test User removed from group 
+summary.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'update user'
+Update user with given id
+
+Type: **correct**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**user_id** |  required  | ZScaler User Id | numeric |  `zscaler user id` 
+**user** |  optional  | JSON object containing the user details (see https://help.zscaler.com/zia/user-management#/users/{userId}-put) | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.user | string |  |  
+action_result.parameter.user_id | numeric |  `zscaler user id`  |   889814 
+action_result.data.\*.adminUser | boolean |  |   True  False 
+action_result.data.\*.comments | string |  |   test This is test user 
+action_result.data.\*.deleted | boolean |  |   True  False 
+action_result.data.\*.department.id | numeric |  |   81896690 
+action_result.data.\*.department.name | string |  |   test IT 
+action_result.data.\*.email | string |  `email`  |   test first.last@domain.com 
+action_result.data.\*.groups.\*.id | numeric |  `zscaler group id`  |   8894813 
+action_result.data.\*.groups.\*.name | string |  |   test Super Admin 
+action_result.data.\*.id | numeric |  `zscaler user id`  |   889814 
+action_result.data.\*.name | string |  |   test First Last 
 action_result.summary | string |  |  
 action_result.summary.message | string |  |   test User removed from group 
 action_result.message | string |  |   test User removed from group 
