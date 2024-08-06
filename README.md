@@ -120,6 +120,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [get groups](#action-get-groups) - Gets a list of groups  
 [add group user](#action-add-group-user) - Add user to group  
 [remove group user](#action-remove-group-user) - Remove user from group  
+[create destination group](#action-create-destination-group) - Create destination group  
+[list destination group](#action-list-destination-group) - List destination group  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -743,6 +745,87 @@ action_result.data.\*.name | string |  |   test Elsie
 action_result.summary | string |  |  
 action_result.summary.message | string |  |   test User removed from group 
 action_result.message | string |  |   test User removed from group 
+summary.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'create destination group'
+Create destination group
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**name** |  required  | Destination IP group name | string | 
+**type** |  required  | Destination IP group type (i.e., the group can contain destination IP addresses, countries, URL categories or FQDNs) | string | 
+**addresses** |  optional  | Comma seperated string of destination IP addresses, FQDNs, or wildcard FQDNs added to the group | string | 
+**description** |  optional  | Additional information about the destination IP group. | string | 
+**ip_categories** |  optional  | Destination IP address URL categories | string | 
+**countries** |  optional  | Destination IP address countries. You can identify destinations based on the location of a server. | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.countries | string |  |  
+action_result.parameter.ip_categories | string |  |  
+action_result.parameter.addresses | string |  |  
+action_result.parameter.type | string |  |  
+action_result.parameter.name | string |  |  
+action_result.data.\*.id | numeric |  |  
+action_result.data.\*.name | string |  |  
+action_result.data.\*.type | string |  |   DSTN_IP  DSTN_FQDN  DSTN_DOMAIN  DSTN_OTHER 
+action_result.data.\*.addresses | string |  |   192.168.1.1 
+action_result.data.\*.countries | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.ipCategories | string |  |   TRADING_BROKARAGE_INSURANCE 
+action_result.summary | string |  |  
+action_result.summary.message | string |  |   test User removed from group 
+action_result.message | string |  |   test User removed from group 
+summary.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'list destination group'
+List destination group
+
+Type: **investigate**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**ip_group_id** |  optional  | A comma-separated list of unique identifiers for the IP destination groups | string | 
+**exclude_type** |  optional  | The IP group type to be excluded from the results | string | 
+**category_type** |  optional  | The IP group type to be filtered from results. This argument is only supported when the 'lite' argument is set to True | string | 
+**include_ipv6** |  optional  | Retrieve IPv6 destination groups | boolean | 
+**limit** |  optional  | Limit of the results to be retrieved | numeric | 
+**all_results** |  optional  | Whether to retrieve all results at once | boolean | 
+**lite** |  optional  | Whether to retrieve only limited information of IP destination groups. Includes ID, name and type of the IP destination groups | boolean | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.lite | boolean |  |  
+action_result.parameter.all_reuslts | boolean |  |  
+action_result.parameter.limit | numeric |  |  
+action_result.parameter.include_ipv6 | boolean |  |  
+action_result.parameter.category_type | string |  |  
+action_result.parameter.exclude_type | string |  |  
+action_result.parameter.ip_group_id | string |  |  
+action_result.data.\*.id | numeric |  |  
+action_result.data.\*.name | string |  |  
+action_result.data.\*.type | string |  |   DSTN_IP  DSTN_FQDN  DSTN_DOMAIN  DSTN_OTHER 
+action_result.data.\*.addresses | string |  |   192.168.1.1 
+action_result.data.\*.countries | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.ipCategories | string |  |   TRADING_BROKARAGE_INSURANCE 
+action_result.summary | string |  |  
+action_result.summary.message | string |  |   Retreived Destination Groups 
+action_result.message | string |  |   Retreived Destination Groups 
 summary.message | string |  |  
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1 
