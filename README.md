@@ -120,6 +120,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [get groups](#action-get-groups) - Gets a list of groups  
 [add group user](#action-add-group-user) - Add user to group  
 [remove group user](#action-remove-group-user) - Remove user from group  
+[get whitelist](#action-get-whitelist) - get urls on the allow list  
+[get blakclist](#action-get-blakclist) - get urls on the deny list  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -744,5 +746,44 @@ action_result.summary | string |  |
 action_result.summary.message | string |  |   test User removed from group 
 action_result.message | string |  |   test User removed from group 
 summary.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'get whitelist'
+get urls on the allow list
+
+Type: **investigate**  
+Read only: **True**
+
+#### Action Parameters
+No parameters are required for this action
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.data.\*.whitelistUrls | string |  |  
+action_result.message | string |  |   test Total url categories: 97 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'get blakclist'
+get urls on the deny list
+
+Type: **investigate**  
+Read only: **True**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**filter** |  optional  | Filter results be url or ip | string |  `url`  `ip` 
+**query** |  optional  | Regular expression to match url or ip against | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.data.\*.whitelistUrls | string |  |  
+action_result.message | string |  |   test Total url categories: 97 
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1 
