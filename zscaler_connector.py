@@ -18,6 +18,7 @@
 import json
 import re
 import time
+import ipaddress
 
 import phantom.app as phantom
 import phantom.rules as phantom_rules
@@ -25,7 +26,6 @@ import requests
 from bs4 import BeautifulSoup
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
-import socket
 from zscaler_consts import *
 
 
@@ -998,13 +998,25 @@ class ZscalerConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        ret_val, response = self._make_rest_call_helper('/api/v1/settings', action_result)
+        ret_val, response = self._get_allowlist(action_result)
         if phantom.is_fail(ret_val):
-            return action_result.get_status()
+            return RetVal(ret_val, None)
 
-        self.debug_print(response)
+        whitelist = response.get('whitelistUrls', [])
+        for allowed in whitelist:
+            action_result.add_data(allowed)
+        summary = action_result.update_summary({})
+        summary['total_whitelist_items'] = action_result.get_data_size()
+        summary['message'] = "Whitelist retrieved"
 
         return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _is_ip_address(self, address):
+        try:
+            ipaddress.ip_address(address)
+            return True
+        except ValueError:
+            return False
 
     def _handle_get_blacklist(self, param):
         """
@@ -1014,29 +1026,28 @@ class ZscalerConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        ret_val, response = self._make_rest_call_helper('/api/v1/settings/advanced', action_result)
+        ret_val, response = self._get_blocklist(action_result)
         if phantom.is_fail(ret_val):
-            return action_result.get_status()
+            return RetVal(ret_val, None)
 
         filter = param.get("filter")
         query = param.get("query")
 
-        self.debug_print(response)
-        if not filter and not query:
-            return action_result.set_status(phantom.APP_SUCCESS)
+        summary = action_result.update_summary({})
+        summary['message'] = "Blacklist retrieved"
 
-        parsed_data = []
+        blocklist = response.get('blacklistUrls', [])
+        for blocked in blocklist:
+            is_ip = self._is_ip_address(blocked)
+            if filter == "ip" and not is_ip:
+                continue
+            if filter == "url" and is_ip:
+                continue
+            if query and not re.fullmatch(query, blocked):
+                continue
+            action_result.add_data(blocked)
 
-        self.debug_print(response)
-        for entry in response:
-            self.debug_print(entry)
-            url = entry.get(url, "")
-            ip = socket.socket.gethostbyname(url)
-            if url == filter or ip == filter:
-                parsed_data.append(entry)
-            elif query and (re.fullmatch(query, url) or re.fullmatch(query, ip)):
-                parsed_data.append(entry)
-
+        summary['total_blacklist_items'] = action_result.get_data_size()
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def handle_action(self, param):
