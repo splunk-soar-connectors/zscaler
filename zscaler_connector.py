@@ -991,6 +991,16 @@ class ZscalerConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_create_destination_group(self, param):
+        """
+        This action is used to create an IP Destination Group
+        :param name: IP destination group name
+        :param type: IP destination group type
+        :param addresses: Destination IP addresses, FQDNs, or wildcard FQDNs
+        :param description: Additional information about the destination IP group
+        :param ip_categories: Destination IP address URL categories
+        :param countries: Destination IP address countries
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
@@ -1017,6 +1027,180 @@ class ZscalerConnector(BaseConnector):
         summary = action_result.update_summary({})
         summary['message'] = "Destination IP added"
 
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _get_destination_group(self, id, action_result, exclude_type=None, category_type=None, lite=False):
+
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/ipDestinationGroups/{id}', action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status(), None
+
+        group_type = response["type"]
+
+        if group_type == exclude_type:
+            return phantom.APP_SUCCESS, None
+
+        if lite:
+            if category_type and group_type not in category_type:
+                return phantom.APP_SUCCESS, None
+
+            lite_resp = {"id": response["id"], "name": response["name"], "type": group_type}
+            return phantom.APP_SUCCESS, lite_resp
+
+        return phantom.APP_SUCCESS, response
+
+    def _get_batched_groups(self, endpoint, params, action_result):
+        limit = params['pageSize']
+
+        while True:
+            params['pageSize'] = min(limit, ZSCALER_MAX_PAGESIZE)
+            ret_val, get_groups = self._make_rest_call_helper('/api/v1' + endpoint, action_result, params=params)
+            self.debug_print("get groups is {0}".format(get_groups))
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+            for group in get_groups:
+                if "extensions" in group:
+                    extensions = group.pop("extensions")
+                    for key in extensions:
+                        group[key] = extensions[key]
+                action_result.add_data(group)
+            limit = limit - params['pageSize']
+            if limit <= 0 or len(get_groups) == 0:
+                break
+            params['page'] += 1
+
+        return phantom.APP_SUCCESS
+
+    def _handle_list_destination_group(self, param):
+        """
+        This action is used to list IP Destination Groups
+        :param ip_group_ids: Destination groups to retrieve
+        :param exclude_type: Group types to exclude from search
+        :param category_type: Destination types to filter by
+        :param include_ipv6: Retrieve IPv6 groups
+        :param limit: Number of groups to retrieve
+        :param lite: Retrieve limited information for each group
+        :param all_results:
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        ip_group_ids = param.get("ip_group_ids", "")
+        ip_ids_lst = [item.strip() for item in ip_group_ids.split(',') if item.strip()]
+        exclude_type = param.get("exclude_type", "")
+        category_type = param.get("category_type", "")
+        category_type_list = [item.strip() for item in category_type.split(',') if item.strip()]
+        include_ipv6 = param.get("include_ipv6", False)
+        limit = param.get("limit", 50)
+        # all_results = param.get("all_results", False)
+        lite = param.get("lite", False)
+
+        params = {}
+        endpoint = '/ipDestinationGroups'
+        params['excludeType'] = exclude_type
+        self.debug_print("ip id list {0}".format(ip_ids_lst))
+        if ip_ids_lst:
+            for ip in ip_ids_lst:
+                ret_val, response = self._get_destination_group(ip, action_result, exclude_type, category_type, lite)
+                if phantom.is_fail(ret_val):
+                    return action_result.get_status()
+                action_result.add_data(response)
+
+            summary = action_result.update_summary({})
+            summary['message'] = "Destination groups retrieved"
+            return action_result.set_status(phantom.APP_SUCCESS)
+
+        elif lite:
+            endpoint = '/ipDestinationGroups/lite'
+            params['type'] = category_type_list
+
+        params['page'] = 1
+        params['pageSize'] = limit
+        ret_val = self._get_batched_groups(endpoint, params, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if include_ipv6:
+            self.save_progress("Retrieving ipv6 destination groups")
+            params['page'] = 1
+            params['pageSize'] = limit
+            endpoint = '/ipDestinationGroups/ipv6DestinationGroups/lite' if lite else '/ipDestinationGroups/ipv6DestinationGroups'
+            ret_val = self._get_batched_groups(endpoint, params, action_result)
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+
+        # action_result.add_data(destination_groups)
+        summary = action_result.update_summary({})
+        summary['message'] = "Destination groups retrieved"
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_edit_destination_group(self, param):
+        """
+        This action is used to edit an IP Destination Group
+        :param ip_group_id: Id of destination group to edit
+        :param name: IP destination group name
+        :param addresses: Destination IP addresses, FQDNs, or wildcard FQDNs
+        :param description: Additional information about the destination IP group
+        :param ip_categories: Destination IP address URL categories
+        :param countries: Destination IP address countries
+        :param is_non_editable: If set to true, the destination IP address group is non-editable
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        group_id = param['ip_group_id']
+
+        ret_val, group_resp = self._get_destination_group(group_id, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+        self.debug_print("handle edit response {0}".format(group_resp))
+        if param.get("name"):
+            group_resp["name"] = param["name"]
+        if param.get('addresses'):
+            addresses = param["addresses"]
+            group_resp["addresses"] = [item.strip() for item in addresses.split(',') if item.strip()]
+        if param.get("description"):
+            group_resp["description"] = param["description"]
+        if param.get("ip_categories"):
+            ip_categories = param["ip_categories"]
+            group_resp["ip_categories"] = [item.strip() for item in ip_categories.split(',') if item.strip()]
+        if param.get("countries"):
+            countries = param["countries"]
+            group_resp["countries"] = [item.strip() for item in countries.split(',') if item.strip()]
+        group_resp["isNonEditable"] = param["is_non_editable"]
+
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/ipDestinationGroups/{group_id}', action_result, data=group_resp, method='put')
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary['message'] = "Destination IP edited"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_delete_destination_group(self, param):
+        """
+        This action is used to delete IP Destination Groups
+        :param ip_group_ids: Ids of destination group to delete
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        group_ids = param.get("ip_group_ids", "")
+        list_group_ids = [item.strip() for item in group_ids.split(',') if item.strip()]
+
+        for group_id in list_group_ids:
+            ret_val, response = self._make_rest_call_helper(f'/api/v1/ipDestinationGroups/{group_id}', action_result, method='delete')
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+            action_result.add_data({"ip_group_id": group_id})
+
+        summary = action_result.update_summary({})
+        summary['message'] = "Destination groups deleted"
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def handle_action(self, param):
@@ -1087,6 +1271,15 @@ class ZscalerConnector(BaseConnector):
 
         elif action_id == 'create_destination_group':
             ret_val = self._handle_create_destination_group(param)
+
+        elif action_id == 'list_destination_group':
+            ret_val = self._handle_list_destination_group(param)
+
+        elif action_id == 'edit_destination_group':
+            ret_val = self._handle_edit_destination_group(param)
+
+        elif action_id == 'delete_destination_group':
+            ret_val = self._handle_delete_destination_group(param)
 
         return ret_val
 
