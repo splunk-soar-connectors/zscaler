@@ -805,7 +805,6 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **category_type** |  optional  | Comma seperated list of IP group types to be filtered from results. This argument is only supported when the 'lite' argument is set to True | string | 
 **include_ipv6** |  optional  | Retrieve IPv6 destination groups | boolean | 
 **limit** |  optional  | Limit of the results to be retrieved | numeric | 
-**all_results** |  optional  | Whether to retrieve all results at once | boolean | 
 **lite** |  optional  | Whether to retrieve only limited information of IP destination groups. Includes ID, name and type of the IP destination groups | boolean | 
 
 #### Action Output
@@ -813,7 +812,6 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string |  |   test success  test failed 
 action_result.parameter.lite | boolean |  |  
-action_result.parameter.all_reuslts | boolean |  |  
 action_result.parameter.limit | numeric |  |  
 action_result.parameter.include_ipv6 | boolean |  |  
 action_result.parameter.category_type | string |  |  
