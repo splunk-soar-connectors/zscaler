@@ -989,6 +989,36 @@ class ZscalerConnector(BaseConnector):
         summary['message'] = "User removed from group"
 
         return action_result.set_status(phantom.APP_SUCCESS)
+    
+    def _get_category_details(self, id, action_result):
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/urlCategories/{id}', action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status(), None
+        return phantom.APP_SUCCESS, response
+
+    def _handle_add_category_url(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        category_id = param["category_id"]
+        
+        ret_val, category_details = self._get_category_details(category_id, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+        
+        configuredName = category_details["configuredName"]
+        urls = param["urls"]
+        urls_list = [item.strip() for item in urls.split(',') if item.strip()]
+        retaining_parent_category_url = param["retaining-parent-category-url"]
+        parent_urls = [item.strip() for item in retaining_parent_category_url.split(',') if item.strip()]
+        data = {}
+        data["configuredName"] = configuredName
+        data["urls"] = urls_list
+        #do get_categories because custom categories need name so just pass name with every call
+    
+    def _handle_get_categories(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        get_ids_and_names_only = param["get_ids_and_names_only"]
 
     def handle_action(self, param):
 
@@ -1055,6 +1085,12 @@ class ZscalerConnector(BaseConnector):
 
         elif action_id == 'remove_group_user':
             ret_val = self._handle_remove_group_user(param)
+   
+        elif action_id == 'add_category_url':
+            ret_val = self._handle_add_category_url(param)
+            
+        elif action_id == 'get_categories':
+            ret_val = self._handle_get_categories(param)
 
         return ret_val
 
