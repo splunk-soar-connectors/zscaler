@@ -1080,7 +1080,6 @@ class ZscalerConnector(BaseConnector):
         :param include_ipv6: Retrieve IPv6 groups
         :param limit: Number of groups to retrieve
         :param lite: Retrieve limited information for each group
-        :param all_results:
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
@@ -1093,7 +1092,6 @@ class ZscalerConnector(BaseConnector):
         category_type_list = [item.strip() for item in category_type.split(',') if item.strip()]
         include_ipv6 = param.get("include_ipv6", False)
         limit = param.get("limit", 50)
-        # all_results = param.get("all_results", False)
         lite = param.get("lite", False)
 
         params = {}

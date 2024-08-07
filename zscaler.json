@@ -3230,16 +3230,6 @@
                     "default": 50,
                     "order": 4
                 },
-                "all_results": {
-                    "description": "Whether to retrieve all results at once",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true, 
-                        false
-                    ],
-                    "default": false,
-                    "order": 5
-                },
                 "lite": {
                     "description": "Whether to retrieve only limited information of IP destination groups. Includes ID, name and type of the IP destination groups",
                     "data_type": "boolean",
@@ -3248,7 +3238,7 @@
                         false
                     ],
                     "default": false,
-                    "order": 6
+                    "order": 5
                 }
             },
             "output": [
@@ -3266,12 +3256,6 @@
                     "data_path": "action_result.parameter.lite",
                     "data_type": "boolean",
                     "column_name": "Lite",
-                    "column_order": 6
-                },
-                {
-                    "data_path": "action_result.parameter.all_reuslts",
-                    "data_type": "boolean",
-                    "column_name": "All Results",
                     "column_order": 5
                 },
                 {
