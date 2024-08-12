@@ -18,6 +18,7 @@
 import json
 import re
 import time
+import ipaddress
 
 import phantom.app as phantom
 import phantom.rules as phantom_rules
@@ -25,7 +26,6 @@ import requests
 from bs4 import BeautifulSoup
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
-
 from zscaler_consts import *
 
 
@@ -999,6 +999,66 @@ class ZscalerConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _handle_get_whitelist(self, param):
+        """
+        This action is used to get the default whitelist in zscalar
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        ret_val, response = self._get_allowlist(action_result)
+        if phantom.is_fail(ret_val):
+            return RetVal(ret_val, None)
+
+        whitelist = response.get('whitelistUrls', [])
+        for allowed in whitelist:
+            action_result.add_data(allowed)
+        summary = action_result.update_summary({})
+        summary['total_whitelist_items'] = action_result.get_data_size()
+        summary['message'] = "Whitelist retrieved"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _is_ip_address(self, address):
+        try:
+            ipaddress.ip_address(address)
+            return True
+        except ValueError:
+            return False
+
+    def _handle_get_blacklist(self, param):
+        """
+        This action is used to get the blacklist in zscalar
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        ret_val, response = self._get_blocklist(action_result)
+        if phantom.is_fail(ret_val):
+            return RetVal(ret_val, None)
+
+        filter = param.get("filter")
+        query = param.get("query")
+
+        summary = action_result.update_summary({})
+        summary['message'] = "Blacklist retrieved"
+
+        blocklist = response.get('blacklistUrls', [])
+        for blocked in blocklist:
+            is_ip = self._is_ip_address(blocked)
+            if filter == "ip" and not is_ip:
+                continue
+            if filter == "url" and is_ip:
+                continue
+            if query and not re.fullmatch(query, blocked):
+                continue
+            action_result.add_data(blocked)
+
+        summary['total_blacklist_items'] = action_result.get_data_size()
+        return action_result.set_status(phantom.APP_SUCCESS)
+    
     def _handle_update_user(self, param):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -1261,7 +1321,7 @@ class ZscalerConnector(BaseConnector):
         """
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
-
+        
         ip_group_ids = param.get("ip_group_ids", "")
         ip_ids_lst = [item.strip() for item in ip_group_ids.split(',') if item.strip()]
         exclude_type = param.get("exclude_type", "")
@@ -1443,6 +1503,12 @@ class ZscalerConnector(BaseConnector):
 
         elif action_id == 'remove_group_user':
             ret_val = self._handle_remove_group_user(param)
+
+        elif action_id == 'get_whitelist':
+            ret_val = self._handle_get_whitelist(param)
+
+        elif action_id == 'get_blacklist':
+            ret_val = self._handle_get_blacklist(param)
 
         elif action_id == "update_user":
             ret_val = self._handle_update_user(param)

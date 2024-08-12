@@ -120,6 +120,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [get groups](#action-get-groups) - Gets a list of groups  
 [add group user](#action-add-group-user) - Add user to group  
 [remove group user](#action-remove-group-user) - Remove user from group  
+[get whitelist](#action-get-whitelist) - get urls on the allow list  
+[get blacklist](#action-get-blacklist) - get urls on the deny list  
 [update user](#action-update-user) - Update user with given id  
 [add category url](#action-add-category-url) - Add urls to a cetgory  
 [add category ip](#action-add-category-ip) - Add IPs to a cetgory  
@@ -756,6 +758,49 @@ action_result.summary | string |  |
 action_result.summary.message | string |  |   test User removed from group 
 action_result.message | string |  |   test User removed from group 
 summary.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'get whitelist'
+get urls on the allow list
+
+Type: **investigate**  
+Read only: **True**
+
+#### Action Parameters
+No parameters are required for this action
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.data.\*.whitelistUrl | string |  |  
+action_result.summary.total_whitelist_items | numeric |  |   10 
+action_result.summary.message | string |  |   Whitelist retrieved 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'get blacklist'
+get urls on the deny list
+
+Type: **investigate**  
+Read only: **True**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**filter** |  optional  | Filter results be url or ip | string | 
+**query** |  optional  | Regular expression to match url or ip against | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.query | string |  |   8...8 
+action_result.parameter.filter | string |  |  
+action_result.data.\*.blacklistUrl | string |  |  
+action_result.summary.message | string |  |   Blacklist retrieved 
+action_result.summary.total_blacklist_items | numeric |  |   10 
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1   
 
