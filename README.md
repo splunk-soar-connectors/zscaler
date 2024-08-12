@@ -802,7 +802,7 @@ action_result.data.\*.blacklistUrl | string |  |
 action_result.summary.message | string |  |   Blacklist retrieved 
 action_result.summary.total_blacklist_items | numeric |  |   10 
 summary.total_objects | numeric |  |   1 
-summary.total_objects_successful | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'update user'
 Update user with given id
