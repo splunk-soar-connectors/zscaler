@@ -121,7 +121,9 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [add group user](#action-add-group-user) - Add user to group  
 [remove group user](#action-remove-group-user) - Remove user from group  
 [add category url](#action-add-category-url) - Add urls to a cetgory  
-[get categories](#action-get-categories) - Retrieve categories  
+[add category ip](#action-add-category-ip) - Add IPs to a cetgory  
+[remove category url](#action-remove-category-url) - Add urls to a cetgory  
+[remove category ip](#action-remove-category-ip) - Remove IPs to a cetgory  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -187,12 +189,15 @@ Type: **investigate**
 Read only: **True**
 
 #### Action Parameters
-No parameters are required for this action
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**get_ids_and_names_only** |  optional  | Whether to retrieve only a list containing URL category IDs and names. Even if displayURL is set to true, URLs will not be returned | boolean | 
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string |  |   test success  test failed 
+action_result.parameter.get_ids_and_names_only | string |  |   RADIO_STATIONS 
 action_result.data.\*.configuredName | string |  |   test Test-Caution 
 action_result.data.\*.customCategory | boolean |  |   True  False 
 action_result.data.\*.customIpRangesCount | numeric |  |   0 
@@ -769,26 +774,146 @@ action_result.status | string |  |   success  failed
 action_result.parameter.category_id | string |  |   RADIO_STATIONS 
 action_result.parameter.urls | string |  |  
 action_result.parameter.retaining-parent-category-url | string |  |  
-action_result.message | string |  |   Total messages returned: 1 
+action_result.data.\*.id | string |  |  
+action_result.data.\*.val | numeric |  |  
+action_result.data.\*.type | string |  |  
+action_result.data.\*.urls | string |  |  
+action_result.data.\*.scopes.\*.Type | string |  |  
+action_result.data.\*.editable | boolean |  |  
+action_result.data.\*.keywords | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.configuredName | string |  |  
+action_result.data.\*.customCategory | boolean |  |  
+action_result.data.\*.customUrlsCount | numeric |  |  
+action_result.data.\*.dbCategorizedUrls | string |  |  
+action_result.data.\*.customIpRangesCount | numeric |  |  
+action_result.data.\*.keywordsRetainingParentCategory | string |  |  
+action_result.data.\*.urlsRetainingParentCategoryCount | numeric |  |  
+action_result.data.\*.ipRangesRetainingParentCategoryCount | numeric |  |  
+action_result.message | string |  |   Message: Category urs updated 
+action_result.summary | string |  |  
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1   
 
-## action: 'get categories'
-Retrieve categories
+## action: 'add category ip'
+Add IPs to a cetgory
 
-Type: **investigative**  
+Type: **generic**  
 Read only: **False**
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**get_ids_and_names_only** |  optional  | Whether to retrieve only a list containing URL category IDs and names. Even if displayURL is set to true, URLs will not be returned | boolean | 
+**category_id** |  required  | The ID of the category to add the specified URLs to | string | 
+**ips** |  optional  | A comma-separated list of IP addresses to add to the specified category | string | 
+**retaining-parent-category-ip** |  optional  | A comma-separated list of IPs to add to the retaining parent category section inside the specified category | string | 
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string |  |   success  failed 
-action_result.parameter.get_ids_and_names_only | string |  |   RADIO_STATIONS 
-action_result.message | string |  |   Total messages returned: 1 
+action_result.parameter.category_id | string |  |   RADIO_STATIONS 
+action_result.parameter.ips | string |  |  
+action_result.parameter.retaining-parent-category-ip | string |  |  
+action_result.data.\*.id | string |  |  
+action_result.data.\*.val | numeric |  |  
+action_result.data.\*.type | string |  |  
+action_result.data.\*.urls | string |  |  
+action_result.data.\*.scopes.\*.Type | string |  |  
+action_result.data.\*.editable | boolean |  |  
+action_result.data.\*.keywords | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.configuredName | string |  |  
+action_result.data.\*.customCategory | boolean |  |  
+action_result.data.\*.customUrlsCount | numeric |  |  
+action_result.data.\*.dbCategorizedUrls | string |  |  
+action_result.data.\*.customIpRangesCount | numeric |  |  
+action_result.data.\*.keywordsRetainingParentCategory | string |  |  
+action_result.data.\*.urlsRetainingParentCategoryCount | numeric |  |  
+action_result.data.\*.ipRangesRetainingParentCategoryCount | numeric |  |  
+action_result.message | string |  |   Message: Category ips updated 
+action_result.summary | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'remove category url'
+Add urls to a cetgory
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**category_id** |  required  | The ID of the category to add the specified URLs to | string | 
+**urls** |  optional  | A comma-separated list of URLs to remove from the specified category | string | 
+**retaining-parent-category-url** |  optional  | A comma-separated list of URLs to remove from the retaining parent category section inside the specified category | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.category_id | string |  |   RADIO_STATIONS 
+action_result.parameter.urls | string |  |  
+action_result.parameter.retaining-parent-category-url | string |  |  
+action_result.data.\*.id | string |  |  
+action_result.data.\*.val | numeric |  |  
+action_result.data.\*.type | string |  |  
+action_result.data.\*.urls | string |  |  
+action_result.data.\*.scopes.\*.Type | string |  |  
+action_result.data.\*.editable | boolean |  |  
+action_result.data.\*.keywords | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.configuredName | string |  |  
+action_result.data.\*.customCategory | boolean |  |  
+action_result.data.\*.customUrlsCount | numeric |  |  
+action_result.data.\*.dbCategorizedUrls | string |  |  
+action_result.data.\*.customIpRangesCount | numeric |  |  
+action_result.data.\*.keywordsRetainingParentCategory | string |  |  
+action_result.data.\*.urlsRetainingParentCategoryCount | numeric |  |  
+action_result.data.\*.ipRangesRetainingParentCategoryCount | numeric |  |  
+action_result.message | string |  |   Message: Category urls removed 
+action_result.summary | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'remove category ip'
+Remove IPs to a cetgory
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**category_id** |  required  | The ID of the category to add the specified URLs to | string | 
+**ips** |  optional  | A comma-separated list of IP addresses to add to the specified category | string | 
+**retaining-parent-category-ip** |  optional  | A comma-separated list of IPs to add to the retaining parent category section inside the specified category | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.category_id | string |  |   RADIO_STATIONS 
+action_result.parameter.ips | string |  |  
+action_result.parameter.retaining-parent-category-ip | string |  |  
+action_result.data.\*.id | string |  |  
+action_result.data.\*.val | numeric |  |  
+action_result.data.\*.type | string |  |  
+action_result.data.\*.urls | string |  |  
+action_result.data.\*.scopes.\*.Type | string |  |  
+action_result.data.\*.editable | boolean |  |  
+action_result.data.\*.keywords | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.configuredName | string |  |  
+action_result.data.\*.customCategory | boolean |  |  
+action_result.data.\*.customUrlsCount | numeric |  |  
+action_result.data.\*.dbCategorizedUrls | string |  |  
+action_result.data.\*.customIpRangesCount | numeric |  |  
+action_result.data.\*.keywordsRetainingParentCategory | string |  |  
+action_result.data.\*.urlsRetainingParentCategoryCount | numeric |  |  
+action_result.data.\*.ipRangesRetainingParentCategoryCount | numeric |  |  
+action_result.message | string |  |   Message: Category ips removed 
+action_result.summary | string |  |  
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1 
