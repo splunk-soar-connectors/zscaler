@@ -739,8 +739,17 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
+        get_ids_and_names_only = param["get_ids_and_names_only"]
+
         for url_category in list_url_categories:
-            action_result.add_data(url_category)
+            if get_ids_and_names_only:
+                category_lite = {}
+                category_lite["id"] = url_category["id"]
+                if "configuredName" in url_category:
+                    category_lite["configuredName"] = url_category["configuredName"]
+                action_result.add_data(category_lite)
+            else:
+                action_result.add_data(url_category)
 
         summary = action_result.update_summary({})
         summary['total_url_categories'] = action_result.get_data_size()
@@ -989,36 +998,152 @@ class ZscalerConnector(BaseConnector):
         summary['message'] = "User removed from group"
 
         return action_result.set_status(phantom.APP_SUCCESS)
-    
+
     def _get_category_details(self, id, action_result):
         ret_val, response = self._make_rest_call_helper(f'/api/v1/urlCategories/{id}', action_result)
         if phantom.is_fail(ret_val):
             return action_result.get_status(), None
         return phantom.APP_SUCCESS, response
 
+    def _add_to_category(self, data, parent_data, category_details, category_id, action_result):
+        new_data = category_details.get("urls", [])
+        new_data.extend(data)
+        if new_data:
+            category_details["urls"] = new_data
+        self.debug_print("add_to_category new data {0}".format(category_details["urls"]))
+
+        new_parent_data = category_details.get("dbCategorizedUrls", [])
+        new_parent_data.extend(parent_data)
+        if new_parent_data:
+            category_details["dbCategorizedUrls"] = new_parent_data
+        self.debug_print("add_to_category new parent data {0}".format(category_details["dbCategorizedUrls"]))
+
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/urlCategories/{category_id}', action_result, data=category_details, method='put')
+        return ret_val, response
+
     def _handle_add_category_url(self, param):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
         category_id = param["category_id"]
-        
+
         ret_val, category_details = self._get_category_details(category_id, action_result)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
-        
-        configuredName = category_details["configuredName"]
-        urls = param["urls"]
+
+        is_custom_category = category_details.get("customCategory", False)
+
+        if not is_custom_category:
+            action_result.set_status(phantom.APP_ERROR, "Category with {0} is a default category, which cannot be modified"
+                                                   .format(category_id))
+            return action_result.get_status()
+
+        urls = param.get("urls", "")
         urls_list = [item.strip() for item in urls.split(',') if item.strip()]
-        retaining_parent_category_url = param["retaining-parent-category-url"]
+        retaining_parent_category_url = param.get("retaining-parent-category-url", "")
         parent_urls = [item.strip() for item in retaining_parent_category_url.split(',') if item.strip()]
-        data = {}
-        data["configuredName"] = configuredName
-        data["urls"] = urls_list
-        #do get_categories because custom categories need name so just pass name with every call
-    
-    def _handle_get_categories(self, param):
+        ret_val, response = self._add_to_category(urls_list, parent_urls, category_details, category_id, action_result)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary['message'] = "Category urls updated"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_add_category_ips(self, param):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
-        get_ids_and_names_only = param["get_ids_and_names_only"]
+        category_id = param["category_id"]
+
+        ret_val, category_details = self._get_category_details(category_id, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        ips = param.get("ips", "")
+        ips_list = [item.strip() for item in ips.split(',') if item.strip()]
+        retaining_parent_category_ip = param.get("retaining-parent-category-ip", "")
+        parent_ips = [item.strip() for item in retaining_parent_category_ip.split(',') if item.strip()]
+        ret_val, response = self._add_to_category(ips_list, parent_ips, category_details, category_id, action_result)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary['message'] = "Category ips updated"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _remove_from_category(self, data, parent_data, category_details, category_id, action_result):
+        data_set = set(data)
+        new_data = []
+        for point in category_details.get("urls", []):
+            if point not in data_set:
+                new_data.append(point)
+
+        parent_data_set = set(parent_data)
+        new_parent_data = []
+        for point in category_details.get("dbCategorizedUrls", []):
+            if point not in parent_data_set:
+                new_parent_data.append(point)
+
+        category_details["urls"] = new_data
+        category_details["dbCategorizedUrls"] = new_parent_data
+
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/urlCategories/{category_id}', action_result, data=category_details, method='put')
+        return ret_val, response
+
+    def _handle_remove_category_urls(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        category_id = param["category_id"]
+
+        ret_val, category_details = self._get_category_details(category_id, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        urls = param.get("urls", "")
+        urls_to_remove = [item.strip() for item in urls.split(',') if item.strip()]
+        retaining_parent_category_url = param.get("retaining-parent-category-url", "")
+        parent_urls_to_remove = [item.strip() for item in retaining_parent_category_url.split(',') if item.strip()]
+
+        ret_val, response = self._remove_from_category(urls_to_remove, parent_urls_to_remove, category_details, category_id, action_result)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary['message'] = "Category urls removed"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_remove_category_ips(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        category_id = param["category_id"]
+
+        ret_val, category_details = self._get_category_details(category_id, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        ips = param.get("ips", "")
+        ips_to_remove = [item.strip() for item in ips.split(',') if item.strip()]
+        retaining_parent_category_ips = param.get("retaining-parent-category-ip", "")
+        parent_ips_to_remove = [item.strip() for item in retaining_parent_category_ips.split(',') if item.strip()]
+
+        ret_val, response = self._remove_from_category(ips_to_remove, parent_ips_to_remove, category_details, category_id, action_result)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary['message'] = "Category ips removed"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
 
     def handle_action(self, param):
 
@@ -1085,12 +1210,18 @@ class ZscalerConnector(BaseConnector):
 
         elif action_id == 'remove_group_user':
             ret_val = self._handle_remove_group_user(param)
-   
+
         elif action_id == 'add_category_url':
             ret_val = self._handle_add_category_url(param)
-            
-        elif action_id == 'get_categories':
-            ret_val = self._handle_get_categories(param)
+
+        elif action_id == 'add_category_ip':
+            ret_val = self._handle_add_category_ips(param)
+
+        elif action_id == 'remove_category_url':
+            ret_val = self._handle_remove_category_urls(param)
+
+        elif action_id == 'remove_category_ip':
+            ret_val = self._handle_remove_category_ips(param)
 
         return ret_val
 
