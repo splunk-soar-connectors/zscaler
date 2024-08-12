@@ -920,7 +920,7 @@ action_result.data.\*.ipRangesRetainingParentCategoryCount | numeric |  |
 action_result.message | string |  |   Message: Category ips removed 
 action_result.summary | string |  |  
 summary.total_objects | numeric |  |   1 
-summary.total_objects_successful | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'create destination group'
 Create destination group
