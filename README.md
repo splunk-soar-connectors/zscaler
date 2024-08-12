@@ -792,7 +792,7 @@ action_result.summary.message | string |  |   test User removed from group
 action_result.message | string |  |   test User removed from group 
 summary.message | string |  |  
 summary.total_objects | numeric |  |   1 
-summary.total_objects_successful | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'add category url'
 Add urls to a cetgory
