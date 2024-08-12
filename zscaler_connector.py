@@ -1010,13 +1010,11 @@ class ZscalerConnector(BaseConnector):
         new_data.extend(data)
         if new_data:
             category_details["urls"] = new_data
-        self.debug_print("add_to_category new data {0}".format(category_details["urls"]))
 
         new_parent_data = category_details.get("dbCategorizedUrls", [])
         new_parent_data.extend(parent_data)
         if new_parent_data:
             category_details["dbCategorizedUrls"] = new_parent_data
-        self.debug_print("add_to_category new parent data {0}".format(category_details["dbCategorizedUrls"]))
 
         ret_val, response = self._make_rest_call_helper(f'/api/v1/urlCategories/{category_id}', action_result, data=category_details, method='put')
         return ret_val, response
@@ -1075,7 +1073,7 @@ class ZscalerConnector(BaseConnector):
         summary['message'] = "Category ips updated"
 
         return action_result.set_status(phantom.APP_SUCCESS)
-    
+
     def _handle_remove_category_ips(self, param):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -1135,13 +1133,15 @@ class ZscalerConnector(BaseConnector):
         parent_urls_to_remove = [item.strip() for item in retaining_parent_category_url.split(',') if item.strip()]
 
         ret_val, response = self._remove_from_category(urls_to_remove, parent_urls_to_remove, category_details, category_id, action_result)
-        
+
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
         action_result.add_data(response)
         summary = action_result.update_summary({})
         summary['message'] = "Category urls removed"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_create_destination_group(self, param):
         """
@@ -1168,7 +1168,7 @@ class ZscalerConnector(BaseConnector):
             data["addresses"] = [item.strip() for item in addresses.split(',')]
         data["description"] = param.get("description", "")
         if ip_categories:
-            data["ip_categories"] = [item.strip() for item in ip_categories.split(',')]
+            data["ipCategories"] = [item.strip() for item in ip_categories.split(',')]
         if countries:
             data["countries"] = [item.strip() for item in countries.split(',')]
 
@@ -1310,16 +1310,16 @@ class ZscalerConnector(BaseConnector):
         if param.get("name"):
             group_resp["name"] = param["name"]
         if param.get('addresses'):
-            addresses = param["addresses"]
-            group_resp["addresses"] = [item.strip() for item in addresses.split(',') if item.strip()]
+            new_addresses = [item.strip() for item in param["addresses"].split(',') if item.strip()]
+            group_resp["addresses"] = new_addresses
         if param.get("description"):
             group_resp["description"] = param["description"]
         if param.get("ip_categories"):
-            ip_categories = param["ip_categories"]
-            group_resp["ip_categories"] = [item.strip() for item in ip_categories.split(',') if item.strip()]
+            new_ip_categories = [item.strip() for item in param["ip_categories"].split(',') if item.strip()]
+            group_resp["ipCategories"] = new_ip_categories
         if param.get("countries"):
-            countries = param["countries"]
-            group_resp["countries"] = [item.strip() for item in countries.split(',') if item.strip()]
+            new_countries = [item.strip() for item in param["countries"].split(',') if item.strip()]
+            group_resp["countries"] = new_countries
         group_resp["isNonEditable"] = param["is_non_editable"]
 
         ret_val, response = self._make_rest_call_helper(f'/api/v1/ipDestinationGroups/{group_id}', action_result, data=group_resp, method='put')
