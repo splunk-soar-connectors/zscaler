@@ -1013,10 +1013,10 @@ class ZscalerConnector(BaseConnector):
             )
 
         ret_val, response = self._make_rest_call_helper(f'/api/v1/users/{user_id}', action_result, data=data, method='put')
-        
+
         if phantom.is_fail(ret_val):
             return action_result.get_status()
-          
+
         self.debug_print(response)
         action_result.add_data(response)
         summary = action_result.update_summary({})
@@ -1446,7 +1446,7 @@ class ZscalerConnector(BaseConnector):
 
         elif action_id == "update_user":
             ret_val = self._handle_update_user(param)
-            
+
         elif action_id == 'add_category_url':
             ret_val = self._handle_add_category_url(param)
 
