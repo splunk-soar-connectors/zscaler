@@ -739,8 +739,17 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
+        get_ids_and_names_only = param["get_ids_and_names_only"]
+
         for url_category in list_url_categories:
-            action_result.add_data(url_category)
+            if get_ids_and_names_only:
+                category_lite = {}
+                category_lite["id"] = url_category["id"]
+                if "configuredName" in url_category:
+                    category_lite["configuredName"] = url_category["configuredName"]
+                action_result.add_data(category_lite)
+            else:
+                action_result.add_data(url_category)
 
         summary = action_result.update_summary({})
         summary['total_url_categories'] = action_result.get_data_size()
@@ -1049,6 +1058,385 @@ class ZscalerConnector(BaseConnector):
 
         summary['total_blacklist_items'] = action_result.get_data_size()
         return action_result.set_status(phantom.APP_SUCCESS)
+    
+    def _handle_update_user(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        user_id = param['user_id']
+
+        try:
+            data = json.loads(param["user"])
+        except Exception as e:
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                "User object needs to be valid json: {}".format(e)
+            )
+
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/users/{user_id}', action_result, data=data, method='put')
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        self.debug_print(response)
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary['message'] = "User updated"
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _get_category_details(self, id, action_result):
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/urlCategories/{id}', action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status(), None
+        return phantom.APP_SUCCESS, response
+
+    def _add_to_category(self, data, parent_data, category_details, category_id, action_result):
+        new_data = category_details.get("urls", [])
+        new_data.extend(data)
+        if new_data:
+            category_details["urls"] = new_data
+
+        new_parent_data = category_details.get("dbCategorizedUrls", [])
+        new_parent_data.extend(parent_data)
+        if new_parent_data:
+            category_details["dbCategorizedUrls"] = new_parent_data
+
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/urlCategories/{category_id}', action_result, data=category_details, method='put')
+        return ret_val, response
+
+    def _handle_add_category_url(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        category_id = param["category_id"]
+
+        ret_val, category_details = self._get_category_details(category_id, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        is_custom_category = category_details.get("customCategory", False)
+
+        if not is_custom_category:
+            action_result.set_status(phantom.APP_ERROR, "Category with {0} is a default category, which cannot be modified"
+                                                   .format(category_id))
+            return action_result.get_status()
+
+        urls = param.get("urls", "")
+        urls_list = [item.strip() for item in urls.split(',') if item.strip()]
+        retaining_parent_category_url = param.get("retaining-parent-category-url", "")
+        parent_urls = [item.strip() for item in retaining_parent_category_url.split(',') if item.strip()]
+        ret_val, response = self._add_to_category(urls_list, parent_urls, category_details, category_id, action_result)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary['message'] = "Category urls updated"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_add_category_ips(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        category_id = param["category_id"]
+
+        ret_val, category_details = self._get_category_details(category_id, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        ips = param.get("ips", "")
+        ips_list = [item.strip() for item in ips.split(',') if item.strip()]
+        retaining_parent_category_ip = param.get("retaining-parent-category-ip", "")
+        parent_ips = [item.strip() for item in retaining_parent_category_ip.split(',') if item.strip()]
+        ret_val, response = self._add_to_category(ips_list, parent_ips, category_details, category_id, action_result)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary['message'] = "Category ips updated"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_remove_category_ips(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        category_id = param["category_id"]
+
+        ret_val, category_details = self._get_category_details(category_id, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        ips = param.get("ips", "")
+        ips_to_remove = [item.strip() for item in ips.split(',') if item.strip()]
+        retaining_parent_category_ips = param.get("retaining-parent-category-ip", "")
+        parent_ips_to_remove = [item.strip() for item in retaining_parent_category_ips.split(',') if item.strip()]
+
+        ret_val, response = self._remove_from_category(ips_to_remove, parent_ips_to_remove, category_details, category_id, action_result)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary['message'] = "Category ips removed"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _remove_from_category(self, data, parent_data, category_details, category_id, action_result):
+        data_set = set(data)
+        new_data = []
+        for point in category_details.get("urls", []):
+            if point not in data_set:
+                new_data.append(point)
+
+        parent_data_set = set(parent_data)
+        new_parent_data = []
+        for point in category_details.get("dbCategorizedUrls", []):
+            if point not in parent_data_set:
+                new_parent_data.append(point)
+
+        category_details["urls"] = new_data
+        category_details["dbCategorizedUrls"] = new_parent_data
+
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/urlCategories/{category_id}', action_result, data=category_details, method='put')
+        return ret_val, response
+
+    def _handle_remove_category_urls(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        category_id = param["category_id"]
+
+        ret_val, category_details = self._get_category_details(category_id, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        urls = param.get("urls", "")
+        urls_to_remove = [item.strip() for item in urls.split(',') if item.strip()]
+        retaining_parent_category_url = param.get("retaining-parent-category-url", "")
+        parent_urls_to_remove = [item.strip() for item in retaining_parent_category_url.split(',') if item.strip()]
+
+        ret_val, response = self._remove_from_category(urls_to_remove, parent_urls_to_remove, category_details, category_id, action_result)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary['message'] = "Category urls removed"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_create_destination_group(self, param):
+        """
+        This action is used to create an IP Destination Group
+        :param name: IP destination group name
+        :param type: IP destination group type
+        :param addresses: Destination IP addresses, FQDNs, or wildcard FQDNs
+        :param description: Additional information about the destination IP group
+        :param ip_categories: Destination IP address URL categories
+        :param countries: Destination IP address countries
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        addresses = param.get("addresses", "")
+        ip_categories = param.get("ip_categories", "")
+        countries = param.get("countries", "")
+
+        data = {}
+        data["name"] = param["name"]
+        data["type"] = param["type"]
+        if addresses:
+            data["addresses"] = [item.strip() for item in addresses.split(',')]
+        data["description"] = param.get("description", "")
+        if ip_categories:
+            data["ipCategories"] = [item.strip() for item in ip_categories.split(',')]
+        if countries:
+            data["countries"] = [item.strip() for item in countries.split(',')]
+
+        ret_val, response = self._make_rest_call_helper('/api/v1/ipDestinationGroups', action_result, data=data, method='post')
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary['message'] = "Destination IP added"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _get_destination_group(self, id, action_result, exclude_type=None, category_type=None, lite=False):
+
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/ipDestinationGroups/{id}', action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status(), None
+
+        group_type = response["type"]
+
+        if group_type == exclude_type:
+            return phantom.APP_SUCCESS, None
+
+        if lite:
+            if category_type and group_type not in category_type:
+                return phantom.APP_SUCCESS, None
+
+            lite_resp = {"id": response["id"], "name": response["name"], "type": group_type}
+            return phantom.APP_SUCCESS, lite_resp
+
+        return phantom.APP_SUCCESS, response
+
+    def _get_batched_groups(self, endpoint, params, action_result):
+        limit = params['pageSize']
+
+        while True:
+            params['pageSize'] = min(limit, ZSCALER_MAX_PAGESIZE)
+            ret_val, get_groups = self._make_rest_call_helper('/api/v1' + endpoint, action_result, params=params)
+            self.debug_print("get groups is {0}".format(get_groups))
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+            for group in get_groups:
+                if "extensions" in group:
+                    extensions = group.pop("extensions")
+                    for key in extensions:
+                        group[key] = extensions[key]
+                action_result.add_data(group)
+            limit = limit - params['pageSize']
+            if limit <= 0 or len(get_groups) == 0:
+                break
+            params['page'] += 1
+
+        return phantom.APP_SUCCESS
+
+    def _handle_list_destination_group(self, param):
+        """
+        This action is used to list IP Destination Groups
+        :param ip_group_ids: Destination groups to retrieve
+        :param exclude_type: Group types to exclude from search
+        :param category_type: Destination types to filter by
+        :param include_ipv6: Retrieve IPv6 groups
+        :param limit: Number of groups to retrieve
+        :param lite: Retrieve limited information for each group
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        
+        ip_group_ids = param.get("ip_group_ids", "")
+        ip_ids_lst = [item.strip() for item in ip_group_ids.split(',') if item.strip()]
+        exclude_type = param.get("exclude_type", "")
+        category_type = param.get("category_type", "")
+        category_type_list = [item.strip() for item in category_type.split(',') if item.strip()]
+        include_ipv6 = param.get("include_ipv6", False)
+        limit = param.get("limit", 50)
+        lite = param.get("lite", False)
+
+        params = {}
+        endpoint = '/ipDestinationGroups'
+        params['excludeType'] = exclude_type
+        self.debug_print("ip id list {0}".format(ip_ids_lst))
+        if ip_ids_lst:
+            for ip in ip_ids_lst:
+                ret_val, response = self._get_destination_group(ip, action_result, exclude_type, category_type, lite)
+                if phantom.is_fail(ret_val):
+                    return action_result.get_status()
+                action_result.add_data(response)
+
+            summary = action_result.update_summary({})
+            summary['message'] = "Destination groups retrieved"
+            return action_result.set_status(phantom.APP_SUCCESS)
+
+        elif lite:
+            endpoint = '/ipDestinationGroups/lite'
+            params['type'] = category_type_list
+
+        params['page'] = 1
+        params['pageSize'] = limit
+        ret_val = self._get_batched_groups(endpoint, params, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if include_ipv6:
+            self.save_progress("Retrieving ipv6 destination groups")
+            params['page'] = 1
+            params['pageSize'] = limit
+            endpoint = '/ipDestinationGroups/ipv6DestinationGroups/lite' if lite else '/ipDestinationGroups/ipv6DestinationGroups'
+            ret_val = self._get_batched_groups(endpoint, params, action_result)
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+
+        # action_result.add_data(destination_groups)
+        summary = action_result.update_summary({})
+        summary['message'] = "Destination groups retrieved"
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_edit_destination_group(self, param):
+        """
+        This action is used to edit an IP Destination Group
+        :param ip_group_id: Id of destination group to edit
+        :param name: IP destination group name
+        :param addresses: Destination IP addresses, FQDNs, or wildcard FQDNs
+        :param description: Additional information about the destination IP group
+        :param ip_categories: Destination IP address URL categories
+        :param countries: Destination IP address countries
+        :param is_non_editable: If set to true, the destination IP address group is non-editable
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        group_id = param['ip_group_id']
+
+        ret_val, group_resp = self._get_destination_group(group_id, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+        self.debug_print("handle edit response {0}".format(group_resp))
+        if param.get("name"):
+            group_resp["name"] = param["name"]
+        if param.get('addresses'):
+            new_addresses = [item.strip() for item in param["addresses"].split(',') if item.strip()]
+            group_resp["addresses"] = new_addresses
+        if param.get("description"):
+            group_resp["description"] = param["description"]
+        if param.get("ip_categories"):
+            new_ip_categories = [item.strip() for item in param["ip_categories"].split(',') if item.strip()]
+            group_resp["ipCategories"] = new_ip_categories
+        if param.get("countries"):
+            new_countries = [item.strip() for item in param["countries"].split(',') if item.strip()]
+            group_resp["countries"] = new_countries
+        group_resp["isNonEditable"] = param["is_non_editable"]
+
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/ipDestinationGroups/{group_id}', action_result, data=group_resp, method='put')
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary['message'] = "Destination IP edited"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_delete_destination_group(self, param):
+        """
+        This action is used to delete IP Destination Groups
+        :param ip_group_ids: Ids of destination group to delete
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        group_ids = param.get("ip_group_ids", "")
+        list_group_ids = [item.strip() for item in group_ids.split(',') if item.strip()]
+
+        for group_id in list_group_ids:
+            ret_val, response = self._make_rest_call_helper(f'/api/v1/ipDestinationGroups/{group_id}', action_result, method='delete')
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+            action_result.add_data({"ip_group_id": group_id})
+
+        summary = action_result.update_summary({})
+        summary['message'] = "Destination groups deleted"
+        return action_result.set_status(phantom.APP_SUCCESS)
 
     def handle_action(self, param):
 
@@ -1121,6 +1509,33 @@ class ZscalerConnector(BaseConnector):
 
         elif action_id == 'get_blacklist':
             ret_val = self._handle_get_blacklist(param)
+
+        elif action_id == "update_user":
+            ret_val = self._handle_update_user(param)
+
+        elif action_id == 'add_category_url':
+            ret_val = self._handle_add_category_url(param)
+
+        elif action_id == 'add_category_ip':
+            ret_val = self._handle_add_category_ips(param)
+
+        elif action_id == 'remove_category_url':
+            ret_val = self._handle_remove_category_urls(param)
+
+        elif action_id == 'remove_category_ip':
+            ret_val = self._handle_remove_category_ips(param)
+
+        elif action_id == 'create_destination_group':
+            ret_val = self._handle_create_destination_group(param)
+
+        elif action_id == 'list_destination_group':
+            ret_val = self._handle_list_destination_group(param)
+
+        elif action_id == 'edit_destination_group':
+            ret_val = self._handle_edit_destination_group(param)
+
+        elif action_id == 'delete_destination_group':
+            ret_val = self._handle_delete_destination_group(param)
 
         return ret_val
 

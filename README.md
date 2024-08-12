@@ -122,6 +122,15 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [remove group user](#action-remove-group-user) - Remove user from group  
 [get whitelist](#action-get-whitelist) - get urls on the allow list  
 [get blacklist](#action-get-blacklist) - get urls on the deny list  
+[update user](#action-update-user) - Update user with given id  
+[add category url](#action-add-category-url) - Add urls to a cetgory  
+[add category ip](#action-add-category-ip) - Add IPs to a cetgory  
+[remove category url](#action-remove-category-url) - Add urls to a cetgory  
+[remove category ip](#action-remove-category-ip) - Remove IPs to a cetgory  
+[create destination group](#action-create-destination-group) - Create destination group  
+[list destination group](#action-list-destination-group) - List destination group  
+[edit destination group](#action-edit-destination-group) - Edit destination group  
+[delete destination group](#action-delete-destination-group) - Delete destination group  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -187,12 +196,15 @@ Type: **investigate**
 Read only: **True**
 
 #### Action Parameters
-No parameters are required for this action
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**get_ids_and_names_only** |  optional  | Whether to retrieve only a list containing URL category IDs and names. Even if displayURL is set to true, URLs will not be returned | boolean | 
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string |  |   test success  test failed 
+action_result.parameter.get_ids_and_names_only | string |  |   RADIO_STATIONS 
 action_result.data.\*.configuredName | string |  |   test Test-Caution 
 action_result.data.\*.customCategory | boolean |  |   True  False 
 action_result.data.\*.customIpRangesCount | numeric |  |   0 
@@ -789,5 +801,351 @@ action_result.parameter.filter | string |  |
 action_result.data.\*.blacklistUrl | string |  |  
 action_result.summary.message | string |  |   Blacklist retrieved 
 action_result.summary.total_blacklist_items | numeric |  |   10 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1 
+
+## action: 'update user'
+Update user with given id
+
+Type: **correct**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**user_id** |  required  | ZScaler User Id | numeric |  `zscaler user id` 
+**user** |  optional  | JSON object containing the user details (see https://help.zscaler.com/zia/user-management#/users/{userId}-put) | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.user | string |  |  
+action_result.parameter.user_id | numeric |  `zscaler user id`  |   889814 
+action_result.data.\*.adminUser | boolean |  |   True  False 
+action_result.data.\*.comments | string |  |   test This is test user 
+action_result.data.\*.deleted | boolean |  |   True  False 
+action_result.data.\*.department.id | numeric |  |   81896690 
+action_result.data.\*.department.name | string |  |   test IT 
+action_result.data.\*.email | string |  `email`  |   test first.last@domain.com 
+action_result.data.\*.groups.\*.id | numeric |  `zscaler group id`  |   8894813 
+action_result.data.\*.groups.\*.name | string |  |   test Super Admin 
+action_result.data.\*.id | numeric |  `zscaler user id`  |   889814 
+action_result.data.\*.name | string |  |   test First Last 
+action_result.summary | string |  |  
+action_result.summary.message | string |  |   test User removed from group 
+action_result.message | string |  |   test User removed from group 
+summary.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'add category url'
+Add urls to a cetgory
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**category_id** |  required  | The ID of the category to add the specified URLs to | string | 
+**urls** |  optional  | A comma-separated list of URLs to add to the specified category | string | 
+**retaining-parent-category-url** |  optional  | A comma-separated list of URLs to add to the retaining parent category section inside the specified category | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.category_id | string |  |   RADIO_STATIONS 
+action_result.parameter.urls | string |  |  
+action_result.parameter.retaining-parent-category-url | string |  |  
+action_result.data.\*.id | string |  |  
+action_result.data.\*.val | numeric |  |  
+action_result.data.\*.type | string |  |  
+action_result.data.\*.urls | string |  |  
+action_result.data.\*.scopes.\*.Type | string |  |  
+action_result.data.\*.editable | boolean |  |  
+action_result.data.\*.keywords | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.configuredName | string |  |  
+action_result.data.\*.customCategory | boolean |  |  
+action_result.data.\*.customUrlsCount | numeric |  |  
+action_result.data.\*.dbCategorizedUrls | string |  |  
+action_result.data.\*.customIpRangesCount | numeric |  |  
+action_result.data.\*.keywordsRetainingParentCategory | string |  |  
+action_result.data.\*.urlsRetainingParentCategoryCount | numeric |  |  
+action_result.data.\*.ipRangesRetainingParentCategoryCount | numeric |  |  
+action_result.message | string |  |   Message: Category urs updated 
+action_result.summary | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'add category ip'
+Add IPs to a cetgory
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**category_id** |  required  | The ID of the category to add the specified URLs to | string | 
+**ips** |  optional  | A comma-separated list of IP addresses to add to the specified category | string | 
+**retaining-parent-category-ip** |  optional  | A comma-separated list of IPs to add to the retaining parent category section inside the specified category | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.category_id | string |  |   RADIO_STATIONS 
+action_result.parameter.ips | string |  |  
+action_result.parameter.retaining-parent-category-ip | string |  |  
+action_result.data.\*.id | string |  |  
+action_result.data.\*.val | numeric |  |  
+action_result.data.\*.type | string |  |  
+action_result.data.\*.urls | string |  |  
+action_result.data.\*.scopes.\*.Type | string |  |  
+action_result.data.\*.editable | boolean |  |  
+action_result.data.\*.keywords | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.configuredName | string |  |  
+action_result.data.\*.customCategory | boolean |  |  
+action_result.data.\*.customUrlsCount | numeric |  |  
+action_result.data.\*.dbCategorizedUrls | string |  |  
+action_result.data.\*.customIpRangesCount | numeric |  |  
+action_result.data.\*.keywordsRetainingParentCategory | string |  |  
+action_result.data.\*.urlsRetainingParentCategoryCount | numeric |  |  
+action_result.data.\*.ipRangesRetainingParentCategoryCount | numeric |  |  
+action_result.message | string |  |   Message: Category ips updated 
+action_result.summary | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'remove category url'
+Add urls to a cetgory
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**category_id** |  required  | The ID of the category to add the specified URLs to | string | 
+**urls** |  optional  | A comma-separated list of URLs to remove from the specified category | string | 
+**retaining-parent-category-url** |  optional  | A comma-separated list of URLs to remove from the retaining parent category section inside the specified category | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.category_id | string |  |   RADIO_STATIONS 
+action_result.parameter.urls | string |  |  
+action_result.parameter.retaining-parent-category-url | string |  |  
+action_result.data.\*.id | string |  |  
+action_result.data.\*.val | numeric |  |  
+action_result.data.\*.type | string |  |  
+action_result.data.\*.urls | string |  |  
+action_result.data.\*.scopes.\*.Type | string |  |  
+action_result.data.\*.editable | boolean |  |  
+action_result.data.\*.keywords | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.configuredName | string |  |  
+action_result.data.\*.customCategory | boolean |  |  
+action_result.data.\*.customUrlsCount | numeric |  |  
+action_result.data.\*.dbCategorizedUrls | string |  |  
+action_result.data.\*.customIpRangesCount | numeric |  |  
+action_result.data.\*.keywordsRetainingParentCategory | string |  |  
+action_result.data.\*.urlsRetainingParentCategoryCount | numeric |  |  
+action_result.data.\*.ipRangesRetainingParentCategoryCount | numeric |  |  
+action_result.message | string |  |   Message: Category urls removed 
+action_result.summary | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'remove category ip'
+Remove IPs to a cetgory
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**category_id** |  required  | The ID of the category to add the specified URLs to | string | 
+**ips** |  optional  | A comma-separated list of IP addresses to add to the specified category | string | 
+**retaining-parent-category-ip** |  optional  | A comma-separated list of IPs to add to the retaining parent category section inside the specified category | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.category_id | string |  |   RADIO_STATIONS 
+action_result.parameter.ips | string |  |  
+action_result.parameter.retaining-parent-category-ip | string |  |  
+action_result.data.\*.id | string |  |  
+action_result.data.\*.val | numeric |  |  
+action_result.data.\*.type | string |  |  
+action_result.data.\*.urls | string |  |  
+action_result.data.\*.scopes.\*.Type | string |  |  
+action_result.data.\*.editable | boolean |  |  
+action_result.data.\*.keywords | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.configuredName | string |  |  
+action_result.data.\*.customCategory | boolean |  |  
+action_result.data.\*.customUrlsCount | numeric |  |  
+action_result.data.\*.dbCategorizedUrls | string |  |  
+action_result.data.\*.customIpRangesCount | numeric |  |  
+action_result.data.\*.keywordsRetainingParentCategory | string |  |  
+action_result.data.\*.urlsRetainingParentCategoryCount | numeric |  |  
+action_result.data.\*.ipRangesRetainingParentCategoryCount | numeric |  |  
+action_result.message | string |  |   Message: Category ips removed 
+action_result.summary | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'create destination group'
+Create destination group
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**name** |  required  | Destination IP group name | string | 
+**type** |  required  | Destination IP group type (i.e., the group can contain destination IP addresses, countries, URL categories or FQDNs) | string | 
+**addresses** |  optional  | Comma seperated string of destination IP addresses, FQDNs, or wildcard FQDNs added to the group | string | 
+**description** |  optional  | Additional information about the destination IP group. | string | 
+**ip_categories** |  optional  | Destination IP address URL categories | string | 
+**countries** |  optional  | Destination IP address countries. You can identify destinations based on the location of a server. | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.countries | string |  |  
+action_result.parameter.ip_categories | string |  |  
+action_result.parameter.description | string |  |  
+action_result.parameter.addresses | string |  |  
+action_result.parameter.type | string |  |  
+action_result.parameter.name | string |  |  
+action_result.data.\*.id | numeric |  |  
+action_result.data.\*.name | string |  |  
+action_result.data.\*.type | string |  |   DSTN_IP  DSTN_FQDN  DSTN_DOMAIN  DSTN_OTHER 
+action_result.data.\*.addresses | string |  |   192.168.1.1 
+action_result.data.\*.countries | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.ipCategories | string |  |   TRADING_BROKARAGE_INSURANCE 
+action_result.summary | string |  |  
+action_result.summary.message | string |  |   test User removed from group 
+action_result.message | string |  |   test User removed from group 
+summary.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'list destination group'
+List destination group
+
+Type: **investigate**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**ip_group_ids** |  optional  | A comma-separated list of unique identifiers for the IP destination groups | string | 
+**exclude_type** |  optional  | The IP group type to be excluded from the results | string | 
+**category_type** |  optional  | Comma seperated list of IP group types to be filtered from results. This argument is only supported when the 'lite' argument is set to True | string | 
+**include_ipv6** |  optional  | Retrieve IPv6 destination groups | boolean | 
+**limit** |  optional  | Limit of the results to be retrieved | numeric | 
+**lite** |  optional  | Whether to retrieve only limited information of IP destination groups. Includes ID, name and type of the IP destination groups | boolean | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.lite | boolean |  |  
+action_result.parameter.limit | numeric |  |  
+action_result.parameter.include_ipv6 | boolean |  |  
+action_result.parameter.category_type | string |  |  
+action_result.parameter.exclude_type | string |  |  
+action_result.parameter.ip_group_id | string |  |  
+action_result.data.\*.id | numeric |  |  
+action_result.data.\*.name | string |  |  
+action_result.data.\*.type | string |  |   DSTN_IP  DSTN_FQDN  DSTN_DOMAIN  DSTN_OTHER 
+action_result.data.\*.addresses | string |  |   192.168.1.1 
+action_result.data.\*.countries | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.ipCategories | string |  |   TRADING_BROKARAGE_INSURANCE 
+action_result.summary | string |  |  
+action_result.summary.message | string |  |   Retreived Destination Groups 
+action_result.message | string |  |   Retreived Destination Groups 
+summary.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'edit destination group'
+Edit destination group
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**ip_group_id** |  required  | The unique identifier for the IP destination group | numeric | 
+**name** |  optional  | Destination IP group name | string | 
+**addresses** |  optional  | Comma seperated string of destination IP addresses, FQDNs, or wildcard FQDNs added to the group | string | 
+**description** |  optional  | Additional information about the destination IP group. | string | 
+**ip_categories** |  optional  | Destination IP address URL categories | string | 
+**countries** |  optional  | Destination IP address countries. You can identify destinations based on the location of a server. | string | 
+**is_non_editable** |  optional  | If set to true, the destination IP address group is non-editable. This field is applicable only to predefined IP address groups, which cannot be modified | boolean | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.is_non_editable | boolean |  |  
+action_result.parameter.countries | string |  |  
+action_result.parameter.ip_categories | string |  |  
+action_result.parameter.description | string |  |  
+action_result.parameter.addresses | string |  |  
+action_result.parameter.name | string |  |  
+action_result.parameter.ip_group_id | numeric |  |  
+action_result.data.\*.id | numeric |  |  
+action_result.data.\*.name | string |  |  
+action_result.data.\*.type | string |  |   DSTN_IP  DSTN_FQDN  DSTN_DOMAIN  DSTN_OTHER 
+action_result.data.\*.addresses | string |  |   192.168.1.1 
+action_result.data.\*.countries | string |  |  
+action_result.data.\*.description | string |  |  
+action_result.data.\*.ipCategories | string |  |   TRADING_BROKARAGE_INSURANCE 
+action_result.data.\*.creatorContext | string |  |  
+action_result.summary | string |  |  
+action_result.summary.message | string |  |   test User removed from group 
+action_result.message | string |  |   test User removed from group 
+summary.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'delete destination group'
+Delete destination group
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**ip_group_ids** |  optional  | A comma-separated list of unique identifiers for the IP destination groups | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.ip_group_ids | string |  |  
+action_result.data.\*.ip_group_ids | string |  |  
+action_result.summary | string |  |  
+action_result.summary.message | string |  |   test User removed from group 
+action_result.message | string |  |   test User removed from group 
+summary.message | string |  |  
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1 
