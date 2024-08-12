@@ -120,6 +120,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [get groups](#action-get-groups) - Gets a list of groups  
 [add group user](#action-add-group-user) - Add user to group  
 [remove group user](#action-remove-group-user) - Remove user from group  
+[add category url](#action-add-category-url) - Add urls to a cetgory  
+[get categories](#action-get-categories) - Retrieve categories  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -744,5 +746,49 @@ action_result.summary | string |  |
 action_result.summary.message | string |  |   test User removed from group 
 action_result.message | string |  |   test User removed from group 
 summary.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'add category url'
+Add urls to a cetgory
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**category_id** |  required  | The ID of the category to add the specified URLs to | string | 
+**urls** |  optional  | A comma-separated list of URLs to add to the specified category | string | 
+**retaining-parent-category-url** |  optional  | A comma-separated list of URLs to add to the retaining parent category section inside the specified category | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.category_id | string |  |   RADIO_STATIONS 
+action_result.parameter.urls | string |  |  
+action_result.parameter.retaining-parent-category-url | string |  |  
+action_result.message | string |  |   Total messages returned: 1 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'get categories'
+Retrieve categories
+
+Type: **investigative**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**get_ids_and_names_only** |  optional  | Whether to retrieve only a list containing URL category IDs and names. Even if displayURL is set to true, URLs will not be returned | boolean | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.get_ids_and_names_only | string |  |   RADIO_STATIONS 
+action_result.message | string |  |   Total messages returned: 1 
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1 
