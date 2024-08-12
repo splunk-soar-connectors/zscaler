@@ -1321,7 +1321,7 @@ class ZscalerConnector(BaseConnector):
         """
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
-        
+
         ip_group_ids = param.get("ip_group_ids", "")
         ip_ids_lst = [item.strip() for item in ip_group_ids.split(',') if item.strip()]
         exclude_type = param.get("exclude_type", "")
