@@ -1058,7 +1058,7 @@ class ZscalerConnector(BaseConnector):
 
         summary['total_blacklist_items'] = action_result.get_data_size()
         return action_result.set_status(phantom.APP_SUCCESS)
-    
+
     def _handle_update_user(self, param):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -1437,6 +1437,40 @@ class ZscalerConnector(BaseConnector):
         summary = action_result.update_summary({})
         summary['message'] = "Destination groups deleted"
         return action_result.set_status(phantom.APP_SUCCESS)
+    
+    def _handle_get_departments(self, param):
+        """
+        This action is used to get departments
+        :param name: Filter by department name
+        :param page: Specifies the page offset
+        :param pageSize: Specifies the page size. Defaul is 100
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        
+        name = param.get("name")
+        page_size = param.get("pageSize")
+        page_num = param.get("page", 1)
+        
+        endpoint = f"/api/v1/departments?page={page_num}&pageSize={page_size}"
+        
+        if name:
+            endpoint = f"/api/v1/departments?page={page_num}&pageSize={page_size}&search={name}&limitSearch=true"
+        
+        ret_val, response = self._make_rest_call_helper(endpoint, action_result)
+        
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+        
+        for department in response:
+            action_result.add_data(department)
+        
+        summary = action_result.update_summary({})
+        summary['message'] = "Departments retrieved"
+        summary['total_deparments'] = action_result.get_data_size()
+        return action_result.set_status(phantom.APP_SUCCESS)
+        
 
     def handle_action(self, param):
 
@@ -1536,6 +1570,9 @@ class ZscalerConnector(BaseConnector):
 
         elif action_id == 'delete_destination_group':
             ret_val = self._handle_delete_destination_group(param)
+
+        elif action_id == 'get_departments':
+            ret_val = self._handle_get_departments(param)
 
         return ret_val
 

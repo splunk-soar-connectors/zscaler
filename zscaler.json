@@ -3038,7 +3038,8 @@
                 },
                 {
                     "data_path": "action_result.data.*.whitelistUrl",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.summary.total_whitelist_items",
@@ -3117,8 +3118,7 @@
                     "column_name": "Query",
                    "example_values": [
                         "8...8"
-                    ],
-                    "column_order": 1
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.filter",
@@ -3127,12 +3127,12 @@
                     "value_list": [
                         "url",
                         "ip"
-                    ],
-                    "column_order": 0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.blacklistUrl",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.summary.message",
@@ -3201,7 +3201,6 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "column_name": "Status",
-                    "column_order": 2,
                     "example_values": [
                         "test success",
                         "test failed"
@@ -3210,8 +3209,7 @@
                 {
                     "data_path": "action_result.parameter.user",
                     "data_type": "string",
-                    "column_name": "User",
-                    "column_order": 1
+                    "column_name": "User"
                 },
                 {
                     "data_path": "action_result.parameter.user_id",
@@ -3220,7 +3218,6 @@
                         "zscaler user id"
                     ],
                     "column_name": "User ID",
-                    "column_order": 0,
                     "example_values": [
                         889814
                     ]
@@ -3231,14 +3228,16 @@
                     "example_values": [
                         true,
                         false
-                    ]
+                    ],
+                    "column_order": 9
                 },
                 {
                     "data_path": "action_result.data.*.comments",
                     "data_type": "string",
                     "example_values": [
                         "test This is test user"
-                    ]
+                    ],
+                    "column_order": 8
                 },
                 {
                     "data_path": "action_result.data.*.deleted",
@@ -3246,21 +3245,24 @@
                     "example_values": [
                         true,
                         false
-                    ]
+                    ],
+                    "column_order": 7
                 },
                 {
                     "data_path": "action_result.data.*.department.id",
                     "data_type": "numeric",
                     "example_values": [
                         81896690
-                    ]
+                    ],
+                    "column_order": 6
                 },
                 {
                     "data_path": "action_result.data.*.department.name",
                     "data_type": "string",
                     "example_values": [
                         "test IT"
-                    ]
+                    ],
+                    "column_order": 5
                 },
                 {
                     "data_path": "action_result.data.*.email",
@@ -3272,7 +3274,7 @@
                         "test first.last@domain.com"
                     ],
                     "column_name": "User Email",
-                    "column_order": 2
+                    "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.groups.*.id",
@@ -3293,7 +3295,7 @@
                         "test Super Admin"
                     ],
                     "column_name": "Group Name",
-                    "column_order": 4
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.id",
@@ -3414,67 +3416,83 @@
                 },
                 {
                     "data_path": "action_result.data.*.id",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.val",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.type",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.urls",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.scopes.*.Type",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.editable",
-                    "data_type": "boolean"
+                    "data_type": "boolean",
+                    "column_order": 5
                 },
                 {
                     "data_path": "action_result.data.*.keywords",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 6
                 },
                 {
                     "data_path": "action_result.data.*.description",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 7
                 },
                 {
                     "data_path": "action_result.data.*.configuredName",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 8
                 },
                 {
                     "data_path": "action_result.data.*.customCategory",
-                    "data_type": "boolean"
+                    "data_type": "boolean",
+                    "column_order": 9
                 },
                 {
                     "data_path": "action_result.data.*.customUrlsCount",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_order": 10
                 },
                 {
                     "data_path": "action_result.data.*.dbCategorizedUrls",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 11
                 },
                 {
                     "data_path": "action_result.data.*.customIpRangesCount",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_order": 12
                 },
                 {
                     "data_path": "action_result.data.*.keywordsRetainingParentCategory",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 13
                 },
                 {
                     "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_order": 14
                 },
                 {
                     "data_path": "action_result.data.*.ipRangesRetainingParentCategoryCount",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_order": 15
                 },
                 {
                     "data_path": "action_result.message",
@@ -3563,67 +3581,83 @@
                 },
                 {
                     "data_path": "action_result.data.*.id",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.val",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.type",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.urls",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.scopes.*.Type",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.editable",
-                    "data_type": "boolean"
+                    "data_type": "boolean",
+                    "column_order": 5
                 },
                 {
                     "data_path": "action_result.data.*.keywords",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 6
                 },
                 {
                     "data_path": "action_result.data.*.description",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 7
                 },
                 {
                     "data_path": "action_result.data.*.configuredName",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 8
                 },
                 {
                     "data_path": "action_result.data.*.customCategory",
-                    "data_type": "boolean"
+                    "data_type": "boolean",
+                    "column_order": 9
                 },
                 {
                     "data_path": "action_result.data.*.customUrlsCount",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_order": 10
                 },
                 {
                     "data_path": "action_result.data.*.dbCategorizedUrls",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 11
                 },
                 {
                     "data_path": "action_result.data.*.customIpRangesCount",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_order": 12
                 },
                 {
                     "data_path": "action_result.data.*.keywordsRetainingParentCategory",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 13
                 },
                 {
                     "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_order": 14
                 },
                 {
                     "data_path": "action_result.data.*.ipRangesRetainingParentCategoryCount",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_order": 15
                 },
                 {
                     "data_path": "action_result.message",
@@ -3693,7 +3727,8 @@
                     "example_values": [
                         "success",
                         "failed"
-                    ]
+                    ],
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.parameter.category_id",
@@ -3842,7 +3877,8 @@
                     "example_values": [
                         "success",
                         "failed"
-                    ]
+                    ],
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.parameter.category_id",
@@ -4016,46 +4052,42 @@
                 {
                     "data_path": "action_result.parameter.countries",
                     "data_type": "string",
-                    "column_name": "Countries",
-                    "column_order": 5
+                    "column_name": "Countries"
                 },
                 {
                     "data_path": "action_result.parameter.ip_categories",
                     "data_type": "string",
-                    "column_name": "Ip Categories",
-                    "column_order": 4
+                    "column_name": "Ip Categories"
                 },
                 {
                     "data_path": "action_result.parameter.description",
                     "data_type": "string",
-                    "column_name": "Description",
-                    "column_order": 3
+                    "column_name": "Description"
                 },
                 {
                     "data_path": "action_result.parameter.addresses",
                     "data_type": "string",
-                    "column_name": "Addresses",
-                    "column_order": 2
+                    "column_name": "Addresses"
                 },
                 {
                     "data_path": "action_result.parameter.type",
                     "data_type": "string",
-                    "column_name": "Type",
-                    "column_order": 1
+                    "column_name": "Type"
                 },
                 {
                     "data_path": "action_result.parameter.name",
                     "data_type": "string",
-                    "column_name": "Name",
-                    "column_order": 0
+                    "column_name": "Name"
                 },
                 {
                     "data_path": "action_result.data.*.id",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.name",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.type",
@@ -4065,29 +4097,39 @@
                         "DSTN_FQDN",
                         "DSTN_DOMAIN",
                         "DSTN_OTHER"
-                    ]
+                    ],
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.addresses",
                     "data_type": "string",
                     "example_values": [
                         "192.168.1.1"
-                    ]
+                    ],
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.countries",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.description",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 5
                 },
                 {
                     "data_path": "action_result.data.*.ipCategories",
                     "data_type": "string",
                     "example_values": [
                         "TRADING_BROKARAGE_INSURANCE"
-                    ]
+                    ],
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.creatorContext",
+                    "data_type": "string",
+                    "column_order": 7
                 },
                 {
                     "data_path": "action_result.summary",
@@ -4199,7 +4241,6 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "column_name": "Status",
-                    "column_order": 2,
                     "example_values": [
                         "test success",
                         "test failed"
@@ -4208,46 +4249,42 @@
                 {
                     "data_path": "action_result.parameter.lite",
                     "data_type": "boolean",
-                    "column_name": "Lite",
-                    "column_order": 5
+                    "column_name": "Lite"
                 },
                 {
                     "data_path": "action_result.parameter.limit",
                     "data_type": "numeric",
-                    "column_name": "Limit",
-                    "column_order": 4
+                    "column_name": "Limit"
                 },
                 {
                     "data_path": "action_result.parameter.include_ipv6",
                     "data_type": "boolean",
-                    "column_name": "Include Ipv6",
-                    "column_order": 3
+                    "column_name": "Include Ipv6"
                 },
                 {
                     "data_path": "action_result.parameter.category_type",
                     "data_type": "string",
-                    "column_name": "Category Type",
-                    "column_order": 2
+                    "column_name": "Category Type"
                 },
                 {
                     "data_path": "action_result.parameter.exclude_type",
                     "data_type": "string",
-                    "column_name": "Exclude Type",
-                    "column_order": 1
+                    "column_name": "Exclude Type"
                 },
                 {
                     "data_path": "action_result.parameter.ip_group_id",
                     "data_type": "string",
-                    "column_name": "Ip Group ID",
-                    "column_order": 0
+                    "column_name": "Ip Group ID"
                 },
                 {
                     "data_path": "action_result.data.*.id",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.name",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.type",
@@ -4257,29 +4294,39 @@
                         "DSTN_FQDN",
                         "DSTN_DOMAIN",
                         "DSTN_OTHER"
-                    ]
+                    ],
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.addresses",
                     "data_type": "string",
                     "example_values": [
                         "192.168.1.1"
-                    ]
+                    ],
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.countries",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.description",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 5
                 },
                 {
                     "data_path": "action_result.data.*.ipCategories",
                     "data_type": "string",
                     "example_values": [
                         "TRADING_BROKARAGE_INSURANCE"
-                    ]
+                    ],
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.creatorContext",
+                    "data_type": "string",
+                    "column_order": 7
                 },
                 {
                     "data_path": "action_result.summary",
@@ -4388,52 +4435,48 @@
                 {
                     "data_path": "action_result.parameter.is_non_editable",
                     "data_type": "boolean",
-                    "column_name": "Is Non Editab;e",
-                    "column_order": 6
+                    "column_name": "Is Non Editable"
                 },
                 {
                     "data_path": "action_result.parameter.countries",
                     "data_type": "string",
-                    "column_name": "Countries",
-                    "column_order": 5
+                    "column_name": "Countries"
                 },
                 {
                     "data_path": "action_result.parameter.ip_categories",
                     "data_type": "string",
-                    "column_name": "Ip Categories",
-                    "column_order": 4
+                    "column_name": "Ip Categories"
                 },
                 {
                     "data_path": "action_result.parameter.description",
                     "data_type": "string",
-                    "column_name": "Description",
-                    "column_order": 3
+                    "column_name": "Description"
                 },
                 {
                     "data_path": "action_result.parameter.addresses",
                     "data_type": "string",
-                    "column_name": "Addresses",
-                    "column_order": 2
+                    "column_name": "Addresses"
                 },
                 {
                     "data_path": "action_result.parameter.name",
                     "data_type": "string",
-                    "column_name": "Name",
-                    "column_order": 1
+                    "column_name": "Name"
                 },
                 {
                     "data_path": "action_result.parameter.ip_group_id",
                     "data_type": "numeric",
-                    "column_name": "IP Group Id",
-                    "column_order": 1
+                    "column_name": "IP Group Id"
+                    
                 },
                 {
                     "data_path": "action_result.data.*.id",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.name",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.type",
@@ -4443,33 +4486,39 @@
                         "DSTN_FQDN",
                         "DSTN_DOMAIN",
                         "DSTN_OTHER"
-                    ]
+                    ],
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.addresses",
                     "data_type": "string",
                     "example_values": [
                         "192.168.1.1"
-                    ]
+                    ],
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.countries",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.description",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 5
                 },
                 {
                     "data_path": "action_result.data.*.ipCategories",
                     "data_type": "string",
                     "example_values": [
                         "TRADING_BROKARAGE_INSURANCE"
-                    ]
+                    ],
+                    "column_order": 6
                 },
                 {
                     "data_path": "action_result.data.*.creatorContext",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_order": 7
                 },
                 {
                     "data_path": "action_result.summary",
@@ -4479,14 +4528,14 @@
                     "data_path": "action_result.summary.message",
                     "data_type": "string",
                     "example_values": [
-                        "test User removed from group"
+                        "Destination group edited"
                     ]
                 },
                 {
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "test User removed from group"
+                        "Destination group edited"
                     ]
                 },
                 {
@@ -4532,7 +4581,7 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "column_name": "Status",
-                    "column_order": 2,
+                    "column_order": 0,
                     "example_values": [
                         "test success",
                         "test failed"
@@ -4541,8 +4590,7 @@
                 {
                     "data_path": "action_result.parameter.ip_group_ids",
                     "data_type": "string",
-                    "column_name": "IP Group Ids",
-                    "column_order": 0
+                    "column_name": "IP Group Ids"
                 },
                 {
                     "data_path": "action_result.data.*.ip_group_ids",
@@ -4556,14 +4604,132 @@
                     "data_path": "action_result.summary.message",
                     "data_type": "string",
                     "example_values": [
-                        "test User removed from group"
+                        "Destination group deleted"
                     ]
                 },
                 {
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "test User removed from group"
+                        "Destination group deleted"
+                    ]
+                },
+                {
+                    "data_path": "summary.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get departments",
+            "identifier": "get_departments",
+            "description": "Get a list of departments",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "name": {
+                    "description": "Filter by department name",
+                    "data_type": "string",
+                    "primary": true,
+                    "order": 0
+                },
+                "page": {
+                    "description": "Specifies the page offset",
+                    "data_type": "numeric",
+                    "primary": true,
+                    "order": 1
+                },
+                "pageSize": {
+                    "description": "Specifies the page size",
+                    "default": 100,
+                    "data_type": "numeric",
+                    "primary": true,
+                    "order": 2
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "column_order": 2,
+                    "example_values": [
+                        "test success",
+                        "test failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.pageSize",
+                    "data_type": "string",
+                    "column_name": "Page Size"
+                },
+                {
+                    "data_path": "action_result.parameter.page",
+                    "data_type": "string",
+                    "column_name": "Page"
+                },
+                {
+                    "data_path": "action_result.parameter.name",
+                    "data_type": "string",
+                    "column_name": "Name"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "column_order": 0
+
+                },
+                {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.isNonEditable",
+                    "data_type": "boolean",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Departments Retrieved"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.total_deparments",
+                    "data_type": "numeric",
+                    "example_values": [
+                        97
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Departments Retrieved"
                     ]
                 },
                 {
