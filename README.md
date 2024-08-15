@@ -131,6 +131,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [list destination group](#action-list-destination-group) - List destination group  
 [edit destination group](#action-edit-destination-group) - Edit destination group  
 [delete destination group](#action-delete-destination-group) - Delete destination group  
+[get departments](#action-get-departments) - Get a list of departments  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -1036,6 +1037,7 @@ action_result.data.\*.addresses | string |  |   192.168.1.1
 action_result.data.\*.countries | string |  |  
 action_result.data.\*.description | string |  |  
 action_result.data.\*.ipCategories | string |  |   TRADING_BROKARAGE_INSURANCE 
+action_result.data.\*.creatorContext | string |  |  
 action_result.summary | string |  |  
 action_result.summary.message | string |  |   test User removed from group 
 action_result.message | string |  |   test User removed from group 
@@ -1076,6 +1078,7 @@ action_result.data.\*.addresses | string |  |   192.168.1.1
 action_result.data.\*.countries | string |  |  
 action_result.data.\*.description | string |  |  
 action_result.data.\*.ipCategories | string |  |   TRADING_BROKARAGE_INSURANCE 
+action_result.data.\*.creatorContext | string |  |  
 action_result.summary | string |  |  
 action_result.summary.message | string |  |   Retreived Destination Groups 
 action_result.message | string |  |   Retreived Destination Groups 
@@ -1120,8 +1123,8 @@ action_result.data.\*.description | string |  |
 action_result.data.\*.ipCategories | string |  |   TRADING_BROKARAGE_INSURANCE 
 action_result.data.\*.creatorContext | string |  |  
 action_result.summary | string |  |  
-action_result.summary.message | string |  |   test User removed from group 
-action_result.message | string |  |   test User removed from group 
+action_result.summary.message | string |  |   Destination group edited 
+action_result.message | string |  |   Destination group edited 
 summary.message | string |  |  
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1   
@@ -1144,8 +1147,39 @@ action_result.status | string |  |   test success  test failed
 action_result.parameter.ip_group_ids | string |  |  
 action_result.data.\*.ip_group_ids | string |  |  
 action_result.summary | string |  |  
-action_result.summary.message | string |  |   test User removed from group 
-action_result.message | string |  |   test User removed from group 
+action_result.summary.message | string |  |   Destination group deleted 
+action_result.message | string |  |   Destination group deleted 
+summary.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'get departments'
+Get a list of departments
+
+Type: **investigate**  
+Read only: **True**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**name** |  optional  | Filter by department name | string | 
+**page** |  optional  | Specifies the page offset | numeric | 
+**pageSize** |  optional  | Specifies the page size | numeric | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.pageSize | string |  |  
+action_result.parameter.page | string |  |  
+action_result.parameter.name | string |  |  
+action_result.data.\*.id | numeric |  |  
+action_result.data.\*.name | string |  |  
+action_result.data.\*.isNonEditable | boolean |  |  
+action_result.summary | string |  |  
+action_result.summary.message | string |  |   Departments Retrieved 
+action_result.summary.total_deparments | numeric |  |   97 
+action_result.message | string |  |   Departments Retrieved 
 summary.message | string |  |  
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1 
