@@ -739,7 +739,7 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        get_ids_and_names_only = param["get_ids_and_names_only"]
+        get_ids_and_names_only = param.get("get_ids_and_names_only", False)
 
         for url_category in list_url_categories:
             if get_ids_and_names_only:
@@ -1404,7 +1404,7 @@ class ZscalerConnector(BaseConnector):
         if param.get("countries"):
             new_countries = [item.strip() for item in param["countries"].split(',') if item.strip()]
             group_resp["countries"] = new_countries
-        group_resp["isNonEditable"] = param["is_non_editable"]
+        group_resp["isNonEditable"] = param.get("is_non_editable", False)
 
         ret_val, response = self._make_rest_call_helper(f'/api/v1/ipDestinationGroups/{group_id}', action_result, data=group_resp, method='put')
         if phantom.is_fail(ret_val):
