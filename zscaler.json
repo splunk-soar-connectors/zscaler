@@ -3037,8 +3037,9 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.whitelistUrl",
+                    "data_path": "action_result.data.*.url",
                     "data_type": "string",
+                    "column_name": "whitelist url",
                     "column_order": 0
                 },
                 {
@@ -3071,7 +3072,7 @@
                 }
             ],
             "render": {
-                "title": "List URL Categories",
+                "title": "Whitelist",
                 "type": "table"
             },
             "versions": "EQ(*)"
@@ -3130,8 +3131,9 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.blacklistUrl",
+                    "data_path": "action_result.data.*.url",
                     "data_type": "string",
+                    "column_name": "blacklist url",
                     "column_order": 0
                 },
                 {
@@ -3164,7 +3166,7 @@
                 }
             ],
             "render": {
-                "title": "List URL Categories",
+                "title": "Blacklist",
                 "type": "table"
             },
             "versions": "EQ(*)"
@@ -3229,6 +3231,7 @@
                         true,
                         false
                     ],
+                    "column_name": "Is Admin User",
                     "column_order": 9
                 },
                 {
@@ -3237,6 +3240,7 @@
                     "example_values": [
                         "test This is test user"
                     ],
+                    "column_name": "Comments",
                     "column_order": 8
                 },
                 {
@@ -3246,6 +3250,7 @@
                         true,
                         false
                     ],
+                    "column_name": "Is Deleted",
                     "column_order": 7
                 },
                 {
@@ -3254,6 +3259,7 @@
                     "example_values": [
                         81896690
                     ],
+                    "column_name": "Department ID",
                     "column_order": 6
                 },
                 {
@@ -3262,6 +3268,7 @@
                     "example_values": [
                         "test IT"
                     ],
+                    "column_name": "Department name",
                     "column_order": 5
                 },
                 {
@@ -3417,81 +3424,97 @@
                 {
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
+                    "column_name": "URL category",
                     "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.val",
                     "data_type": "numeric",
+                    "column_name": "Value",
                     "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.type",
                     "data_type": "string",
+                    "column_name": "Category type",
                     "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.urls",
                     "data_type": "string",
+                    "column_name": "URLs added",
                     "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.scopes.*.Type",
                     "data_type": "string",
+                    "column_name": "Category scope",
                     "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.editable",
                     "data_type": "boolean",
+                    "column_name": "Is editable",
                     "column_order": 5
                 },
                 {
                     "data_path": "action_result.data.*.keywords",
                     "data_type": "string",
+                    "date_type": "Category keywords",
                     "column_order": 6
                 },
                 {
                     "data_path": "action_result.data.*.description",
                     "data_type": "string",
+                    "column_name": "Category description",
                     "column_order": 7
                 },
                 {
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
+                    "column_name": "Configured Name",
                     "column_order": 8
                 },
                 {
                     "data_path": "action_result.data.*.customCategory",
                     "data_type": "boolean",
+                    "column_name": "Is Custom Category",
                     "column_order": 9
                 },
                 {
                     "data_path": "action_result.data.*.customUrlsCount",
                     "data_type": "numeric",
+                    "column_name": "Custom url count",
                     "column_order": 10
                 },
                 {
                     "data_path": "action_result.data.*.dbCategorizedUrls",
                     "data_type": "string",
+                    "column_name": "Parent urls",
                     "column_order": 11
                 },
                 {
                     "data_path": "action_result.data.*.customIpRangesCount",
                     "data_type": "numeric",
+                    "column_name": "Custom ip ranges count",
                     "column_order": 12
                 },
                 {
                     "data_path": "action_result.data.*.keywordsRetainingParentCategory",
                     "data_type": "string",
+                    "column_name": "Parent url keywords",
                     "column_order": 13
                 },
                 {
                     "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
                     "data_type": "numeric",
+                    "column_name": "Number of parent urls",
                     "column_order": 14
                 },
                 {
                     "data_path": "action_result.data.*.ipRangesRetainingParentCategoryCount",
                     "data_type": "numeric",
+                    "column_name": "Number of parent ips",
                     "column_order": 15
                 },
                 {
@@ -3582,81 +3605,97 @@
                 {
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
+                    "column_name": "URL category",
                     "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.val",
                     "data_type": "numeric",
+                    "column_name": "Value",
                     "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.type",
                     "data_type": "string",
+                    "column_name": "Category type",
                     "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.urls",
                     "data_type": "string",
+                    "column_name": "URLs added",
                     "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.scopes.*.Type",
                     "data_type": "string",
+                    "column_name": "Category scope",
                     "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.editable",
                     "data_type": "boolean",
+                    "column_name": "Is editable",
                     "column_order": 5
                 },
                 {
                     "data_path": "action_result.data.*.keywords",
                     "data_type": "string",
+                    "date_type": "Category keywords",
                     "column_order": 6
                 },
                 {
                     "data_path": "action_result.data.*.description",
                     "data_type": "string",
+                    "column_name": "Category description",
                     "column_order": 7
                 },
                 {
                     "data_path": "action_result.data.*.configuredName",
                     "data_type": "string",
+                    "column_name": "Configured Name",
                     "column_order": 8
                 },
                 {
                     "data_path": "action_result.data.*.customCategory",
                     "data_type": "boolean",
+                    "column_name": "Is Custom Category",
                     "column_order": 9
                 },
                 {
                     "data_path": "action_result.data.*.customUrlsCount",
                     "data_type": "numeric",
+                    "column_name": "Custom url count",
                     "column_order": 10
                 },
                 {
                     "data_path": "action_result.data.*.dbCategorizedUrls",
                     "data_type": "string",
+                    "column_name": "Parent urls",
                     "column_order": 11
                 },
                 {
                     "data_path": "action_result.data.*.customIpRangesCount",
                     "data_type": "numeric",
+                    "column_name": "Custom ip ranges count",
                     "column_order": 12
                 },
                 {
                     "data_path": "action_result.data.*.keywordsRetainingParentCategory",
                     "data_type": "string",
+                    "column_name": "Parent url keywords",
                     "column_order": 13
                 },
                 {
                     "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
                     "data_type": "numeric",
+                    "column_name": "Number of parent urls",
                     "column_order": 14
                 },
                 {
                     "data_path": "action_result.data.*.ipRangesRetainingParentCategoryCount",
                     "data_type": "numeric",
+                    "column_name": "Number of parent ips",
                     "column_order": 15
                 },
                 {
@@ -3728,7 +3767,8 @@
                         "success",
                         "failed"
                     ],
-                    "column_order": 0
+                    "column_order": 0,
+                    "column_name": "Status"
                 },
                 {
                     "data_path": "action_result.parameter.category_id",
@@ -3878,7 +3918,8 @@
                         "success",
                         "failed"
                     ],
-                    "column_order": 0
+                    "column_order": 0,
+                    "column_name": "Status"
                 },
                 {
                     "data_path": "action_result.parameter.category_id",
@@ -4082,11 +4123,13 @@
                 {
                     "data_path": "action_result.data.*.id",
                     "data_type": "numeric",
+                    "column_name": "Group ID",
                     "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.name",
                     "data_type": "string",
+                    "column_name": "Group name",
                     "column_order": 1
                 },
                 {
@@ -4098,6 +4141,7 @@
                         "DSTN_DOMAIN",
                         "DSTN_OTHER"
                     ],
+                    "column_name": "Group type",
                     "column_order": 2
                 },
                 {
@@ -4106,16 +4150,19 @@
                     "example_values": [
                         "192.168.1.1"
                     ],
+                    "column_name": "Destination addresses",
                     "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.countries",
                     "data_type": "string",
+                    "column_name": "Destination countries",
                     "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.description",
                     "data_type": "string",
+                    "column_name": "Description",
                     "column_order": 5
                 },
                 {
@@ -4124,12 +4171,24 @@
                     "example_values": [
                         "TRADING_BROKARAGE_INSURANCE"
                     ],
+                    "column_name": "Destination categories",
                     "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.isNonEditable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ],
+                    "column_name": "Is editable",
+                    "column_order": 7
                 },
                 {
                     "data_path": "action_result.data.*.creatorContext",
                     "data_type": "string",
-                    "column_order": 7
+                    "column_name": "Creator Context",
+                    "column_order": 8
                 },
                 {
                     "data_path": "action_result.summary",
@@ -4279,11 +4338,13 @@
                 {
                     "data_path": "action_result.data.*.id",
                     "data_type": "numeric",
+                    "column_name": "Group ID",
                     "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.name",
                     "data_type": "string",
+                    "column_name": "Group name",
                     "column_order": 1
                 },
                 {
@@ -4295,6 +4356,7 @@
                         "DSTN_DOMAIN",
                         "DSTN_OTHER"
                     ],
+                    "column_name": "Group type",
                     "column_order": 2
                 },
                 {
@@ -4303,16 +4365,19 @@
                     "example_values": [
                         "192.168.1.1"
                     ],
+                    "column_name": "Destination addresses",
                     "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.countries",
                     "data_type": "string",
+                    "column_name": "Destination countries",
                     "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.description",
                     "data_type": "string",
+                    "column_name": "Description",
                     "column_order": 5
                 },
                 {
@@ -4321,12 +4386,24 @@
                     "example_values": [
                         "TRADING_BROKARAGE_INSURANCE"
                     ],
+                    "column_name": "Destination categories",
                     "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.isNonEditable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ],
+                    "column_name": "Is editable",
+                    "column_order": 7
                 },
                 {
                     "data_path": "action_result.data.*.creatorContext",
                     "data_type": "string",
-                    "column_order": 7
+                    "column_name": "Creator Context",
+                    "column_order": 8
                 },
                 {
                     "data_path": "action_result.summary",
@@ -4471,11 +4548,13 @@
                 {
                     "data_path": "action_result.data.*.id",
                     "data_type": "numeric",
+                    "column_name": "Group ID",
                     "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.name",
                     "data_type": "string",
+                    "column_name": "Group name",
                     "column_order": 1
                 },
                 {
@@ -4487,6 +4566,7 @@
                         "DSTN_DOMAIN",
                         "DSTN_OTHER"
                     ],
+                    "column_name": "Group type",
                     "column_order": 2
                 },
                 {
@@ -4495,16 +4575,19 @@
                     "example_values": [
                         "192.168.1.1"
                     ],
+                    "column_name": "Destination addresses",
                     "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.countries",
                     "data_type": "string",
+                    "column_name": "Destination countries",
                     "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.description",
                     "data_type": "string",
+                    "column_name": "Description",
                     "column_order": 5
                 },
                 {
@@ -4513,12 +4596,24 @@
                     "example_values": [
                         "TRADING_BROKARAGE_INSURANCE"
                     ],
+                    "column_name": "Destination categories",
                     "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.isNonEditable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ],
+                    "column_name": "Is editable",
+                    "column_order": 7
                 },
                 {
                     "data_path": "action_result.data.*.creatorContext",
                     "data_type": "string",
-                    "column_order": 7
+                    "column_name": "Creator Context",
+                    "column_order": 8
                 },
                 {
                     "data_path": "action_result.summary",
@@ -4694,17 +4789,20 @@
                 {
                     "data_path": "action_result.data.*.id",
                     "data_type": "numeric",
+                    "column_name": "Department Id",
                     "column_order": 0
 
                 },
                 {
                     "data_path": "action_result.data.*.name",
                     "data_type": "string",
+                    "column_name": "Department Name",
                     "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.isNonEditable",
                     "data_type": "boolean",
+                    "column_name": "Is editable",
                     "column_order": 2
                 },
                 {

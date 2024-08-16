@@ -1013,7 +1013,7 @@ class ZscalerConnector(BaseConnector):
 
         whitelist = response.get('whitelistUrls', [])
         for allowed in whitelist:
-            action_result.add_data(allowed)
+            action_result.add_data({"url": allowed})
         summary = action_result.update_summary({})
         summary['total_whitelist_items'] = action_result.get_data_size()
         summary['message'] = "Whitelist retrieved"
@@ -1054,7 +1054,7 @@ class ZscalerConnector(BaseConnector):
                 continue
             if query and not re.fullmatch(query, blocked):
                 continue
-            action_result.add_data(blocked)
+            action_result.add_data({"url": blocked})
 
         summary['total_blacklist_items'] = action_result.get_data_size()
         return action_result.set_status(phantom.APP_SUCCESS)
@@ -1262,7 +1262,7 @@ class ZscalerConnector(BaseConnector):
 
         action_result.add_data(response)
         summary = action_result.update_summary({})
-        summary['message'] = "Destination IP added"
+        summary['message'] = "Destination Group Created"
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -1409,7 +1409,7 @@ class ZscalerConnector(BaseConnector):
 
         action_result.add_data(response)
         summary = action_result.update_summary({})
-        summary['message'] = "Destination IP edited"
+        summary['message'] = "Destination Group Edited"
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
