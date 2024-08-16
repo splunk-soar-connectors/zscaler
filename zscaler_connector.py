@@ -1390,14 +1390,11 @@ class ZscalerConnector(BaseConnector):
         ret_val, group_resp = self._get_destination_group(group_id, action_result)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
-        self.debug_print("handle edit response {0}".format(group_resp))
-        if param.get("name"):
-            group_resp["name"] = param["name"]
+        group_resp["name"] = param.get("name", group_resp["name"])
         if param.get('addresses'):
             new_addresses = [item.strip() for item in param["addresses"].split(',') if item.strip()]
             group_resp["addresses"] = new_addresses
-        if param.get("description"):
-            group_resp["description"] = param["description"]
+        group_resp["description"] = param.get("description", group_resp["description"])
         if param.get("ip_categories"):
             new_ip_categories = [item.strip() for item in param["ip_categories"].split(',') if item.strip()]
             group_resp["ipCategories"] = new_ip_categories
