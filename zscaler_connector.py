@@ -1434,7 +1434,7 @@ class ZscalerConnector(BaseConnector):
         summary = action_result.update_summary({})
         summary['message'] = "Destination groups deleted"
         return action_result.set_status(phantom.APP_SUCCESS)
-    
+
     def _handle_get_departments(self, param):
         """
         This action is used to get departments
@@ -1445,29 +1445,48 @@ class ZscalerConnector(BaseConnector):
         """
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
-        
+
         name = param.get("name")
         page_size = param.get("pageSize")
         page_num = param.get("page", 1)
-        
+
         endpoint = f"/api/v1/departments?page={page_num}&pageSize={page_size}"
-        
+
         if name:
             endpoint = f"/api/v1/departments?page={page_num}&pageSize={page_size}&search={name}&limitSearch=true"
-        
+
         ret_val, response = self._make_rest_call_helper(endpoint, action_result)
-        
+
         if phantom.is_fail(ret_val):
             return action_result.get_status()
-        
+
         for department in response:
             action_result.add_data(department)
-        
+
         summary = action_result.update_summary({})
         summary['message'] = "Departments retrieved"
         summary['total_deparments'] = action_result.get_data_size()
         return action_result.set_status(phantom.APP_SUCCESS)
-        
+
+    def _handle_additional_actions(self, action_id, param):
+        ret_val = phantom.APP_SUCCESS
+
+        if action_id == 'create_destination_group':
+            ret_val = self._handle_create_destination_group(param)
+
+        elif action_id == 'list_destination_group':
+            ret_val = self._handle_list_destination_group(param)
+
+        elif action_id == 'edit_destination_group':
+            ret_val = self._handle_edit_destination_group(param)
+
+        elif action_id == 'delete_destination_group':
+            ret_val = self._handle_delete_destination_group(param)
+
+        elif action_id == 'get_departments':
+            ret_val = self._handle_get_departments(param)
+
+        return ret_val
 
     def handle_action(self, param):
 
@@ -1556,20 +1575,9 @@ class ZscalerConnector(BaseConnector):
         elif action_id == 'remove_category_ip':
             ret_val = self._handle_remove_category_ips(param)
 
-        elif action_id == 'create_destination_group':
-            ret_val = self._handle_create_destination_group(param)
-
-        elif action_id == 'list_destination_group':
-            ret_val = self._handle_list_destination_group(param)
-
-        elif action_id == 'edit_destination_group':
-            ret_val = self._handle_edit_destination_group(param)
-
-        elif action_id == 'delete_destination_group':
-            ret_val = self._handle_delete_destination_group(param)
-
-        elif action_id == 'get_departments':
-            ret_val = self._handle_get_departments(param)
+        else:
+            # passing the action handling to another function to decrease FLAKE_8 complexity
+            ret_val = self._handle_additional_actions(action_id, param)
 
         return ret_val
 
