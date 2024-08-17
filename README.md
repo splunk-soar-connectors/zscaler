@@ -775,7 +775,7 @@ No parameters are required for this action
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string |  |   test success  test failed 
-action_result.data.\*.whitelistUrl | string |  |  
+action_result.data.\*.url | string |  |  
 action_result.summary.total_whitelist_items | numeric |  |   10 
 action_result.summary.message | string |  |   Whitelist retrieved 
 summary.total_objects | numeric |  |   1 
@@ -799,7 +799,7 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 action_result.status | string |  |   test success  test failed 
 action_result.parameter.query | string |  |   8...8 
 action_result.parameter.filter | string |  |  
-action_result.data.\*.blacklistUrl | string |  |  
+action_result.data.\*.url | string |  |  
 action_result.summary.message | string |  |   Blacklist retrieved 
 action_result.summary.total_blacklist_items | numeric |  |   10 
 summary.total_objects | numeric |  |   1 
@@ -1037,6 +1037,7 @@ action_result.data.\*.addresses | string |  |   192.168.1.1
 action_result.data.\*.countries | string |  |  
 action_result.data.\*.description | string |  |  
 action_result.data.\*.ipCategories | string |  |   TRADING_BROKARAGE_INSURANCE 
+action_result.data.\*.isNonEditable | boolean |  |   True  False 
 action_result.data.\*.creatorContext | string |  |  
 action_result.summary | string |  |  
 action_result.summary.message | string |  |   test User removed from group 
@@ -1078,6 +1079,7 @@ action_result.data.\*.addresses | string |  |   192.168.1.1
 action_result.data.\*.countries | string |  |  
 action_result.data.\*.description | string |  |  
 action_result.data.\*.ipCategories | string |  |   TRADING_BROKARAGE_INSURANCE 
+action_result.data.\*.isNonEditable | boolean |  |   True  False 
 action_result.data.\*.creatorContext | string |  |  
 action_result.summary | string |  |  
 action_result.summary.message | string |  |   Retreived Destination Groups 
@@ -1121,6 +1123,7 @@ action_result.data.\*.addresses | string |  |   192.168.1.1
 action_result.data.\*.countries | string |  |  
 action_result.data.\*.description | string |  |  
 action_result.data.\*.ipCategories | string |  |   TRADING_BROKARAGE_INSURANCE 
+action_result.data.\*.isNonEditable | boolean |  |   True  False 
 action_result.data.\*.creatorContext | string |  |  
 action_result.summary | string |  |  
 action_result.summary.message | string |  |   Destination group edited 
