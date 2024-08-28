@@ -1435,6 +1435,29 @@ class ZscalerConnector(BaseConnector):
         summary['message'] = "Destination groups deleted"
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _handle_get_category_details(self, param):
+        """
+        This action is used to get category details of specfic categories
+        :param category_ids: Ids of category's to query
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        group_ids = param.get("category_ids", "")
+        list_category_ids = [item.strip() for item in group_ids.split(',') if item.strip()]
+
+        for category_id in list_category_ids:
+            ret_val, category_details = self._get_category_details(category_id, action_result)
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+            action_result.add_data(category_details)
+
+        summary = action_result.update_summary({})
+        summary['message'] = "Category details recieved"
+        summary['total_categories'] = action_result.get_data_size()
+        return action_result.set_status(phantom.APP_SUCCESS)
+
     def _handle_get_departments(self, param):
         """
         This action is used to get departments
@@ -1485,6 +1508,9 @@ class ZscalerConnector(BaseConnector):
 
         elif action_id == 'get_departments':
             ret_val = self._handle_get_departments(param)
+
+        elif action_id == 'get_category_details':
+            ret_val = self._handle_get_category_details(param)
 
         return ret_val
 

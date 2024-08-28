@@ -3460,7 +3460,7 @@
                 {
                     "data_path": "action_result.data.*.keywords",
                     "data_type": "string",
-                    "date_type": "Category keywords",
+                    "column_name": "Category keywords",
                     "column_order": 6
                 },
                 {
@@ -3641,7 +3641,7 @@
                 {
                     "data_path": "action_result.data.*.keywords",
                     "data_type": "string",
-                    "date_type": "Category keywords",
+                    "column_name": "Category keywords",
                     "column_order": 6
                 },
                 {
@@ -4850,6 +4850,193 @@
                 }
             ],
             "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get category details",
+            "identifier": "get_category_details",
+            "description": "Get the urls and keywords of a category",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "category_ids": {
+                    "description": "Comma seperated string of category id's to query",
+                    "data_type": "string",
+                    "order": 0,
+                    "example_values": [
+                        "CUSTOM_001, CUSTOM_002"
+                    ],
+                    "primary": true
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "test success",
+                        "test failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.category_ids",
+                    "data_type": "string",
+                    "example_values": [
+                        "CUSTOM_001, CUSTOM_002"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "test Test-Caution"
+                    ],
+                    "column_order": 2,
+                    "column_name": "Configured Name"
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "column_name": "Is Custom Category",
+                    "column_order": 4,
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.keywords",
+                    "data_type": "string",
+                    "column_order": 5,
+                    "column_name": "Category Keywords"
+                },
+                {
+                    "data_path": "action_result.data.*.urls",
+                    "data_type": "string",
+                    "column_order": 6,
+                    "column_name": "Category Urls"
+                },
+                {
+                    "data_path": "action_result.data.*.customIpRangesCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customUrlsCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string",
+                    "example_values": [
+                        "test 6.5.3.2.4"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string",
+                    "column_name": "Description",
+                    "column_order": 3,
+                    "example_values": [
+                        "test OTHER_RESTRICTED_WEBSITE_DESC"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.editable",
+                    "data_type": "boolean",
+                    "column_name": "Editable",
+                    "column_order": 7,
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "column_name": "Category ID",
+                    "column_order": 0,
+                    "contains": [
+                        "zscaler url category"
+                    ],
+                    "example_values": [
+                        "test OTHER_RESTRICTED_WEBSITE"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.ipRangesRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.scopes.*.Type",
+                    "data_type": "string",
+                    "example_values": [
+                        "test ORGANIZATION"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "test URL_CATEGORY"
+                    ],
+                    "column_order": 1,
+                    "column_name": "Type"
+                },
+                {
+                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.total_categories",
+                    "data_type": "numeric",
+                    "example_values": [
+                        97
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Category details recieved"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+           "render": {
                 "type": "table"
             },
             "versions": "EQ(*)"
