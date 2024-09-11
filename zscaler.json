@@ -4268,21 +4268,11 @@
                     ],
                     "order": 2
                 },
-                "include_ipv6": {
-                    "description": "Retrieve IPv6 destination groups",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true, 
-                        false
-                    ],
-                    "default": false, 
-                    "order": 3
-                },
                 "limit": {
                     "description": "Limit of the results to be retrieved",
                     "data_type": "numeric",
                     "default": 50,
-                    "order": 4
+                    "order": 3
                 },
                 "lite": {
                     "description": "Whether to retrieve only limited information of IP destination groups. Includes ID, name and type of the IP destination groups",
@@ -4292,7 +4282,7 @@
                         false
                     ],
                     "default": false,
-                    "order": 5
+                    "order": 4
                 }
             },
             "output": [
