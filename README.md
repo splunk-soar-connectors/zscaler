@@ -1059,7 +1059,6 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **ip_group_ids** |  optional  | A comma-separated list of unique identifiers for the IP destination groups | string | 
 **exclude_type** |  optional  | The IP group type to be excluded from the results | string | 
 **category_type** |  optional  | Comma seperated list of IP group types to be filtered from results. This argument is only supported when the 'lite' argument is set to True | string | 
-**include_ipv6** |  optional  | Retrieve IPv6 destination groups | boolean | 
 **limit** |  optional  | Limit of the results to be retrieved | numeric | 
 **lite** |  optional  | Whether to retrieve only limited information of IP destination groups. Includes ID, name and type of the IP destination groups | boolean | 
 
