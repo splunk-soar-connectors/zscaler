@@ -132,6 +132,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [edit destination group](#action-edit-destination-group) - Edit destination group  
 [delete destination group](#action-delete-destination-group) - Delete destination group  
 [get departments](#action-get-departments) - Get a list of departments  
+[get category details](#action-get-category-details) - Get the urls and keywords of a category  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -1184,5 +1185,41 @@ action_result.summary.message | string |  |   Departments Retrieved
 action_result.summary.total_deparments | numeric |  |   97 
 action_result.message | string |  |   Departments Retrieved 
 summary.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'get category details'
+Get the urls and keywords of a category
+
+Type: **investigate**  
+Read only: **True**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**category_ids** |  optional  | Comma seperated string of category id's to query | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   test success  test failed 
+action_result.parameter.category_ids | string |  |   CUSTOM_001, CUSTOM_002 
+action_result.data.\*.configuredName | string |  |   test Test-Caution 
+action_result.data.\*.customCategory | boolean |  |   True  False 
+action_result.data.\*.keywords | string |  |  
+action_result.data.\*.urls | string |  |  
+action_result.data.\*.customIpRangesCount | numeric |  |   0 
+action_result.data.\*.customUrlsCount | numeric |  |   0 
+action_result.data.\*.dbCategorizedUrls | string |  |   test 6.5.3.2.4 
+action_result.data.\*.description | string |  |   test OTHER_RESTRICTED_WEBSITE_DESC 
+action_result.data.\*.editable | boolean |  |   True  False 
+action_result.data.\*.id | string |  `zscaler url category`  |   test OTHER_RESTRICTED_WEBSITE 
+action_result.data.\*.ipRangesRetainingParentCategoryCount | numeric |  |   0 
+action_result.data.\*.scopes.\*.Type | string |  |   test ORGANIZATION 
+action_result.data.\*.type | string |  |   test URL_CATEGORY 
+action_result.data.\*.urlsRetainingParentCategoryCount | numeric |  |   0 
+action_result.data.\*.val | numeric |  |   1 
+action_result.summary.total_categories | numeric |  |   97 
+action_result.message | string |  |   Category details recieved 
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1 
