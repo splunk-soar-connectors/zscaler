@@ -120,8 +120,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [get groups](#action-get-groups) - Gets a list of groups  
 [add group user](#action-add-group-user) - Add user to group  
 [remove group user](#action-remove-group-user) - Remove user from group  
-[get whitelist](#action-get-whitelist) - Get urls on the allow list  
-[get blacklist](#action-get-blacklist) - Get urls on the deny list  
+[get allowlist](#action-get-allowlist) - Get urls on the allow list  
+[get denylist](#action-get-denylist) - Get urls on the deny list  
 [update user](#action-update-user) - Update user with given id  
 [add category url](#action-add-category-url) - Add urls to a cetgory  
 [add category ip](#action-add-category-ip) - Add IPs to a cetgory  
@@ -763,7 +763,7 @@ summary.message | string |  |
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1   
 
-## action: 'get whitelist'
+## action: 'get allowlist'
 Get urls on the allow list
 
 Type: **investigate**  
@@ -777,13 +777,13 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string |  |   test success  test failed 
 action_result.data.\*.url | string |  |  
-action_result.summary.total_whitelist_items | numeric |  |   10 
-action_result.summary.message | string |  |   Whitelist retrieved 
-action_result.message | string |  |   Whitelist retrieved 
+action_result.summary.total_allowlist_items | numeric |  |   10 
+action_result.summary.message | string |  |   Allowlist retrieved 
+action_result.message | string |  |   Allowlist retrieved 
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1   
 
-## action: 'get blacklist'
+## action: 'get denylist'
 Get urls on the deny list
 
 Type: **investigate**  
@@ -803,8 +803,8 @@ action_result.parameter.query | string |  |   8...8
 action_result.parameter.filter | string |  |  
 action_result.data.\*.url | string |  |  
 action_result.summary.message | string |  |   Blacklist retrieved 
-action_result.message | string |  |   Blacklist retrieved 
-action_result.summary.total_blacklist_items | numeric |  |   10 
+action_result.message | string |  |   Denylist retrieved 
+action_result.summary.total_denylist_items | numeric |  |   10 
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1   
 
