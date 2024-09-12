@@ -15,10 +15,10 @@
 #
 #
 # Phantom App imports
+import ipaddress
 import json
 import re
 import time
-import ipaddress
 
 import phantom.app as phantom
 import phantom.rules as phantom_rules
@@ -26,6 +26,7 @@ import requests
 from bs4 import BeautifulSoup
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
+
 from zscaler_consts import *
 
 
@@ -274,17 +275,18 @@ class ZscalerConnector(BaseConnector):
         #  2. There is a maximum number of requests per hour
         # Regardless, the response will include a try-after value, which we can use to sleep
         ret_val, response = self._make_rest_call(*args, **kwargs)
+        self.debug_print(f"retry rest call number: {self._retry_rest_call} and response code is {self._response.status_code}")
         if phantom.is_fail(ret_val):
             if self._response is None:
                 return ret_val, response
-            if self._response.status_code == 409 and self._retry_rest_call:  # Lock not available
+            if self._response.status_code == 409 and self._retry_rest_call != 0:  # Lock not available
                 # This basically just means we need to try again
                 self.debug_print("Error 409: Lock not available")
                 self.send_progress("Error 409: Lock not available: Retrying in 1 second")
                 time.sleep(1)
-                self._retry_rest_call = False  # make it to false to avoid extra rest call
+                self._retry_rest_call -= 1  # reduce the number of retries
                 return self._make_rest_call_helper(*args, **kwargs)
-            if self._response.status_code == 429 and self._retry_rest_call:  # Rate limit exceeded
+            if self._response.status_code == 429 and self._retry_rest_call != 0:  # Rate limit exceeded
                 try:
                     retry_time = self._response.json()['Retry-After']
                 except KeyError:
@@ -296,7 +298,7 @@ class ZscalerConnector(BaseConnector):
                     return retry_time, response
                 self.send_progress("Exceeded rate limit: Retrying after {}".format(retry_time))
                 time.sleep(seconds_to_wait)
-                self._retry_rest_call = False  # make it to false to avoid extra rest call
+                self._retry_rest_call -= 1  # reduce the number of retries
                 return self._make_rest_call_helper(*args, **kwargs)
         return ret_val, response
 
@@ -1601,6 +1603,7 @@ class ZscalerConnector(BaseConnector):
         # Load the state in initialize, use it to store data
         # that needs to be accessed across actions
         self._state = self.load_state()
+        self.debug_print("seeing how often this is called")
         if not isinstance(self._state, dict):
             self.debug_print("Resetting the state file with the default format")
             self._state = {"app_version": self.get_app_json().get("app_version")}
@@ -1615,7 +1618,7 @@ class ZscalerConnector(BaseConnector):
             self._sandbox_base_url = self._sandbox_base_url.rstrip('/')
         self._sandbox_api_token = config.get('sandbox_api_token', None)
         self._headers = {}
-        self._retry_rest_call = True
+        self._retry_rest_call = 5
         self.set_validator('ipv6', self._is_ip)
 
         return self._init_session()
