@@ -1,6 +1,6 @@
 # File: zscaler_connector.py
 #
-# Copyright (c) 2017-2023 Splunk Inc.
+# Copyright (c) 2017-2024 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -1065,7 +1065,7 @@ class ZscalerConnector(BaseConnector):
         user_id = param['user_id']
 
         try:
-            data = json.loads(param["user"])
+            data = json.loads(param.get("user", '{}'))
         except Exception as e:
             return action_result.set_status(
                 phantom.APP_ERROR,
@@ -1089,18 +1089,18 @@ class ZscalerConnector(BaseConnector):
             return action_result.get_status(), None
         return phantom.APP_SUCCESS, response
 
-    def _add_to_category(self, data, parent_data, category_details, category_id, action_result):
-        new_data = category_details.get("urls", [])
+    def _add_to_category(self, data, parent_data, cat_details, category_id, action_result):
+        new_data = cat_details.get("urls", [])
         new_data.extend(data)
         if new_data:
-            category_details["urls"] = new_data
+            cat_details["urls"] = new_data
 
-        new_parent_data = category_details.get("dbCategorizedUrls", [])
+        new_parent_data = cat_details.get("dbCategorizedUrls", [])
         new_parent_data.extend(parent_data)
         if new_parent_data:
-            category_details["dbCategorizedUrls"] = new_parent_data
+            cat_details["dbCategorizedUrls"] = new_parent_data
 
-        ret_val, response = self._make_rest_call_helper(f'/api/v1/urlCategories/{category_id}', action_result, data=category_details, method='put')
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/urlCategories/{category_id}', action_result, data=cat_details, method='put')
         return ret_val, response
 
     def _handle_add_category_url(self, param):
@@ -1134,7 +1134,7 @@ class ZscalerConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _handle_add_category_ips(self, param):
+    def _handle_add_category_ip(self, param):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
         category_id = param["category_id"]
@@ -1158,7 +1158,7 @@ class ZscalerConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _handle_remove_category_ips(self, param):
+    def _handle_remove_category_ip(self, param):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
         category_id = param["category_id"]
@@ -1183,26 +1183,26 @@ class ZscalerConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _remove_from_category(self, data, parent_data, category_details, category_id, action_result):
+    def _remove_from_category(self, data, parent_data, cat_details, category_id, action_result):
         data_set = set(data)
         new_data = []
-        for point in category_details.get("urls", []):
+        for point in cat_details.get("urls", []):
             if point not in data_set:
                 new_data.append(point)
 
         parent_data_set = set(parent_data)
         new_parent_data = []
-        for point in category_details.get("dbCategorizedUrls", []):
+        for point in cat_details.get("dbCategorizedUrls", []):
             if point not in parent_data_set:
                 new_parent_data.append(point)
 
-        category_details["urls"] = new_data
-        category_details["dbCategorizedUrls"] = new_parent_data
+        cat_details["urls"] = new_data
+        cat_details["dbCategorizedUrls"] = new_parent_data
 
-        ret_val, response = self._make_rest_call_helper(f'/api/v1/urlCategories/{category_id}', action_result, data=category_details, method='put')
+        ret_val, response = self._make_rest_call_helper(f'/api/v1/urlCategories/{category_id}', action_result, data=cat_details, method='put')
         return ret_val, response
 
-    def _handle_remove_category_urls(self, param):
+    def _handle_remove_category_url(self, param):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
         category_id = param["category_id"]
@@ -1381,14 +1381,14 @@ class ZscalerConnector(BaseConnector):
             return action_result.get_status()
         group_resp["name"] = param.get("name", group_resp["name"])
         if param.get('addresses'):
-            new_addresses = [item.strip() for item in param["addresses"].split(',') if item.strip()]
+            new_addresses = [item.strip() for item in param.get("addresses", "").split(',') if item.strip()]
             group_resp["addresses"] = new_addresses
         group_resp["description"] = param.get("description", group_resp["description"])
         if param.get("ip_categories"):
-            new_ip_categories = [item.strip() for item in param["ip_categories"].split(',') if item.strip()]
+            new_ip_categories = [item.strip() for item in param.get("ip_categories", "").split(',') if item.strip()]
             group_resp["ipCategories"] = new_ip_categories
         if param.get("countries"):
-            new_countries = [item.strip() for item in param["countries"].split(',') if item.strip()]
+            new_countries = [item.strip() for item in param.get("countries", "").split(',') if item.strip()]
             group_resp["countries"] = new_countries
         group_resp["isNonEditable"] = param.get("is_non_editable", False)
 
@@ -1582,13 +1582,13 @@ class ZscalerConnector(BaseConnector):
             ret_val = self._handle_add_category_url(param)
 
         elif action_id == 'add_category_ip':
-            ret_val = self._handle_add_category_ips(param)
+            ret_val = self._handle_add_category_ip(param)
 
         elif action_id == 'remove_category_url':
-            ret_val = self._handle_remove_category_urls(param)
+            ret_val = self._handle_remove_category_url(param)
 
         elif action_id == 'remove_category_ip':
-            ret_val = self._handle_remove_category_ips(param)
+            ret_val = self._handle_remove_category_ip(param)
 
         else:
             # passing the action handling to another function to decrease FLAKE_8 complexity

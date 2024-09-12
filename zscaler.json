@@ -9,13 +9,13 @@
     "product_name": "Zscaler",
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2017-2023 Splunk Inc.",
+    "license": "Copyright (c) 2017-2024 Splunk Inc.",
     "app_version": "2.4.0",
     "utctime_updated": "2022-01-24T06:29:48.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.py",
     "python_version": "3",
-    "min_phantom_version": "6.0.0",
+    "min_phantom_version": "6.2.1",
     "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud v6.2, 29th June 2023"
@@ -3023,7 +3023,7 @@
         {
             "action": "get whitelist",
             "identifier": "get_whitelist",
-            "description": "get urls on the allow list",
+            "description": "Get urls on the allow list",
             "type": "investigate",
             "read_only": true,
             "parameters": {},
@@ -3057,6 +3057,13 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Whitelist retrieved"
+                    ]
+                },
+                {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric",
                     "example_values": [
@@ -3080,7 +3087,7 @@
         {
             "action": "get blacklist",
             "identifier": "get_blacklist",
-            "description": "get urls on the deny list",
+            "description": "Get urls on the deny list",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -3138,6 +3145,13 @@
                 },
                 {
                     "data_path": "action_result.summary.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Blacklist retrieved"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
                         "Blacklist retrieved"
@@ -4142,7 +4156,7 @@
                         "DSTN_OTHER"
                     ],
                     "column_name": "Group type",
-                    "column_order": 2
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.addresses",
@@ -4151,19 +4165,19 @@
                         "192.168.1.1"
                     ],
                     "column_name": "Destination addresses",
-                    "column_order": 3
+                    "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.countries",
                     "data_type": "string",
                     "column_name": "Destination countries",
-                    "column_order": 4
+                    "column_order": 5
                 },
                 {
                     "data_path": "action_result.data.*.description",
                     "data_type": "string",
                     "column_name": "Description",
-                    "column_order": 5
+                    "column_order": 6
                 },
                 {
                     "data_path": "action_result.data.*.ipCategories",
@@ -4172,7 +4186,7 @@
                         "TRADING_BROKARAGE_INSURANCE"
                     ],
                     "column_name": "Destination categories",
-                    "column_order": 6
+                    "column_order": 7
                 },
                 {
                     "data_path": "action_result.data.*.isNonEditable",
@@ -4182,13 +4196,13 @@
                         false
                     ],
                     "column_name": "Is editable",
-                    "column_order": 7
+                    "column_order": 8
                 },
                 {
                     "data_path": "action_result.data.*.creatorContext",
                     "data_type": "string",
                     "column_name": "Creator Context",
-                    "column_order": 8
+                    "column_order": 9
                 },
                 {
                     "data_path": "action_result.summary",
@@ -4306,11 +4320,6 @@
                     "column_name": "Limit"
                 },
                 {
-                    "data_path": "action_result.parameter.include_ipv6",
-                    "data_type": "boolean",
-                    "column_name": "Include Ipv6"
-                },
-                {
                     "data_path": "action_result.parameter.category_type",
                     "data_type": "string",
                     "column_name": "Category Type"
@@ -4321,7 +4330,7 @@
                     "column_name": "Exclude Type"
                 },
                 {
-                    "data_path": "action_result.parameter.ip_group_id",
+                    "data_path": "action_result.parameter.ip_group_ids",
                     "data_type": "string",
                     "column_name": "Ip Group ID"
                 },
@@ -4557,7 +4566,7 @@
                         "DSTN_OTHER"
                     ],
                     "column_name": "Group type",
-                    "column_order": 2
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.addresses",
@@ -4566,19 +4575,19 @@
                         "192.168.1.1"
                     ],
                     "column_name": "Destination addresses",
-                    "column_order": 3
+                    "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.countries",
                     "data_type": "string",
                     "column_name": "Destination countries",
-                    "column_order": 4
+                    "column_order": 5
                 },
                 {
                     "data_path": "action_result.data.*.description",
                     "data_type": "string",
                     "column_name": "Description",
-                    "column_order": 5
+                    "column_order": 6
                 },
                 {
                     "data_path": "action_result.data.*.ipCategories",
@@ -4587,7 +4596,7 @@
                         "TRADING_BROKARAGE_INSURANCE"
                     ],
                     "column_name": "Destination categories",
-                    "column_order": 6
+                    "column_order": 7
                 },
                 {
                     "data_path": "action_result.data.*.isNonEditable",
@@ -4597,13 +4606,13 @@
                         false
                     ],
                     "column_name": "Is editable",
-                    "column_order": 7
+                    "column_order": 8
                 },
                 {
                     "data_path": "action_result.data.*.creatorContext",
                     "data_type": "string",
                     "column_name": "Creator Context",
-                    "column_order": 8
+                    "column_order": 9
                 },
                 {
                     "data_path": "action_result.summary",
@@ -4755,7 +4764,6 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "column_name": "Status",
-                    "column_order": 2,
                     "example_values": [
                         "test success",
                         "test failed"
