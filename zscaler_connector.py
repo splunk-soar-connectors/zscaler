@@ -275,7 +275,6 @@ class ZscalerConnector(BaseConnector):
         #  2. There is a maximum number of requests per hour
         # Regardless, the response will include a try-after value, which we can use to sleep
         ret_val, response = self._make_rest_call(*args, **kwargs)
-        self.debug_print(f"retry rest call number: {self._retry_rest_call} and response code is {self._response.status_code}")
         if phantom.is_fail(ret_val):
             if self._response is None:
                 return ret_val, response
@@ -1001,9 +1000,9 @@ class ZscalerConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _handle_get_whitelist(self, param):
+    def _handle_get_allowlist(self, param):
         """
-        This action is used to get the default whitelist in zscalar
+        This action is used to get the default allowlist in zscalar
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
@@ -1013,12 +1012,12 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return RetVal(ret_val, None)
 
-        whitelist = response.get('whitelistUrls', [])
-        for allowed in whitelist:
+        allowlist = response.get('whitelistUrls', [])
+        for allowed in allowlist:
             action_result.add_data({"url": allowed})
         summary = action_result.update_summary({})
-        summary['total_whitelist_items'] = action_result.get_data_size()
-        summary['message'] = "Whitelist retrieved"
+        summary['total_allowlist_items'] = action_result.get_data_size()
+        summary['message'] = "allowlist retrieved"
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -1029,9 +1028,9 @@ class ZscalerConnector(BaseConnector):
         except ValueError:
             return False
 
-    def _handle_get_blacklist(self, param):
+    def _handle_get_denylist(self, param):
         """
-        This action is used to get the blacklist in zscalar
+        This action is used to get the denylist in zscalar
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
@@ -1045,7 +1044,7 @@ class ZscalerConnector(BaseConnector):
         query = param.get("query")
 
         summary = action_result.update_summary({})
-        summary['message'] = "Blacklist retrieved"
+        summary['message'] = "Denylist retrieved"
 
         blocklist = response.get('blacklistUrls', [])
         for blocked in blocklist:
@@ -1058,7 +1057,7 @@ class ZscalerConnector(BaseConnector):
                 continue
             action_result.add_data({"url": blocked})
 
-        summary['total_blacklist_items'] = action_result.get_data_size()
+        summary['total_denylist_items'] = action_result.get_data_size()
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_update_user(self, param):
@@ -1571,11 +1570,11 @@ class ZscalerConnector(BaseConnector):
         elif action_id == 'remove_group_user':
             ret_val = self._handle_remove_group_user(param)
 
-        elif action_id == 'get_whitelist':
-            ret_val = self._handle_get_whitelist(param)
+        elif action_id == 'get_allowlist':
+            ret_val = self._handle_get_allowlist(param)
 
-        elif action_id == 'get_blacklist':
-            ret_val = self._handle_get_blacklist(param)
+        elif action_id == 'get_denylist':
+            ret_val = self._handle_get_denylist(param)
 
         elif action_id == "update_user":
             ret_val = self._handle_update_user(param)

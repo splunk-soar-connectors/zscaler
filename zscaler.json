@@ -3021,8 +3021,8 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "get whitelist",
-            "identifier": "get_whitelist",
+            "action": "get allowlist",
+            "identifier": "get_allowlist",
             "description": "Get urls on the allow list",
             "type": "investigate",
             "read_only": true,
@@ -3039,11 +3039,11 @@
                 {
                     "data_path": "action_result.data.*.url",
                     "data_type": "string",
-                    "column_name": "whitelist url",
+                    "column_name": "allowlist url",
                     "column_order": 0
                 },
                 {
-                    "data_path": "action_result.summary.total_whitelist_items",
+                    "data_path": "action_result.summary.total_allowlist_items",
                     "data_type": "numeric",
                     "example_values": [
                         10
@@ -3053,14 +3053,14 @@
                     "data_path": "action_result.summary.message",
                     "data_type": "string",
                     "example_values": [
-                        "Whitelist retrieved"
+                        "Allowlist retrieved"
                     ]
                 },
                 {
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Whitelist retrieved"
+                        "Allowlist retrieved"
                     ]
                 },
                 {
@@ -3079,14 +3079,14 @@
                 }
             ],
             "render": {
-                "title": "Whitelist",
+                "title": "Allowlist",
                 "type": "table"
             },
             "versions": "EQ(*)"
         },
         {
-            "action": "get blacklist",
-            "identifier": "get_blacklist",
+            "action": "get denylist",
+            "identifier": "get_denylist",
             "description": "Get urls on the deny list",
             "type": "investigate",
             "read_only": true,
@@ -3140,7 +3140,7 @@
                 {
                     "data_path": "action_result.data.*.url",
                     "data_type": "string",
-                    "column_name": "blacklist url",
+                    "column_name": "denylist url",
                     "column_order": 0
                 },
                 {
@@ -3154,11 +3154,11 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Blacklist retrieved"
+                        "Denylist retrieved"
                     ]
                 },
                 {
-                    "data_path": "action_result.summary.total_blacklist_items",
+                    "data_path": "action_result.summary.total_denylist_items",
                     "data_type": "numeric",
                     "example_values": [
                         10
@@ -3180,7 +3180,7 @@
                 }
             ],
             "render": {
-                "title": "Blacklist",
+                "title": "Denylist",
                 "type": "table"
             },
             "versions": "EQ(*)"
