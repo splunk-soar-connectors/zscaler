@@ -6,12 +6,12 @@ Connector Version: 2.4.0
 Product Vendor: Zscaler  
 Product Name: Zscaler  
 Product Version Supported (regex): ".\*"  
-Minimum Product Version: 6.0.0  
+Minimum Product Version: 6.2.1  
 
 This app implements containment and investigative actions on Zscaler
 
 [comment]: # " File: README.md"
-[comment]: # "  Copyright (c) 2017-2023 Splunk Inc."
+[comment]: # "  Copyright (c) 2017-2024 Splunk Inc."
 [comment]: # ""
 [comment]: # "Licensed under the Apache License, Version 2.0 (the 'License');"
 [comment]: # "you may not use this file except in compliance with the License."
@@ -120,8 +120,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [get groups](#action-get-groups) - Gets a list of groups  
 [add group user](#action-add-group-user) - Add user to group  
 [remove group user](#action-remove-group-user) - Remove user from group  
-[get whitelist](#action-get-whitelist) - get urls on the allow list  
-[get blacklist](#action-get-blacklist) - get urls on the deny list  
+[get whitelist](#action-get-whitelist) - Get urls on the allow list  
+[get blacklist](#action-get-blacklist) - Get urls on the deny list  
 [update user](#action-update-user) - Update user with given id  
 [add category url](#action-add-category-url) - Add urls to a cetgory  
 [add category ip](#action-add-category-ip) - Add IPs to a cetgory  
@@ -764,7 +764,7 @@ summary.total_objects | numeric |  |   1
 summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'get whitelist'
-get urls on the allow list
+Get urls on the allow list
 
 Type: **investigate**  
 Read only: **True**
@@ -779,11 +779,12 @@ action_result.status | string |  |   test success  test failed
 action_result.data.\*.url | string |  |  
 action_result.summary.total_whitelist_items | numeric |  |   10 
 action_result.summary.message | string |  |   Whitelist retrieved 
+action_result.message | string |  |   Whitelist retrieved 
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'get blacklist'
-get urls on the deny list
+Get urls on the deny list
 
 Type: **investigate**  
 Read only: **True**
@@ -802,6 +803,7 @@ action_result.parameter.query | string |  |   8...8
 action_result.parameter.filter | string |  |  
 action_result.data.\*.url | string |  |  
 action_result.summary.message | string |  |   Blacklist retrieved 
+action_result.message | string |  |   Blacklist retrieved 
 action_result.summary.total_blacklist_items | numeric |  |   10 
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1   
@@ -1068,10 +1070,9 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 action_result.status | string |  |   test success  test failed 
 action_result.parameter.lite | boolean |  |  
 action_result.parameter.limit | numeric |  |  
-action_result.parameter.include_ipv6 | boolean |  |  
 action_result.parameter.category_type | string |  |  
 action_result.parameter.exclude_type | string |  |  
-action_result.parameter.ip_group_id | string |  |  
+action_result.parameter.ip_group_ids | string |  |  
 action_result.data.\*.id | numeric |  |  
 action_result.data.\*.name | string |  |  
 action_result.data.\*.type | string |  |   DSTN_IP  DSTN_FQDN  DSTN_DOMAIN  DSTN_OTHER 
