@@ -380,7 +380,7 @@ class ZscalerConnector(BaseConnector):
         params = {"action": action}
         data = {"blacklistUrls": filtered_endpoints}
         ret_val, response = self._make_rest_call_helper(
-             "/api/v1/security/advanced/blacklistUrls", action_result, params=params, data=data, method="post"
+            "/api/v1/security/advanced/blacklistUrls", action_result, params=params, data=data, method="post"
         )
         if phantom.is_fail(ret_val) and self._response.status_code != 204:
             return ret_val
@@ -459,7 +459,7 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val) or filtered_endpoints is None:
             return ret_val
 
-        params = {"action": action }
+        params = {"action": action}
 
         data = {
             "configuredName": self._category.get("configuredName"),
@@ -1021,10 +1021,7 @@ class ZscalerConnector(BaseConnector):
         try:
             data = json.loads(param.get("user", "{}"))
         except Exception as e:
-            return action_result.set_status(
-                phantom.APP_ERROR,
-                "User object needs to be valid json: {}".format(e)
-            )
+            return action_result.set_status(phantom.APP_ERROR, "User object needs to be valid json: {}".format(e))
 
         ret_val, response = self._make_rest_call_helper(f"/api/v1/users/{user_id}", action_result, data=data, method="put")
 
@@ -1069,8 +1066,7 @@ class ZscalerConnector(BaseConnector):
         is_custom_category = category_details.get("customCategory", False)
 
         if not is_custom_category:
-            action_result.set_status(phantom.APP_ERROR, "Category with {0} is a default category, which cannot be modified"
-                                                   .format(category_id))
+            action_result.set_status(phantom.APP_ERROR, "Category with {0} is a default category, which cannot be modified".format(category_id))
             return action_result.get_status()
 
         urls = param.get("urls", "")
@@ -1601,26 +1597,24 @@ if __name__ == "__main__":
     verify = args.verify
     session_id = None
 
-    if (args.username and args.password):
+    if args.username and args.password:
         login_url = BaseConnector._get_phantom_base_url() + "login"
         try:
             print("Accessing the Login page")
-            r = requests.get(
-                login_url, verify=verify, timeout=ZSCALER_DEFAULT_TIMEOUT)
+            r = requests.get(login_url, verify=verify, timeout=ZSCALER_DEFAULT_TIMEOUT)
             csrftoken = r.cookies["csrftoken"]
             data = {"username": args.username, "password": args.password, "csrfmiddlewaretoken": csrftoken}
             headers = {"Cookie": "csrftoken={0}".format(csrftoken), "Referer": login_url}
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(
-                login_url, verify=verify, data=data, headers=headers, timeout=ZSCALER_DEFAULT_TIMEOUT)
+            r2 = requests.post(login_url, verify=verify, data=data, headers=headers, timeout=ZSCALER_DEFAULT_TIMEOUT)
             session_id = r2.cookies["sessionid"]
 
         except Exception as e:
             print(("Unable to get session id from the platform. Error: {0}".format(str(e))))
             sys.exit(1)
 
-    if (len(sys.argv) < 2):
+    if len(sys.argv) < 2:
         print("No test json specified as input")
         sys.exit(0)
 
@@ -1632,7 +1626,7 @@ if __name__ == "__main__":
         connector = ZscalerConnector()
         connector.print_progress_message = True
 
-        if (session_id is not None):
+        if session_id is not None:
             in_json["user_session_token"] = session_id
 
         ret_val = connector._handle_action(json.dumps(in_json), None)
