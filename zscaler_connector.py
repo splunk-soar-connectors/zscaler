@@ -955,7 +955,7 @@ class ZscalerConnector(BaseConnector):
 
     def _handle_get_allowlist(self, param):
         """
-        This action is used to get the default allowlist in zscalar
+        This action is used to get the default allowlist in zscaler
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
@@ -983,7 +983,7 @@ class ZscalerConnector(BaseConnector):
 
     def _handle_get_denylist(self, param):
         """
-        This action is used to get the denylist in zscalar
+        This action is used to get the denylist in zscaler
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
