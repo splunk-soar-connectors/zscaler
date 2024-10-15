@@ -484,7 +484,7 @@ class ZscalerConnector(BaseConnector):
 
     def _block_endpoint(self, action_result, endpoints, category):
         list_endpoints = list()
-        list_endpoints = [x.strip() for x in endpoints.split(",")]
+        list_endpoints = [x.strip() for x in endpoints.split(",") if x.strip()]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
@@ -500,7 +500,7 @@ class ZscalerConnector(BaseConnector):
 
     def _unblock_endpoint(self, action_result, endpoints, category):
         list_endpoints = list()
-        list_endpoints = [x.strip() for x in endpoints.split(",")]
+        list_endpoints = [x.strip() for x in endpoints.split(",") if x.strip()]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
@@ -1551,7 +1551,6 @@ class ZscalerConnector(BaseConnector):
         # Load the state in initialize, use it to store data
         # that needs to be accessed across actions
         self._state = self.load_state()
-        self.debug_print("seeing how often this is called")
         if not isinstance(self._state, dict):
             self.debug_print("Resetting the state file with the default format")
             self._state = {"app_version": self.get_app_json().get("app_version")}
