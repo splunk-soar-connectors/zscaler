@@ -15,7 +15,7 @@
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.py",
     "python_version": "3",
-    "min_phantom_version": "6.2.1",
+    "min_phantom_version": "6.2.2",
     "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud v6.2, 29th June 2023"
