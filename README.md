@@ -2,7 +2,7 @@
 # Zscaler
 
 Publisher: Splunk  
-Connector Version: 2.4.0  
+Connector Version: 3.0.0  
 Product Vendor: Zscaler  
 Product Name: Zscaler  
 Product Version Supported (regex): ".\*"  
