@@ -10,7 +10,7 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2017-2024 Splunk Inc.",
-    "app_version": "2.4.0",
+    "app_version": "3.0.0",
     "utctime_updated": "2022-01-24T06:29:48.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.py",
