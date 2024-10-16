@@ -6,7 +6,7 @@ Connector Version: 2.4.0
 Product Vendor: Zscaler  
 Product Name: Zscaler  
 Product Version Supported (regex): ".\*"  
-Minimum Product Version: 6.2.1  
+Minimum Product Version: 6.2.2  
 
 This app implements containment and investigative actions on Zscaler
 
