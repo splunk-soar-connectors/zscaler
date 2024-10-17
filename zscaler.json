@@ -9,13 +9,13 @@
     "product_name": "Zscaler",
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2017-2023 Splunk Inc.",
-    "app_version": "2.4.0",
+    "license": "Copyright (c) 2017-2024 Splunk Inc.",
+    "app_version": "3.0.0",
     "utctime_updated": "2022-01-24T06:29:48.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.py",
     "python_version": "3",
-    "min_phantom_version": "6.0.0",
+    "min_phantom_version": "6.2.2",
     "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud v6.2, 29th June 2023"
@@ -316,7 +316,19 @@
             "description": "List all URL categories",
             "type": "investigate",
             "read_only": true,
-            "parameters": {},
+            "parameters": {
+                "get_ids_and_names_only": {
+                    "description": "Whether to retrieve only a list containing URL category IDs and names. Even if displayURL is set to true, URLs will not be returned",
+                    "data_type": "boolean",
+                    "order": 0,
+                    "default": false,
+                    "example_values": [
+                        true,
+                        false
+                    ],
+                    "primary": true
+                }
+            },
             "output": [
                 {
                     "data_path": "action_result.status",
@@ -324,6 +336,13 @@
                     "example_values": [
                         "test success",
                         "test failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.get_ids_and_names_only",
+                    "data_type": "string",
+                    "example_values": [
+                       "RADIO_STATIONS"
                     ]
                 },
                 {
@@ -2997,6 +3016,2025 @@
                 }
             ],
             "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get allowlist",
+            "identifier": "get_allowlist",
+            "description": "Get urls on the allow list",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {},
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "test success",
+                        "test failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.url",
+                    "data_type": "string",
+                    "column_name": "allowlist url",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.summary.total_allowlist_items",
+                    "data_type": "numeric",
+                    "example_values": [
+                        10
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Allowlist retrieved"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Allowlist retrieved"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "title": "Allowlist",
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get denylist",
+            "identifier": "get_denylist",
+            "description": "Get urls on the deny list",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "filter": {
+                    "description": "Filter results be url or ip",
+                    "data_type": "string",
+                    "primary": true,
+                    "value_list": [
+                        "url",
+                        "ip"
+                    ],
+                    "order": 0
+                },
+                "query": {
+                    "description": "Regular expression to match url or ip against",
+                    "data_type": "string",
+                    "primary": true,
+                    "example_values": [
+                        "8...8"
+                    ],
+                    "order": 1
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "test success",
+                        "test failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.query",
+                    "data_type": "string",
+                    "column_name": "Query",
+                   "example_values": [
+                        "8...8"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.filter",
+                    "data_type": "string",
+                    "column_name": "Filter",
+                    "value_list": [
+                        "url",
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.url",
+                    "data_type": "string",
+                    "column_name": "denylist url",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.summary.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Blacklist retrieved"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Denylist retrieved"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.total_denylist_items",
+                    "data_type": "numeric",
+                    "example_values": [
+                        10
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "title": "Denylist",
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "update user",
+            "identifier": "update_user",
+            "description": "Update user with given id",
+            "type": "correct",
+            "read_only": false,
+            "parameters": {
+                "user_id": {
+                    "description": "ZScaler User Id",
+                    "data_type": "numeric",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "zscaler user id"
+                    ],
+                    "example_values": [
+                        889814
+                    ],
+                    "order": 0
+                },
+                "user": {
+                    "description": "JSON object containing the user details (see https://help.zscaler.com/zia/user-management#/users/{userId}-put)",
+                    "data_type": "string",
+                    "primary": true,
+                    "order": 1
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "example_values": [
+                        "test success",
+                        "test failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.user",
+                    "data_type": "string",
+                    "column_name": "User"
+                },
+                {
+                    "data_path": "action_result.parameter.user_id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "zscaler user id"
+                    ],
+                    "column_name": "User ID",
+                    "example_values": [
+                        889814
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.adminUser",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ],
+                    "column_name": "Is Admin User",
+                    "column_order": 9
+                },
+                {
+                    "data_path": "action_result.data.*.comments",
+                    "data_type": "string",
+                    "example_values": [
+                        "test This is test user"
+                    ],
+                    "column_name": "Comments",
+                    "column_order": 8
+                },
+                {
+                    "data_path": "action_result.data.*.deleted",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ],
+                    "column_name": "Is Deleted",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.data.*.department.id",
+                    "data_type": "numeric",
+                    "example_values": [
+                        81896690
+                    ],
+                    "column_name": "Department ID",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.department.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "test IT"
+                    ],
+                    "column_name": "Department name",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.email",
+                    "data_type": "string",
+                    "contains": [
+                        "email"
+                    ],
+                    "example_values": [
+                        "test first.last@domain.com"
+                    ],
+                    "column_name": "User Email",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.groups.*.id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "zscaler group id"
+                    ],
+                    "example_values": [
+                        8894813
+                    ],
+                    "column_name": "Group ID",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.groups.*.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "test Super Admin"
+                    ],
+                    "column_name": "Group Name",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "zscaler user id"
+                    ],
+                    "example_values": [
+                        889814
+                    ],
+                    "column_name": "User ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "test First Last"
+                    ],
+                    "column_name": "User Name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "test User removed from group"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "test User removed from group"
+                    ]
+                },
+                {
+                    "data_path": "summary.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "add category url",
+            "description": "Add urls to a cetgory",
+            "type": "generic",
+            "identifier": "add_category_url",
+            "read_only": false,
+            "parameters": {
+                "category_id": {
+                    "description": "The ID of the category to add the specified URLs to",
+                    "data_type": "string",
+                    "order": 0,
+                    "example_values": [
+                        "RADIO_STATIONS"
+                    ],
+                    "primary": true,
+                    "required": true
+                },
+                "urls": {
+                    "description": "A comma-separated list of URLs to add to the specified category",
+                    "data_type": "string",
+                    "order": 1,
+                    "primary": true
+                },
+                "retaining-parent-category-url": {
+                    "description": "A comma-separated list of URLs to add to the retaining parent category section inside the specified category",
+                    "data_type": "string",
+                    "primary": true,
+                    "order": 2
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.category_id",
+                    "data_type": "string",
+                    "example_values": [
+                       "RADIO_STATIONS"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.urls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.retaining-parent-category-url",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "column_name": "URL category",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "column_name": "Value",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "column_name": "Category type",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.urls",
+                    "data_type": "string",
+                    "column_name": "URLs added",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.scopes.*.Type",
+                    "data_type": "string",
+                    "column_name": "Category scope",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.editable",
+                    "data_type": "boolean",
+                    "column_name": "Is editable",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.keywords",
+                    "data_type": "string",
+                    "column_name": "Category keywords",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string",
+                    "column_name": "Category description",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "column_name": "Configured Name",
+                    "column_order": 8
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "column_name": "Is Custom Category",
+                    "column_order": 9
+                },
+                {
+                    "data_path": "action_result.data.*.customUrlsCount",
+                    "data_type": "numeric",
+                    "column_name": "Custom url count",
+                    "column_order": 10
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string",
+                    "column_name": "Parent urls",
+                    "column_order": 11
+                },
+                {
+                    "data_path": "action_result.data.*.customIpRangesCount",
+                    "data_type": "numeric",
+                    "column_name": "Custom ip ranges count",
+                    "column_order": 12
+                },
+                {
+                    "data_path": "action_result.data.*.keywordsRetainingParentCategory",
+                    "data_type": "string",
+                    "column_name": "Parent url keywords",
+                    "column_order": 13
+                },
+                {
+                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "column_name": "Number of parent urls",
+                    "column_order": 14
+                },
+                {
+                    "data_path": "action_result.data.*.ipRangesRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "column_name": "Number of parent ips",
+                    "column_order": 15
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Message: Category urs updated"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+           "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "add category ip",
+            "description": "Add IPs to a cetgory",
+            "type": "generic",
+            "identifier": "add_category_ip",
+            "read_only": false,
+            "parameters": {
+                "category_id": {
+                    "description": "The ID of the category to add the specified URLs to",
+                    "data_type": "string",
+                    "order": 0,
+                    "example_values": [
+                        "RADIO_STATIONS"
+                    ],
+                    "primary": true,
+                    "required": true
+                },
+                "ips": {
+                    "description": "A comma-separated list of IP addresses to add to the specified category",
+                    "data_type": "string",
+                    "order": 1,
+                    "primary": true
+                },
+                "retaining-parent-category-ip": {
+                    "description": "A comma-separated list of IPs to add to the retaining parent category section inside the specified category",
+                    "data_type": "string",
+                    "primary": true,
+                    "order": 2
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.category_id",
+                    "data_type": "string",
+                    "example_values": [
+                       "RADIO_STATIONS"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.ips",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.retaining-parent-category-ip",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "column_name": "URL category",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "column_name": "Value",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "column_name": "Category type",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.urls",
+                    "data_type": "string",
+                    "column_name": "URLs added",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.scopes.*.Type",
+                    "data_type": "string",
+                    "column_name": "Category scope",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.editable",
+                    "data_type": "boolean",
+                    "column_name": "Is editable",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.keywords",
+                    "data_type": "string",
+                    "column_name": "Category keywords",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string",
+                    "column_name": "Category description",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "column_name": "Configured Name",
+                    "column_order": 8
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "column_name": "Is Custom Category",
+                    "column_order": 9
+                },
+                {
+                    "data_path": "action_result.data.*.customUrlsCount",
+                    "data_type": "numeric",
+                    "column_name": "Custom url count",
+                    "column_order": 10
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string",
+                    "column_name": "Parent urls",
+                    "column_order": 11
+                },
+                {
+                    "data_path": "action_result.data.*.customIpRangesCount",
+                    "data_type": "numeric",
+                    "column_name": "Custom ip ranges count",
+                    "column_order": 12
+                },
+                {
+                    "data_path": "action_result.data.*.keywordsRetainingParentCategory",
+                    "data_type": "string",
+                    "column_name": "Parent url keywords",
+                    "column_order": 13
+                },
+                {
+                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "column_name": "Number of parent urls",
+                    "column_order": 14
+                },
+                {
+                    "data_path": "action_result.data.*.ipRangesRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "column_name": "Number of parent ips",
+                    "column_order": 15
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Message: Category ips updated"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+           "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "remove category url",
+            "description": "Add urls to a cetgory",
+            "type": "generic",
+            "identifier": "remove_category_url",
+            "read_only": false,
+            "parameters": {
+                "category_id": {
+                    "description": "The ID of the category to add the specified URLs to",
+                    "data_type": "string",
+                    "order": 0,
+                    "example_values": [
+                        "RADIO_STATIONS"
+                    ],
+                    "primary": true,
+                    "required": true
+                },
+                "urls": {
+                    "description": "A comma-separated list of URLs to remove from the specified category",
+                    "data_type": "string",
+                    "order": 1,
+                    "primary": true
+                },
+                "retaining-parent-category-url": {
+                    "description": "A comma-separated list of URLs to remove from the retaining parent category section inside the specified category",
+                    "data_type": "string",
+                    "primary": true,
+                    "order": 2
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "column_order": 0,
+                    "column_name": "Status"
+                },
+                {
+                    "data_path": "action_result.parameter.category_id",
+                    "data_type": "string",
+                    "example_values": [
+                       "RADIO_STATIONS"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.urls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.retaining-parent-category-url",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.urls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.scopes.*.Type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.editable",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.keywords",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.customUrlsCount",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.customIpRangesCount",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.keywordsRetainingParentCategory",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.ipRangesRetainingParentCategoryCount",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Message: Category urls removed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+           "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "remove category ip",
+            "description": "Remove IPs to a cetgory",
+            "type": "generic",
+            "identifier": "remove_category_ip",
+            "read_only": false,
+            "parameters": {
+                "category_id": {
+                    "description": "The ID of the category to add the specified URLs to",
+                    "data_type": "string",
+                    "order": 0,
+                    "example_values": [
+                        "RADIO_STATIONS"
+                    ],
+                    "primary": true,
+                    "required": true
+                },
+                "ips": {
+                    "description": "A comma-separated list of IP addresses to add to the specified category",
+                    "data_type": "string",
+                    "order": 1,
+                    "primary": true
+                },
+                "retaining-parent-category-ip": {
+                    "description": "A comma-separated list of IPs to add to the retaining parent category section inside the specified category",
+                    "data_type": "string",
+                    "primary": true,
+                    "order": 2
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "column_order": 0,
+                    "column_name": "Status"
+                },
+                {
+                    "data_path": "action_result.parameter.category_id",
+                    "data_type": "string",
+                    "example_values": [
+                       "RADIO_STATIONS"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.ips",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.retaining-parent-category-ip",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.urls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.scopes.*.Type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.editable",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.keywords",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.customUrlsCount",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.customIpRangesCount",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.keywordsRetainingParentCategory",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.ipRangesRetainingParentCategoryCount",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Message: Category ips removed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+           "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "create destination group",
+            "identifier": "create_destination_group",
+            "description": "Create destination group",
+            "type": "generic",
+            "read_only": false,
+            "parameters": {
+                "name": {
+                    "description": "Destination IP group name",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "order": 0
+                },
+                "type": {
+                    "description": "Destination IP group type (i.e., the group can contain destination IP addresses, countries, URL categories or FQDNs)",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "example_values": [
+                        "DSTN_IP",
+                        "DSTN_FQDN",
+                        "DSTN_DOMAIN",
+                        "DSTN_OTHER"
+                    ],
+                    "order": 1
+                },
+                "addresses": {
+                    "description": "Comma seperated string of destination IP addresses, FQDNs, or wildcard FQDNs added to the group",
+                    "data_type": "string",
+                    "order": 2
+                },
+                "description": {
+                    "description": "Additional information about the destination IP group.",
+                    "data_type": "string",
+                    "order": 3
+                },
+                "ip_categories": {
+                    "description": "Destination IP address URL categories",
+                    "data_type": "string",
+                    "order": 4
+                },
+                "countries": {
+                    "description": "Destination IP address countries. You can identify destinations based on the location of a server.",
+                    "data_type": "string",
+                    "order": 5
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "column_order": 2,
+                    "example_values": [
+                        "test success",
+                        "test failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.countries",
+                    "data_type": "string",
+                    "column_name": "Countries"
+                },
+                {
+                    "data_path": "action_result.parameter.ip_categories",
+                    "data_type": "string",
+                    "column_name": "Ip Categories"
+                },
+                {
+                    "data_path": "action_result.parameter.description",
+                    "data_type": "string",
+                    "column_name": "Description"
+                },
+                {
+                    "data_path": "action_result.parameter.addresses",
+                    "data_type": "string",
+                    "column_name": "Addresses"
+                },
+                {
+                    "data_path": "action_result.parameter.type",
+                    "data_type": "string",
+                    "column_name": "Type"
+                },
+                {
+                    "data_path": "action_result.parameter.name",
+                    "data_type": "string",
+                    "column_name": "Name"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "column_name": "Group ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
+                    "column_name": "Group name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "DSTN_IP",
+                        "DSTN_FQDN",
+                        "DSTN_DOMAIN",
+                        "DSTN_OTHER"
+                    ],
+                    "column_name": "Group type",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.addresses",
+                    "data_type": "string",
+                    "example_values": [
+                        "192.168.1.1"
+                    ],
+                    "column_name": "Destination addresses",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.countries",
+                    "data_type": "string",
+                    "column_name": "Destination countries",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string",
+                    "column_name": "Description",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.ipCategories",
+                    "data_type": "string",
+                    "example_values": [
+                        "TRADING_BROKARAGE_INSURANCE"
+                    ],
+                    "column_name": "Destination categories",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.data.*.isNonEditable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ],
+                    "column_name": "Is editable",
+                    "column_order": 8
+                },
+                {
+                    "data_path": "action_result.data.*.creatorContext",
+                    "data_type": "string",
+                    "column_name": "Creator Context",
+                    "column_order": 9
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "test User removed from group"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "test User removed from group"
+                    ]
+                },
+                {
+                    "data_path": "summary.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "list destination group",
+            "identifier": "list_destination_group",
+            "description": "List destination group",
+            "type": "investigate",
+            "read_only": false,
+            "parameters": {
+                "ip_group_ids": {
+                    "description": "A comma-separated list of unique identifiers for the IP destination groups",
+                    "data_type": "string",
+                    "primary": true,
+                    "order": 0
+                },
+                "exclude_type": {
+                    "description": "The IP group type to be excluded from the results",
+                    "data_type": "string",
+                    "primary": true,
+                    "example_values": [
+                        "DSTN_IP",
+                        "DSTN_FQDN",
+                        "DSTN_DOMAIN",
+                        "DSTN_OTHER"
+                    ],
+                    "order": 1
+                },
+                "category_type": {
+                    "description": "Comma seperated list of IP group types to be filtered from results. This argument is only supported when the 'lite' argument is set to True",
+                    "data_type": "string",
+                    "example_values": [
+                        "DSTN_IP",
+                        "DSTN_FQDN",
+                        "DSTN_DOMAIN",
+                        "DSTN_OTHER"
+                    ],
+                    "order": 2
+                },
+                "limit": {
+                    "description": "Limit of the results to be retrieved",
+                    "data_type": "numeric",
+                    "default": 50,
+                    "order": 3
+                },
+                "lite": {
+                    "description": "Whether to retrieve only limited information of IP destination groups. Includes ID, name and type of the IP destination groups",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true, 
+                        false
+                    ],
+                    "default": false,
+                    "order": 4
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "example_values": [
+                        "test success",
+                        "test failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.lite",
+                    "data_type": "boolean",
+                    "column_name": "Lite"
+                },
+                {
+                    "data_path": "action_result.parameter.limit",
+                    "data_type": "numeric",
+                    "column_name": "Limit"
+                },
+                {
+                    "data_path": "action_result.parameter.category_type",
+                    "data_type": "string",
+                    "column_name": "Category Type"
+                },
+                {
+                    "data_path": "action_result.parameter.exclude_type",
+                    "data_type": "string",
+                    "column_name": "Exclude Type"
+                },
+                {
+                    "data_path": "action_result.parameter.ip_group_ids",
+                    "data_type": "string",
+                    "column_name": "Ip Group ID"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "column_name": "Group ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
+                    "column_name": "Group name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "DSTN_IP",
+                        "DSTN_FQDN",
+                        "DSTN_DOMAIN",
+                        "DSTN_OTHER"
+                    ],
+                    "column_name": "Group type",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.addresses",
+                    "data_type": "string",
+                    "example_values": [
+                        "192.168.1.1"
+                    ],
+                    "column_name": "Destination addresses",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.countries",
+                    "data_type": "string",
+                    "column_name": "Destination countries",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string",
+                    "column_name": "Description",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.ipCategories",
+                    "data_type": "string",
+                    "example_values": [
+                        "TRADING_BROKARAGE_INSURANCE"
+                    ],
+                    "column_name": "Destination categories",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.isNonEditable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ],
+                    "column_name": "Is editable",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.data.*.creatorContext",
+                    "data_type": "string",
+                    "column_name": "Creator Context",
+                    "column_order": 8
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Retreived Destination Groups"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                         "Retreived Destination Groups"
+                    ]
+                },
+                {
+                    "data_path": "summary.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "edit destination group",
+            "identifier": "edit_destination_group",
+            "description": "Edit destination group",
+            "type": "generic",
+            "read_only": false,
+            "parameters": {
+                "ip_group_id": {
+                    "description": "The unique identifier for the IP destination group",
+                    "data_type": "numeric",
+                    "required": true,
+                    "primary": true,
+                    "order": 0
+                },
+                "name": {
+                    "description": "Destination IP group name",
+                    "data_type": "string",
+                    "primary": true,
+                    "order": 1
+                },
+                "addresses": {
+                    "description": "Comma seperated string of destination IP addresses, FQDNs, or wildcard FQDNs added to the group",
+                    "data_type": "string",
+                    "order": 2
+                },
+                "description": {
+                    "description": "Additional information about the destination IP group.",
+                    "data_type": "string",
+                    "order": 3
+                },
+                "ip_categories": {
+                    "description": "Destination IP address URL categories",
+                    "data_type": "string",
+                    "order": 4
+                },
+                "countries": {
+                    "description": "Destination IP address countries. You can identify destinations based on the location of a server.",
+                    "data_type": "string",
+                    "order": 5
+                },
+                "is_non_editable": {
+                    "description": "If set to true, the destination IP address group is non-editable. This field is applicable only to predefined IP address groups, which cannot be modified",
+                    "data_type": "boolean",
+                    "default": false,
+                    "example_values": [
+                        true,
+                        false
+                    ],
+                    "order": 6
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "column_order": 2,
+                    "example_values": [
+                        "test success",
+                        "test failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.is_non_editable",
+                    "data_type": "boolean",
+                    "column_name": "Is Non Editable"
+                },
+                {
+                    "data_path": "action_result.parameter.countries",
+                    "data_type": "string",
+                    "column_name": "Countries"
+                },
+                {
+                    "data_path": "action_result.parameter.ip_categories",
+                    "data_type": "string",
+                    "column_name": "Ip Categories"
+                },
+                {
+                    "data_path": "action_result.parameter.description",
+                    "data_type": "string",
+                    "column_name": "Description"
+                },
+                {
+                    "data_path": "action_result.parameter.addresses",
+                    "data_type": "string",
+                    "column_name": "Addresses"
+                },
+                {
+                    "data_path": "action_result.parameter.name",
+                    "data_type": "string",
+                    "column_name": "Name"
+                },
+                {
+                    "data_path": "action_result.parameter.ip_group_id",
+                    "data_type": "numeric",
+                    "column_name": "IP Group Id"
+                    
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "column_name": "Group ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
+                    "column_name": "Group name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "DSTN_IP",
+                        "DSTN_FQDN",
+                        "DSTN_DOMAIN",
+                        "DSTN_OTHER"
+                    ],
+                    "column_name": "Group type",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.addresses",
+                    "data_type": "string",
+                    "example_values": [
+                        "192.168.1.1"
+                    ],
+                    "column_name": "Destination addresses",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.countries",
+                    "data_type": "string",
+                    "column_name": "Destination countries",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string",
+                    "column_name": "Description",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.ipCategories",
+                    "data_type": "string",
+                    "example_values": [
+                        "TRADING_BROKARAGE_INSURANCE"
+                    ],
+                    "column_name": "Destination categories",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.data.*.isNonEditable",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ],
+                    "column_name": "Is editable",
+                    "column_order": 8
+                },
+                {
+                    "data_path": "action_result.data.*.creatorContext",
+                    "data_type": "string",
+                    "column_name": "Creator Context",
+                    "column_order": 9
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Destination group edited"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Destination group edited"
+                    ]
+                },
+                {
+                    "data_path": "summary.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "delete destination group",
+            "identifier": "delete_destination_group",
+            "description": "Delete destination group",
+            "type": "generic",
+            "read_only": false,
+            "parameters": {
+                "ip_group_ids": {
+                    "description": "A comma-separated list of unique identifiers for the IP destination groups",
+                    "data_type": "string",
+                    "primary": true,
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "column_order": 0,
+                    "example_values": [
+                        "test success",
+                        "test failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.ip_group_ids",
+                    "data_type": "string",
+                    "column_name": "IP Group Ids"
+                },
+                {
+                    "data_path": "action_result.data.*.ip_group_ids",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Destination group deleted"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Destination group deleted"
+                    ]
+                },
+                {
+                    "data_path": "summary.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get departments",
+            "identifier": "get_departments",
+            "description": "Get a list of departments",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "name": {
+                    "description": "Filter by department name",
+                    "data_type": "string",
+                    "primary": true,
+                    "order": 0
+                },
+                "page": {
+                    "description": "Specifies the page offset",
+                    "data_type": "numeric",
+                    "primary": true,
+                    "order": 1
+                },
+                "pageSize": {
+                    "description": "Specifies the page size",
+                    "default": 100,
+                    "data_type": "numeric",
+                    "primary": true,
+                    "order": 2
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "example_values": [
+                        "test success",
+                        "test failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.pageSize",
+                    "data_type": "string",
+                    "column_name": "Page Size"
+                },
+                {
+                    "data_path": "action_result.parameter.page",
+                    "data_type": "string",
+                    "column_name": "Page"
+                },
+                {
+                    "data_path": "action_result.parameter.name",
+                    "data_type": "string",
+                    "column_name": "Name"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "column_name": "Department Id",
+                    "column_order": 0
+
+                },
+                {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
+                    "column_name": "Department Name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.isNonEditable",
+                    "data_type": "boolean",
+                    "column_name": "Is editable",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Departments Retrieved"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.total_deparments",
+                    "data_type": "numeric",
+                    "example_values": [
+                        97
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Departments Retrieved"
+                    ]
+                },
+                {
+                    "data_path": "summary.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get category details",
+            "identifier": "get_category_details",
+            "description": "Get the urls and keywords of a category",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "category_ids": {
+                    "description": "Comma seperated string of category id's to query",
+                    "data_type": "string",
+                    "order": 0,
+                    "example_values": [
+                        "CUSTOM_001, CUSTOM_002"
+                    ],
+                    "primary": true
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "test success",
+                        "test failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.category_ids",
+                    "data_type": "string",
+                    "example_values": [
+                        "CUSTOM_001, CUSTOM_002"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.configuredName",
+                    "data_type": "string",
+                    "example_values": [
+                        "test Test-Caution"
+                    ],
+                    "column_order": 2,
+                    "column_name": "Configured Name"
+                },
+                {
+                    "data_path": "action_result.data.*.customCategory",
+                    "data_type": "boolean",
+                    "column_name": "Is Custom Category",
+                    "column_order": 4,
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.keywords",
+                    "data_type": "string",
+                    "column_order": 5,
+                    "column_name": "Category Keywords"
+                },
+                {
+                    "data_path": "action_result.data.*.urls",
+                    "data_type": "string",
+                    "column_order": 6,
+                    "column_name": "Category Urls"
+                },
+                {
+                    "data_path": "action_result.data.*.customIpRangesCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.customUrlsCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dbCategorizedUrls",
+                    "data_type": "string",
+                    "example_values": [
+                        "test 6.5.3.2.4"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string",
+                    "column_name": "Description",
+                    "column_order": 3,
+                    "example_values": [
+                        "test OTHER_RESTRICTED_WEBSITE_DESC"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.editable",
+                    "data_type": "boolean",
+                    "column_name": "Editable",
+                    "column_order": 7,
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "column_name": "Category ID",
+                    "column_order": 0,
+                    "contains": [
+                        "zscaler url category"
+                    ],
+                    "example_values": [
+                        "test OTHER_RESTRICTED_WEBSITE"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.ipRangesRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.scopes.*.Type",
+                    "data_type": "string",
+                    "example_values": [
+                        "test ORGANIZATION"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "test URL_CATEGORY"
+                    ],
+                    "column_order": 1,
+                    "column_name": "Type"
+                },
+                {
+                    "data_path": "action_result.data.*.urlsRetainingParentCategoryCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.val",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.total_categories",
+                    "data_type": "numeric",
+                    "example_values": [
+                        97
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Category details recieved"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+           "render": {
                 "type": "table"
             },
             "versions": "EQ(*)"
