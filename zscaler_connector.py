@@ -1,6 +1,6 @@
 # File: zscaler_connector.py
 #
-# Copyright (c) 2017-2023 Splunk Inc.
+# Copyright (c) 2017-2024 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 #
 #
 # Phantom App imports
+import ipaddress
 import json
 import re
 import time
@@ -104,10 +105,11 @@ class ZscalerConnector(BaseConnector):
     def _process_empty_response(self, response, action_result):
         if response.status_code == 200 or response.status_code == 204:
             return RetVal(phantom.APP_SUCCESS, {})
-        return RetVal(action_result.set_status(
-            phantom.APP_ERROR,
-            "Status code : {}. Empty response and no information in the header".format(response.status_code)),
-            None
+        return RetVal(
+            action_result.set_status(
+                phantom.APP_ERROR, "Status code : {}. Empty response and no information in the header".format(response.status_code)
+            ),
+            None,
         )
 
     def _process_html_response(self, response, action_result):
@@ -121,22 +123,24 @@ class ZscalerConnector(BaseConnector):
             for element in soup(["script", "style", "footer", "nav"]):
                 element.extract()
             err_text = soup.text
-            split_lines = err_text.split('\n')
+            split_lines = err_text.split("\n")
             split_lines = [x.strip() for x in split_lines if x.strip()]
-            err_text = '\n'.join(split_lines)
+            err_text = "\n".join(split_lines)
         except Exception as e:
             err_text = "Cannot parse err details"
             self.debug_print("{}. Error: {}".format(err_text, e))
 
         err_text = err_text
 
-        msg = "Please check the asset configuration parameters (the base_url should not end with "\
+        msg = (
+            "Please check the asset configuration parameters (the base_url should not end with "
             "/api/v1 e.g. https://admin.zscaler_instance.net)."
+        )
 
         if len(err_text) <= 500:
             msg += "Status Code: {0}. Data from server:\n{1}\n".format(status_code, err_text)
 
-        msg = msg.replace('{', '{{').replace('}', '}}')
+        msg = msg.replace("{", "{{").replace("}", "}}")
         return RetVal(action_result.set_status(phantom.APP_ERROR, msg), None)
 
     def _process_json_response(self, r, action_result):
@@ -145,8 +149,12 @@ class ZscalerConnector(BaseConnector):
         try:
             resp_json = r.json()
         except Exception as e:
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}"
-                .format(self._get_err_msg_from_exception(e))), None)
+            return RetVal(
+                action_result.set_status(
+                    phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}".format(self._get_err_msg_from_exception(e))
+                ),
+                None,
+            )
 
         # Please specify the status codes here
         if 200 <= r.status_code < 399:
@@ -154,32 +162,30 @@ class ZscalerConnector(BaseConnector):
 
         # You should process the error returned in the json
         try:
-            msg = resp_json['message']
+            msg = resp_json["message"]
         except Exception:
-            msg = "Error from server. Status Code: {0} Data from server: {1}".format(
-                r.status_code, r.text.replace('{', '{{').replace('}', '}}')
-            )
+            msg = "Error from server. Status Code: {0} Data from server: {1}".format(r.status_code, r.text.replace("{", "{{").replace("}", "}}"))
         return RetVal(action_result.set_status(phantom.APP_ERROR, msg), None)
 
     def _process_response(self, r, action_result):
 
         # store the r_text in debug data, it will get dumped in the logs if the action fails
-        if hasattr(action_result, 'add_debug_data'):
-            action_result.add_debug_data({'r_status_code': r.status_code})
-            action_result.add_debug_data({'r_text': r.text})
-            action_result.add_debug_data({'r_headers': r.headers})
+        if hasattr(action_result, "add_debug_data"):
+            action_result.add_debug_data({"r_status_code": r.status_code})
+            action_result.add_debug_data({"r_text": r.text})
+            action_result.add_debug_data({"r_headers": r.headers})
 
         # Process each 'Content-Type' of response separately
 
         # Process a json response
-        if 'json' in r.headers.get('Content-Type', ''):
+        if "json" in r.headers.get("Content-Type", ""):
             return self._process_json_response(r, action_result)
 
         # Process an HTML response, Do this no matter what the api talks.
         # There is a high chance of a PROXY in between phantom and the rest of
         # world, in case of errors, PROXY's return HTML, this function parses
         # the error and adds it to the action_result.
-        if 'html' in r.headers.get('Content-Type', ''):
+        if "html" in r.headers.get("Content-Type", ""):
             return self._process_html_response(r, action_result)
 
         # it's not content-type that is to be parsed, handle an empty response
@@ -188,13 +194,13 @@ class ZscalerConnector(BaseConnector):
 
         # everything else is actually an error at this point
         msg = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
-            r.status_code, r.text.replace('{', '{{').replace('}', '}}')
+            r.status_code, r.text.replace("{", "{{").replace("}", "}}")
         )
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, msg), None)
 
     def _is_ip(self, input_ip_address):
-        """ Function that checks given address and return True if address is valid IPv4 or IPV6 address.
+        """Function that checks given address and return True if address is valid IPv4 or IPV6 address.
 
         :param input_ip_address: IP address
         :return: status (success/failure)
@@ -212,15 +218,16 @@ class ZscalerConnector(BaseConnector):
 
         return True
 
-    def _make_rest_call(self, endpoint, action_result, headers=None, params=None,
-                        data=None, method="get", use_json=True, timeout=ZSCALER_DEFAULT_TIMEOUT):
+    def _make_rest_call(
+        self, endpoint, action_result, headers=None, params=None, data=None, method="get", use_json=True, timeout=ZSCALER_DEFAULT_TIMEOUT
+    ):
 
         resp_json = None
 
         if headers is None:
             headers = {}
 
-        if self.get_action_identifier() != 'submit_file':
+        if self.get_action_identifier() != "submit_file":
             headers.update(self._headers)
 
         try:
@@ -229,29 +236,16 @@ class ZscalerConnector(BaseConnector):
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid method: {0}".format(method)), resp_json)
 
         # Create a URL to connect to
-        url = '{}{}'.format(self._base_url, endpoint)
+        url = "{}{}".format(self._base_url, endpoint)
         try:
             if use_json:
-                r = request_func(
-                    url,
-                    json=data,
-                    headers=headers,
-                    params=params,
-                    timeout=timeout
-                )
+                r = request_func(url, json=data, headers=headers, params=params, timeout=timeout)
             else:
-                r = request_func(
-                    url,
-                    data=data,
-                    headers=headers,
-                    params=params,
-                    timeout=timeout
-                )
+                r = request_func(url, data=data, headers=headers, params=params, timeout=timeout)
         except Exception as e:
             error_message = self._get_err_msg_from_exception(e)
             error_message = re.sub(ZSCALER_MATCH_REGEX, ZSCALER_REPLACE_REGEX, error_message)
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to Zscaler server. {}"
-                                                   .format(error_message)), resp_json)
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to Zscaler server. {}".format(error_message)), resp_json)
 
         self._response = r
 
@@ -277,16 +271,16 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             if self._response is None:
                 return ret_val, response
-            if self._response.status_code == 409 and self._retry_rest_call:  # Lock not available
+            if self._response.status_code == 409 and self._retry_rest_call != 0:  # Lock not available
                 # This basically just means we need to try again
                 self.debug_print("Error 409: Lock not available")
                 self.send_progress("Error 409: Lock not available: Retrying in 1 second")
                 time.sleep(1)
-                self._retry_rest_call = False  # make it to false to avoid extra rest call
+                self._retry_rest_call -= 1  # reduce the number of retries
                 return self._make_rest_call_helper(*args, **kwargs)
-            if self._response.status_code == 429 and self._retry_rest_call:  # Rate limit exceeded
+            if self._response.status_code == 429 and self._retry_rest_call != 0:  # Rate limit exceeded
                 try:
-                    retry_time = self._response.json()['Retry-After']
+                    retry_time = self._response.json()["Retry-After"]
                 except KeyError:
                     self.debug_print("KeyError")
                     return ret_val, response
@@ -296,7 +290,7 @@ class ZscalerConnector(BaseConnector):
                     return retry_time, response
                 self.send_progress("Exceeded rate limit: Retrying after {}".format(retry_time))
                 time.sleep(seconds_to_wait)
-                self._retry_rest_call = False  # make it to false to avoid extra rest call
+                self._retry_rest_call -= 1  # reduce the number of retries
                 return self._make_rest_call_helper(*args, **kwargs)
         return ret_val, response
 
@@ -319,42 +313,25 @@ class ZscalerConnector(BaseConnector):
         try:
             timestamp, obf_api_key = self._obfuscate_api_key(api_key)
         except Exception:
-            return self.set_status(
-                phantom.APP_ERROR,
-                "Error obfuscating API key"
-            )
+            return self.set_status(phantom.APP_ERROR, "Error obfuscating API key")
 
-        body = {
-            'apiKey': obf_api_key,
-            'username': username,
-            'password': password,
-            'timestamp': timestamp
-        }
+        body = {"apiKey": obf_api_key, "username": username, "password": password, "timestamp": timestamp}
 
         action_result = ActionResult()
-        ret_val, _ = self._make_rest_call_helper(
-            '/api/v1/authenticatedSession',
-            action_result, data=body,
-            method='post'
-        )
+        ret_val, _ = self._make_rest_call_helper("/api/v1/authenticatedSession", action_result, data=body, method="post")
         if phantom.is_fail(ret_val):
-            self.debug_print('Error starting Zscaler session: {}'.format(action_result.get_message()))
-            return self.set_status(
-                phantom.APP_ERROR,
-                'Error starting Zscaler session: {}'.format(action_result.get_message())
-            )
+            self.debug_print("Error starting Zscaler session: {}".format(action_result.get_message()))
+            return self.set_status(phantom.APP_ERROR, "Error starting Zscaler session: {}".format(action_result.get_message()))
         else:
-            self.save_progress('Successfully started Zscaler session')
-            self._headers = {
-                'cookie': self._response.headers['Set-Cookie'].split(';')[0].strip()
-            }
+            self.save_progress("Successfully started Zscaler session")
+            self._headers = {"cookie": self._response.headers["Set-Cookie"].split(";")[0].strip()}
             return phantom.APP_SUCCESS
 
     def _deinit_session(self):
         action_result = ActionResult()
         config = self.get_config()
-        self._base_url = config['base_url'].rstrip('/')
-        ret_val, response = self._make_rest_call_helper('/api/v1/authenticatedSession', action_result, method='delete')
+        self._base_url = config["base_url"].rstrip("/")
+        ret_val, response = self._make_rest_call_helper("/api/v1/authenticatedSession", action_result, method="delete")
 
         if phantom.is_fail(ret_val):
             self.debug_print("Deleting the authenticated session failed on the ZScaler server.")
@@ -378,58 +355,55 @@ class ZscalerConnector(BaseConnector):
 
         if not endpoints:
             summary = action_result.set_summary({})
-            summary['updated'] = []
-            summary['ignored'] = to_add
+            summary["updated"] = []
+            summary["ignored"] = to_add
             return RetVal(action_result.set_status(phantom.APP_SUCCESS, msg), None)
         return RetVal(phantom.APP_SUCCESS, endpoints)
 
     def _get_blocklist(self, action_result):
-        return self._make_rest_call_helper('/api/v1/security/advanced', action_result)
+        return self._make_rest_call_helper("/api/v1/security/advanced", action_result)
 
     def _check_blocklist(self, action_result, endpoints, action):
         ret_val, response = self._get_blocklist(action_result)
         if phantom.is_fail(ret_val):
             return RetVal(ret_val, None)
 
-        blocklist = response.get('blacklistUrls', [])
+        blocklist = response.get("blacklistUrls", [])
 
-        return self._filter_endpoints(action_result, endpoints, blocklist, action, 'Blocklist')
+        return self._filter_endpoints(action_result, endpoints, blocklist, action, "Blocklist")
 
     def _amend_blocklist(self, action_result, endpoints, action):
         ret_val, filtered_endpoints = self._check_blocklist(action_result, endpoints, action)
         if phantom.is_fail(ret_val) or filtered_endpoints is None:
             return ret_val
 
-        params = {'action': action}
-        data = {
-            "blacklistUrls": filtered_endpoints
-        }
+        params = {"action": action}
+        data = {"blacklistUrls": filtered_endpoints}
         ret_val, response = self._make_rest_call_helper(
-            '/api/v1/security/advanced/blacklistUrls', action_result, params=params,
-            data=data, method="post"
+            "/api/v1/security/advanced/blacklistUrls", action_result, params=params, data=data, method="post"
         )
         if phantom.is_fail(ret_val) and self._response.status_code != 204:
             return ret_val
         summary = action_result.set_summary({})
-        summary['updated'] = filtered_endpoints
-        summary['ignored'] = list(set(endpoints) - set(filtered_endpoints))
+        summary["updated"] = filtered_endpoints
+        summary["ignored"] = list(set(endpoints) - set(filtered_endpoints))
         # Encode the unicode IP or URL strings
-        summary['updated'] = [element for element in summary['updated']]
-        summary['ignored'] = [element for element in summary['ignored']]
+        summary["updated"] = [element for element in summary["updated"]]
+        summary["ignored"] = [element for element in summary["ignored"]]
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_allowlist(self, action_result):
-        return self._make_rest_call_helper('/api/v1/security', action_result)
+        return self._make_rest_call_helper("/api/v1/security", action_result)
 
     def _check_allowlist(self, action_result, endpoints, action):
         ret_val, response = self._get_allowlist(action_result)
         if phantom.is_fail(ret_val):
             return RetVal(ret_val, None)
 
-        allowlist = response.get('whitelistUrls', [])
+        allowlist = response.get("whitelistUrls", [])
         self._allowlist = allowlist
 
-        return self._filter_endpoints(action_result, endpoints, allowlist, action, 'Allowlist')
+        return self._filter_endpoints(action_result, endpoints, allowlist, action, "Allowlist")
 
     def _amend_allowlist(self, action_result, endpoints, action):
         ret_val, filtered_endpoints = self._check_allowlist(action_result, endpoints, action)
@@ -441,44 +415,34 @@ class ZscalerConnector(BaseConnector):
         else:
             to_add_endpoints = list(set(self._allowlist) - set(filtered_endpoints))
 
-        data = {
-            "whitelistUrls": to_add_endpoints
-        }
-        ret_val, response = self._make_rest_call_helper(
-            '/api/v1/security', action_result,
-            data=data, method='put'
-        )
+        data = {"whitelistUrls": to_add_endpoints}
+        ret_val, response = self._make_rest_call_helper("/api/v1/security", action_result, data=data, method="put")
         if phantom.is_fail(ret_val):
             return ret_val
 
         action_result.add_data(response)
         summary = action_result.set_summary({})
-        summary['updated'] = filtered_endpoints
-        summary['ignored'] = list(set(endpoints) - set(filtered_endpoints))
+        summary["updated"] = filtered_endpoints
+        summary["ignored"] = list(set(endpoints) - set(filtered_endpoints))
         # Encode the unicode IP or URL strings
-        summary['updated'] = [element for element in summary['updated']]
-        summary['ignored'] = [element for element in summary['ignored']]
+        summary["updated"] = [element for element in summary["updated"]]
+        summary["ignored"] = [element for element in summary["ignored"]]
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_category(self, action_result, category):
-        ret_val, response = self._make_rest_call_helper('/api/v1/urlCategories', action_result)
+        ret_val, response = self._make_rest_call_helper("/api/v1/urlCategories", action_result)
         if phantom.is_fail(ret_val):
             return ret_val, response
 
         for cat in response:
-            if cat.get('configuredName', None) == category:
+            if cat.get("configuredName", None) == category:
                 return RetVal(phantom.APP_SUCCESS, cat)
 
         for cat in response:
-            if cat['id'] == category:
+            if cat["id"] == category:
                 return RetVal(phantom.APP_SUCCESS, cat)
 
-        return RetVal(
-            action_result.set_status(
-                phantom.APP_ERROR, "Unable to find category"
-            ),
-            None
-        )
+        return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to find category"), None)
 
     def _check_category(self, action_result, endpoints, category, action):
         ret_val, response = self._get_category(action_result, category)
@@ -486,159 +450,153 @@ class ZscalerConnector(BaseConnector):
             return ret_val, response
 
         self._category = response
-        urls = response.get('dbCategorizedUrls', [])
+        urls = response.get("dbCategorizedUrls", [])
 
-        return self._filter_endpoints(action_result, endpoints, urls, action, 'Category')
+        return self._filter_endpoints(action_result, endpoints, urls, action, "Category")
 
     def _amend_category(self, action_result, endpoints, category, action):
         ret_val, filtered_endpoints = self._check_category(action_result, endpoints, category, action)
         if phantom.is_fail(ret_val) or filtered_endpoints is None:
             return ret_val
 
-        params = {'action': action }
+        params = {"action": action}
 
         data = {
-            "configuredName": self._category.get('configuredName'),
+            "configuredName": self._category.get("configuredName"),
             "keywordsRetainingParentCategory": self._category.get("keywordsRetainingParentCategory", []),
             "urls": [],
-            "dbCategorizedUrls": filtered_endpoints
+            "dbCategorizedUrls": filtered_endpoints,
         }
 
         ret_val, response = self._make_rest_call_helper(
-            '/api/v1/urlCategories/{}'.format(self._category['id']),
-            action_result, data=data, method='put', params=params, timeout=None
+            "/api/v1/urlCategories/{}".format(self._category["id"]), action_result, data=data, method="put", params=params, timeout=None
         )
         if phantom.is_fail(ret_val):
             return ret_val
         action_result.add_data(response)
         summary = action_result.set_summary({})
-        summary['updated'] = filtered_endpoints
-        summary['ignored'] = list(set(endpoints) - set(filtered_endpoints))
+        summary["updated"] = filtered_endpoints
+        summary["ignored"] = list(set(endpoints) - set(filtered_endpoints))
         # Encode the unicode IP or URL strings
-        summary['updated'] = [element for element in summary['updated']]
-        summary['ignored'] = [element for element in summary['ignored']]
+        summary["updated"] = [element for element in summary["updated"]]
+        summary["ignored"] = [element for element in summary["ignored"]]
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _block_endpoint(self, action_result, endpoints, category):
         list_endpoints = list()
-        list_endpoints = [x.strip() for x in endpoints.split(',')]
+        list_endpoints = [x.strip() for x in endpoints.split(",") if x.strip()]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
-        if self.get_action_identifier() in ['block_url']:
+        if self.get_action_identifier() in ["block_url"]:
             ret_val = self._check_for_overlength(action_result, endpoints)
             if phantom.is_fail(ret_val):
                 return ret_val
 
         if category is None:
-            return self._amend_blocklist(action_result, endpoints, 'ADD_TO_LIST')
+            return self._amend_blocklist(action_result, endpoints, "ADD_TO_LIST")
         else:
-            return self._amend_category(action_result, endpoints, category, 'ADD_TO_LIST')
+            return self._amend_category(action_result, endpoints, category, "ADD_TO_LIST")
 
     def _unblock_endpoint(self, action_result, endpoints, category):
         list_endpoints = list()
-        list_endpoints = [x.strip() for x in endpoints.split(',')]
+        list_endpoints = [x.strip() for x in endpoints.split(",") if x.strip()]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
-        if self.get_action_identifier() in ['unblock_url']:
+        if self.get_action_identifier() in ["unblock_url"]:
             ret_val = self._check_for_overlength(action_result, endpoints)
             if phantom.is_fail(ret_val):
                 return ret_val
 
         if category is None:
-            return self._amend_blocklist(action_result, endpoints, 'REMOVE_FROM_LIST')
+            return self._amend_blocklist(action_result, endpoints, "REMOVE_FROM_LIST")
         else:
-            return self._amend_category(action_result, endpoints, category, 'REMOVE_FROM_LIST')
+            return self._amend_category(action_result, endpoints, category, "REMOVE_FROM_LIST")
 
     def _handle_block_ip(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
-        return self._block_endpoint(action_result, param['ip'], param.get('url_category'))
+        return self._block_endpoint(action_result, param["ip"], param.get("url_category"))
 
     def _handle_block_url(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
-        return self._block_endpoint(action_result, param['url'], param.get('url_category'))
+        return self._block_endpoint(action_result, param["url"], param.get("url_category"))
 
     def _handle_unblock_ip(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
-        return self._unblock_endpoint(action_result, param['ip'], param.get('url_category'))
+        return self._unblock_endpoint(action_result, param["ip"], param.get("url_category"))
 
     def _handle_unblock_url(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
-        return self._unblock_endpoint(action_result, param['url'], param.get('url_category'))
+        return self._unblock_endpoint(action_result, param["url"], param.get("url_category"))
 
     def _allowlist_endpoint(self, action_result, endpoints, category):
         list_endpoints = list()
-        list_endpoints = [x.strip() for x in endpoints.split(',')]
+        list_endpoints = [x.strip() for x in endpoints.split(",")]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
-        if self.get_action_identifier() in ['allow_url']:
+        if self.get_action_identifier() in ["allow_url"]:
             ret_val = self._check_for_overlength(action_result, endpoints)
             if phantom.is_fail(ret_val):
                 return ret_val
 
         if category is None:
-            return self._amend_allowlist(action_result, endpoints, 'ADD_TO_LIST')
+            return self._amend_allowlist(action_result, endpoints, "ADD_TO_LIST")
         else:
-            return self._amend_category(action_result, endpoints, category, 'ADD_TO_LIST')
+            return self._amend_category(action_result, endpoints, category, "ADD_TO_LIST")
 
     def _unallow_endpoint(self, action_result, endpoints, category):
         list_endpoints = list()
-        list_endpoints = [x.strip() for x in endpoints.split(',')]
+        list_endpoints = [x.strip() for x in endpoints.split(",")]
         endpoints = list(filter(None, list_endpoints))
         endpoints = self._truncate_protocol(endpoints)
 
-        if self.get_action_identifier() in ['unallow_url']:
+        if self.get_action_identifier() in ["unallow_url"]:
             ret_val = self._check_for_overlength(action_result, endpoints)
             if phantom.is_fail(ret_val):
                 return ret_val
 
         if category is None:
-            return self._amend_allowlist(action_result, endpoints, 'REMOVE_FROM_LIST')
+            return self._amend_allowlist(action_result, endpoints, "REMOVE_FROM_LIST")
         else:
-            return self._amend_category(action_result, endpoints, category, 'REMOVE_FROM_LIST')
+            return self._amend_category(action_result, endpoints, category, "REMOVE_FROM_LIST")
 
     def _handle_allow_ip(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
-        return self._allowlist_endpoint(action_result, param['ip'], param.get('url_category'))
+        return self._allowlist_endpoint(action_result, param["ip"], param.get("url_category"))
 
     def _handle_allow_url(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
-        return self._allowlist_endpoint(action_result, param['url'], param.get('url_category'))
+        return self._allowlist_endpoint(action_result, param["url"], param.get("url_category"))
 
     def _handle_unallow_ip(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
-        return self._unallow_endpoint(action_result, param['ip'], param.get('url_category'))
+        return self._unallow_endpoint(action_result, param["ip"], param.get("url_category"))
 
     def _handle_unallow_url(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
-        return self._unallow_endpoint(action_result, param['url'], param.get('url_category'))
+        return self._unallow_endpoint(action_result, param["url"], param.get("url_category"))
 
     def _lookup_endpoint(self, action_result, endpoints):
 
         if not endpoints:
             action_result.set_status(phantom.APP_ERROR, "Please provide valid list of URL(s)")
 
-        ret_val, response = self._make_rest_call_helper(
-            '/api/v1/urlLookup', action_result,
-            data=endpoints, method='post'
-        )
+        ret_val, response = self._make_rest_call_helper("/api/v1/urlLookup", action_result, data=endpoints, method="post")
         if phantom.is_fail(ret_val):
             return ret_val
 
-        ret_val, blocklist_response = self._make_rest_call_helper(
-            '/api/v1/security/advanced', action_result, method='get'
-        )
+        ret_val, blocklist_response = self._make_rest_call_helper("/api/v1/security/advanced", action_result, method="get")
 
         if phantom.is_fail(ret_val):
             return ret_val
 
         for e in endpoints:
-            if e in blocklist_response.get('blacklistUrls', []):
-                [response[i].update({"blocklisted": True}) for i, item in enumerate(response) if item['url'] == e]
+            if e in blocklist_response.get("blacklistUrls", []):
+                [response[i].update({"blocklisted": True}) for i, item in enumerate(response) if item["url"] == e]
             else:
-                [response[i].update({"blocklisted": False}) for i, item in enumerate(response) if item['url'] == e]
+                [response[i].update({"blocklisted": False}) for i, item in enumerate(response) if item["url"] == e]
 
         action_result.update_data(response)
 
@@ -653,16 +611,14 @@ class ZscalerConnector(BaseConnector):
 
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        file_hash = param['file_hash']
+        file_hash = param["file_hash"]
 
-        ret_val, sandbox_report = self._make_rest_call_helper('/api/v1/sandbox/report/{0}?details=full'
-            .format(file_hash), action_result)
+        ret_val, sandbox_report = self._make_rest_call_helper("/api/v1/sandbox/report/{0}?details=full".format(file_hash), action_result)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        if sandbox_report.get(ZSCALER_JSON_FULL_DETAILS) and ZSCLAER_ERR_MD5_UNKNOWN_MSG in sandbox_report.get(
-                                                                        ZSCALER_JSON_FULL_DETAILS):
+        if sandbox_report.get(ZSCALER_JSON_FULL_DETAILS) and ZSCLAER_ERR_MD5_UNKNOWN_MSG in sandbox_report.get(ZSCALER_JSON_FULL_DETAILS):
             return action_result.set_status(phantom.APP_ERROR, sandbox_report.get(ZSCALER_JSON_FULL_DETAILS))
 
         action_result.add_data(sandbox_report)
@@ -680,49 +636,50 @@ class ZscalerConnector(BaseConnector):
 
         if not (self._sandbox_api_token and self._sandbox_base_url):
             return action_result.set_status(
-                phantom.APP_ERROR, "Please provide ZScaler Sandbox Base URL and API token to submit the file to Sandbox")
+                phantom.APP_ERROR, "Please provide ZScaler Sandbox Base URL and API token to submit the file to Sandbox"
+            )
         self._base_url = self._sandbox_base_url
 
         try:
-            file_id = param['vault_id']
+            file_id = param["vault_id"]
             success, msg, file_info = phantom_rules.vault_info(vault_id=file_id)
             file_info = list(file_info)[0]
         except IndexError:
-            return action_result.set_status(phantom.APP_ERROR, 'Vault file could not be found with supplied Vault ID')
+            return action_result.set_status(phantom.APP_ERROR, "Vault file could not be found with supplied Vault ID")
         except Exception as e:
             err_msg = self._get_err_msg_from_exception(e)
             self.debug_print("Vault ID not valid. Error: {}".format(err_msg))
-            return action_result.set_status(phantom.APP_ERROR, 'Vault ID not valid')
+            return action_result.set_status(phantom.APP_ERROR, "Vault ID not valid")
 
-        params = {
-            'force': 1 if param.get('force', False) else 0,
-            'api_token': self._sandbox_api_token
-        }
+        params = {"force": 1 if param.get("force", False) else 0, "api_token": self._sandbox_api_token}
 
-        with open(file_info.get('path'), 'rb') as f:
+        with open(file_info.get("path"), "rb") as f:
             data = f.read()
 
-        ret_val, resp_json = self._make_rest_call_helper('/zscsb/submit',
-            action_result, params=params, data=data, method='post', use_json=False)
+        ret_val, resp_json = self._make_rest_call_helper("/zscsb/submit", action_result, params=params, data=data, method="post", use_json=False)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        if resp_json.get('code') != 200:
-            return action_result.set_status(phantom.APP_ERROR,
-                "Status code: {} Details: {}. Please make sure ZScaler Sandbox Base URL and API token are configured correctly"
-                .format(resp_json.get('code'), resp_json.get('message')))
+        if resp_json.get("code") != 200:
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                "Status code: {} Details: {}. Please make sure ZScaler Sandbox Base URL and API token are configured correctly".format(
+                    resp_json.get("code"), resp_json.get("message")
+                ),
+            )
 
         action_result.add_data(resp_json)
 
-        if resp_json.get('message') == '/submit response OK':
+        if resp_json.get("message") == "/submit response OK":
             msg = ZSCALER_SANDBOX_SUBMIT_FILE_MSG
         else:
-            if resp_json.get('message').lower() != resp_json.get('sandboxSubmission').lower():
-                msg = 'Status Code: {}. Data from server: {}. {}.'.format(resp_json.get('code'), resp_json.get('sandboxSubmission'),
-                    resp_json.get('message'))
+            if resp_json.get("message").lower() != resp_json.get("sandboxSubmission").lower():
+                msg = "Status Code: {}. Data from server: {}. {}.".format(
+                    resp_json.get("code"), resp_json.get("sandboxSubmission"), resp_json.get("message")
+                )
             else:
-                msg = 'Status Code: {}. Data from server: {}'.format(resp_json.get('code'), resp_json.get('message'))
+                msg = "Status Code: {}. Data from server: {}".format(resp_json.get("code"), resp_json.get("message"))
 
         return action_result.set_status(phantom.APP_SUCCESS, msg)
 
@@ -734,16 +691,25 @@ class ZscalerConnector(BaseConnector):
         """
 
         action_result = self.add_action_result(ActionResult(dict(param)))
-        ret_val, list_url_categories = self._make_rest_call_helper('/api/v1/urlCategories', action_result)
+        ret_val, list_url_categories = self._make_rest_call_helper("/api/v1/urlCategories", action_result)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
+        get_ids_and_names_only = param.get("get_ids_and_names_only", False)
+
         for url_category in list_url_categories:
-            action_result.add_data(url_category)
+            if get_ids_and_names_only:
+                category_lite = {}
+                category_lite["id"] = url_category["id"]
+                if "configuredName" in url_category:
+                    category_lite["configuredName"] = url_category["configuredName"]
+                action_result.add_data(category_lite)
+            else:
+                action_result.add_data(url_category)
 
         summary = action_result.update_summary({})
-        summary['total_url_categories'] = action_result.get_data_size()
+        summary["total_url_categories"] = action_result.get_data_size()
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -751,7 +717,7 @@ class ZscalerConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         list_endpoints = list()
-        list_endpoints = [x.strip() for x in param['ip'].split(',')]
+        list_endpoints = [x.strip() for x in param["ip"].split(",")]
         endpoints = list(filter(None, list_endpoints))
 
         return self._lookup_endpoint(action_result, endpoints)
@@ -761,7 +727,7 @@ class ZscalerConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         list_endpoints = list()
-        list_endpoints = [x.strip() for x in param['url'].split(',')]
+        list_endpoints = [x.strip() for x in param["url"].split(",")]
         endpoints = list(filter(None, list_endpoints))
 
         endpoints = self._truncate_protocol(endpoints)
@@ -780,9 +746,9 @@ class ZscalerConnector(BaseConnector):
         """
         for i in range(len(endpoints)):
             if endpoints[i].startswith("http://"):
-                endpoints[i] = endpoints[i][(len("http://")):]
+                endpoints[i] = endpoints[i][(len("http://")) :]  # noqa
             elif endpoints[i].startswith("https://"):
-                endpoints[i] = endpoints[i][(len("https://")):]
+                endpoints[i] = endpoints[i][(len("https://")) :]  # noqa
 
         return endpoints
 
@@ -793,8 +759,10 @@ class ZscalerConnector(BaseConnector):
         """
         for url in endpoints:
             if len(url) > 1024:
-                return action_result.set_status(phantom.APP_ERROR,
-                        "Please provide valid comma-separated values in the action parameter. Max allowed length for each value is 1024.")
+                return action_result.set_status(
+                    phantom.APP_ERROR,
+                    "Please provide valid comma-separated values in the action parameter. Max allowed length for each value is 1024.",
+                )
         return phantom.APP_SUCCESS
 
     def _handle_get_admin_users(self, param):
@@ -805,31 +773,31 @@ class ZscalerConnector(BaseConnector):
         """
 
         action_result = self.add_action_result(ActionResult(dict(param)))
-        ret_val, limit = self._validate_integer(action_result, param.get('limit', ZSCALER_MAX_PAGESIZE), ZSCALER_LIMIT_KEY)
+        ret_val, limit = self._validate_integer(action_result, param.get("limit", ZSCALER_MAX_PAGESIZE), ZSCALER_LIMIT_KEY)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
         params = {}
         admin_users = []
-        params['page'] = 1
+        params["page"] = 1
         while True:
             if limit < ZSCALER_MAX_PAGESIZE:
-                params['pageSize'] = limit
+                params["pageSize"] = limit
             else:
-                params['pageSize'] = ZSCALER_MAX_PAGESIZE
-            ret_val, get_admin_users = self._make_rest_call_helper('/api/v1/adminUsers', action_result, params=params)
+                params["pageSize"] = ZSCALER_MAX_PAGESIZE
+            ret_val, get_admin_users = self._make_rest_call_helper("/api/v1/adminUsers", action_result, params=params)
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
             for admin_user in get_admin_users:
                 admin_users.append(admin_user)
-            limit = limit - params['pageSize']
+            limit = limit - params["pageSize"]
             if limit <= 0 or len(get_admin_users) == 0:
                 break
-            params['page'] += 1
+            params["page"] += 1
 
         for user in admin_users:
             action_result.add_data(user)
         summary = action_result.update_summary({})
-        summary['total_admin_users'] = action_result.get_data_size()
+        summary["total_admin_users"] = action_result.get_data_size()
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -850,27 +818,22 @@ class ZscalerConnector(BaseConnector):
         if not param:
             return action_result.set_status(phantom.APP_ERROR, "No filters provided")
 
-        ret_val, limit = self._validate_integer(action_result, param.get('limit', ZSCALER_MAX_PAGESIZE), ZSCALER_LIMIT_KEY)
+        ret_val, limit = self._validate_integer(action_result, param.get("limit", ZSCALER_MAX_PAGESIZE), ZSCALER_LIMIT_KEY)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
-        params = {
-            "name": param.get('name'),
-            "dept": param.get('dept'),
-            "group": param.get('group'),
-            'page': 1
-        }
+        params = {"name": param.get("name"), "dept": param.get("dept"), "group": param.get("group"), "page": 1}
         users = []
         while True:
-            params['pageSize'] = min(limit, ZSCALER_MAX_PAGESIZE)
-            ret_val, get_users = self._make_rest_call_helper('/api/v1/users', action_result, params=params, timeout=None)
+            params["pageSize"] = min(limit, ZSCALER_MAX_PAGESIZE)
+            ret_val, get_users = self._make_rest_call_helper("/api/v1/users", action_result, params=params, timeout=None)
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
             for user in get_users:
                 users.append(user)
-            limit = limit - params['pageSize']
+            limit = limit - params["pageSize"]
             if limit <= 0 or len(get_users) == 0:
                 break
-            params['page'] += 1
+            params["page"] += 1
 
         # Add the response into the data section
         for user in users:
@@ -878,7 +841,7 @@ class ZscalerConnector(BaseConnector):
 
         # Add a dictionary that is made up of the most important values from data into the summary
         summary = action_result.update_summary({})
-        summary['total_users'] = action_result.get_data_size()
+        summary["total_users"] = action_result.get_data_size()
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -891,29 +854,29 @@ class ZscalerConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
 
         action_result = self.add_action_result(ActionResult(dict(param)))
-        ret_val, limit = self._validate_integer(action_result, param.get('limit', ZSCALER_MAX_PAGESIZE), ZSCALER_LIMIT_KEY)
+        ret_val, limit = self._validate_integer(action_result, param.get("limit", ZSCALER_MAX_PAGESIZE), ZSCALER_LIMIT_KEY)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
-        params = {"search": param.get('search')}
+        params = {"search": param.get("search")}
         groups = []
-        params['page'] = 1
+        params["page"] = 1
         while True:
-            params['pageSize'] = min(limit, ZSCALER_MAX_PAGESIZE)
-            ret_val, get_groups = self._make_rest_call_helper('/api/v1/groups', action_result, params=params)
+            params["pageSize"] = min(limit, ZSCALER_MAX_PAGESIZE)
+            ret_val, get_groups = self._make_rest_call_helper("/api/v1/groups", action_result, params=params)
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
             for group in get_groups:
                 groups.append(group)
-            limit = limit - params['pageSize']
+            limit = limit - params["pageSize"]
             if limit <= 0 or len(get_groups) == 0:
                 break
-            params['page'] += 1
+            params["page"] += 1
 
         for group in groups:
             action_result.add_data(group)
 
         summary = action_result.update_summary({})
-        summary['total_groups'] = action_result.get_data_size()
+        summary["total_groups"] = action_result.get_data_size()
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -928,29 +891,29 @@ class ZscalerConnector(BaseConnector):
 
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        user_id = param['user_id']
-        group_id = param['group_id']
-        ret_val, user_response = self._make_rest_call_helper(f'/api/v1/users/{user_id}', action_result)
+        user_id = param["user_id"]
+        group_id = param["group_id"]
+        ret_val, user_response = self._make_rest_call_helper(f"/api/v1/users/{user_id}", action_result)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
-        ret_val, group_response = self._make_rest_call_helper(f'/api/v1/groups/{group_id}', action_result)
+        ret_val, group_response = self._make_rest_call_helper(f"/api/v1/groups/{group_id}", action_result)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
         summary = action_result.update_summary({})
-        if group_response in user_response['groups']:
-            summary['message'] = "User already in group"
+        if group_response in user_response["groups"]:
+            summary["message"] = "User already in group"
             action_result.add_data(group_response)
             return action_result.set_status(phantom.APP_SUCCESS, "User already in group")
-        user_response['groups'].append(group_response)
+        user_response["groups"].append(group_response)
         data = user_response
-        ret_val, response = self._make_rest_call_helper(f'/api/v1/users/{user_id}', action_result, data=data, method='put')
+        ret_val, response = self._make_rest_call_helper(f"/api/v1/users/{user_id}", action_result, data=data, method="put")
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
         action_result.add_data(response)
 
-        summary['message'] = "User successfully added to group"
+        summary["message"] = "User successfully added to group"
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_remove_group_user(self, param):
@@ -963,32 +926,532 @@ class ZscalerConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        user_id = param['user_id']
-        group_id = param['group_id']
-        ret_val, user_response = self._make_rest_call_helper(f'/api/v1/users/{user_id}', action_result)
+        user_id = param["user_id"]
+        group_id = param["group_id"]
+        ret_val, user_response = self._make_rest_call_helper(f"/api/v1/users/{user_id}", action_result)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
         summary = action_result.update_summary({})
-        if group_id not in [item['id'] for item in user_response['groups']]:
-            summary['message'] = "User already removed from group"
+        if group_id not in [item["id"] for item in user_response["groups"]]:
+            summary["message"] = "User already removed from group"
             action_result.add_data(user_response)
             return action_result.set_status(phantom.APP_SUCCESS, "User already removed from group")
 
-        for index, group in enumerate(user_response['groups']):
-            if group_id == group['id']:
-                user_response['groups'].pop(index)
+        for index, group in enumerate(user_response["groups"]):
+            if group_id == group["id"]:
+                user_response["groups"].pop(index)
 
         data = user_response
-        ret_val, response = self._make_rest_call_helper(f'/api/v1/users/{user_id}', action_result, data=data, method='put')
+        ret_val, response = self._make_rest_call_helper(f"/api/v1/users/{user_id}", action_result, data=data, method="put")
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
         action_result.add_data(response)
-        summary['message'] = "User removed from group"
+        summary["message"] = "User removed from group"
 
         return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_get_allowlist(self, param):
+        """
+        This action is used to get the default allowlist in zscaler
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        ret_val, response = self._get_allowlist(action_result)
+        if phantom.is_fail(ret_val):
+            return RetVal(ret_val, None)
+
+        allowlist = response.get("whitelistUrls", [])
+        for allowed in allowlist:
+            action_result.add_data({"url": allowed})
+        summary = action_result.update_summary({})
+        summary["total_allowlist_items"] = action_result.get_data_size()
+        summary["message"] = "allowlist retrieved"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _is_ip_address(self, address):
+        try:
+            ipaddress.ip_address(address)
+            return True
+        except ValueError:
+            return False
+
+    def _handle_get_denylist(self, param):
+        """
+        This action is used to get the denylist in zscaler
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        ret_val, response = self._get_blocklist(action_result)
+        if phantom.is_fail(ret_val):
+            return RetVal(ret_val, None)
+
+        filter = param.get("filter")
+        query = param.get("query")
+
+        summary = action_result.update_summary({})
+        summary["message"] = "Denylist retrieved"
+
+        blocklist = response.get("blacklistUrls", [])
+        for blocked in blocklist:
+            is_ip = self._is_ip_address(blocked)
+            if filter == "ip" and not is_ip:
+                continue
+            if filter == "url" and is_ip:
+                continue
+            if query and not re.fullmatch(query, blocked):
+                continue
+            action_result.add_data({"url": blocked})
+
+        summary["total_denylist_items"] = action_result.get_data_size()
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_update_user(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        user_id = param["user_id"]
+
+        try:
+            data = json.loads(param.get("user", "{}"))
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, "User object needs to be valid json: {}".format(e))
+
+        ret_val, response = self._make_rest_call_helper(f"/api/v1/users/{user_id}", action_result, data=data, method="put")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        self.debug_print(response)
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary["message"] = "User updated"
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _get_category_details(self, id, action_result):
+        ret_val, response = self._make_rest_call_helper(f"/api/v1/urlCategories/{id}", action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status(), None
+        return phantom.APP_SUCCESS, response
+
+    def _add_to_category(self, data, parent_data, cat_details, category_id, action_result):
+        new_data = cat_details.get("urls", [])
+        new_data.extend(data)
+        if new_data:
+            cat_details["urls"] = new_data
+
+        new_parent_data = cat_details.get("dbCategorizedUrls", [])
+        new_parent_data.extend(parent_data)
+        if new_parent_data:
+            cat_details["dbCategorizedUrls"] = new_parent_data
+
+        ret_val, response = self._make_rest_call_helper(f"/api/v1/urlCategories/{category_id}", action_result, data=cat_details, method="put")
+        return ret_val, response
+
+    def _handle_add_category_url(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        category_id = param["category_id"]
+
+        ret_val, category_details = self._get_category_details(category_id, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        is_custom_category = category_details.get("customCategory", False)
+
+        if not is_custom_category:
+            action_result.set_status(phantom.APP_ERROR, "Category with {0} is a default category, which cannot be modified".format(category_id))
+            return action_result.get_status()
+
+        urls = param.get("urls", "")
+        urls_list = [item.strip() for item in urls.split(",") if item.strip()]
+        retaining_parent_category_url = param.get("retaining-parent-category-url", "")
+        parent_urls = [item.strip() for item in retaining_parent_category_url.split(",") if item.strip()]
+        ret_val, response = self._add_to_category(urls_list, parent_urls, category_details, category_id, action_result)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary["message"] = "Category urls updated"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_add_category_ip(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        category_id = param["category_id"]
+
+        ret_val, category_details = self._get_category_details(category_id, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        ips = param.get("ips", "")
+        ips_list = [item.strip() for item in ips.split(",") if item.strip()]
+        retaining_parent_category_ip = param.get("retaining-parent-category-ip", "")
+        parent_ips = [item.strip() for item in retaining_parent_category_ip.split(",") if item.strip()]
+        ret_val, response = self._add_to_category(ips_list, parent_ips, category_details, category_id, action_result)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary["message"] = "Category ips updated"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_remove_category_ip(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        category_id = param["category_id"]
+
+        ret_val, category_details = self._get_category_details(category_id, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        ips = param.get("ips", "")
+        ips_to_remove = [item.strip() for item in ips.split(",") if item.strip()]
+        retaining_parent_category_ips = param.get("retaining-parent-category-ip", "")
+        parent_ips_to_remove = [item.strip() for item in retaining_parent_category_ips.split(",") if item.strip()]
+
+        ret_val, response = self._remove_from_category(ips_to_remove, parent_ips_to_remove, category_details, category_id, action_result)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary["message"] = "Category ips removed"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _remove_from_category(self, data, parent_data, cat_details, category_id, action_result):
+        data_set = set(data)
+        new_data = []
+        for point in cat_details.get("urls", []):
+            if point not in data_set:
+                new_data.append(point)
+
+        parent_data_set = set(parent_data)
+        new_parent_data = []
+        for point in cat_details.get("dbCategorizedUrls", []):
+            if point not in parent_data_set:
+                new_parent_data.append(point)
+
+        cat_details["urls"] = new_data
+        cat_details["dbCategorizedUrls"] = new_parent_data
+
+        ret_val, response = self._make_rest_call_helper(f"/api/v1/urlCategories/{category_id}", action_result, data=cat_details, method="put")
+        return ret_val, response
+
+    def _handle_remove_category_url(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        category_id = param["category_id"]
+
+        ret_val, category_details = self._get_category_details(category_id, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        urls = param.get("urls", "")
+        urls_to_remove = [item.strip() for item in urls.split(",") if item.strip()]
+        retaining_parent_category_url = param.get("retaining-parent-category-url", "")
+        parent_urls_to_remove = [item.strip() for item in retaining_parent_category_url.split(",") if item.strip()]
+
+        ret_val, response = self._remove_from_category(urls_to_remove, parent_urls_to_remove, category_details, category_id, action_result)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary["message"] = "Category urls removed"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_create_destination_group(self, param):
+        """
+        This action is used to create an IP Destination Group
+        :param name: IP destination group name
+        :param type: IP destination group type
+        :param addresses: Destination IP addresses, FQDNs, or wildcard FQDNs
+        :param description: Additional information about the destination IP group
+        :param ip_categories: Destination IP address URL categories
+        :param countries: Destination IP address countries
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        addresses = param.get("addresses", "")
+        ip_categories = param.get("ip_categories", "")
+        countries = param.get("countries", "")
+
+        data = {}
+        data["name"] = param["name"]
+        data["type"] = param["type"]
+        if addresses:
+            data["addresses"] = [item.strip() for item in addresses.split(",")]
+        data["description"] = param.get("description", "")
+        if ip_categories:
+            data["ipCategories"] = [item.strip() for item in ip_categories.split(",")]
+        if countries:
+            data["countries"] = [item.strip() for item in countries.split(",")]
+
+        ret_val, response = self._make_rest_call_helper("/api/v1/ipDestinationGroups", action_result, data=data, method="post")
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary["message"] = "Destination Group Created"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _get_destination_group(self, id, action_result, exclude_type=None, category_type=None, lite=False):
+
+        ret_val, response = self._make_rest_call_helper(f"/api/v1/ipDestinationGroups/{id}", action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status(), None
+
+        group_type = response["type"]
+
+        if group_type == exclude_type:
+            return phantom.APP_SUCCESS, None
+
+        if lite:
+            if category_type and group_type not in category_type:
+                return phantom.APP_SUCCESS, None
+
+            lite_resp = {"id": response["id"], "name": response["name"], "type": group_type}
+            return phantom.APP_SUCCESS, lite_resp
+
+        return phantom.APP_SUCCESS, response
+
+    def _get_batched_groups(self, endpoint, params, action_result):
+        limit = params["pageSize"]
+
+        while True:
+            params["pageSize"] = min(limit, ZSCALER_MAX_PAGESIZE)
+            ret_val, get_groups = self._make_rest_call_helper("/api/v1" + endpoint, action_result, params=params)
+            self.debug_print("get groups is {0}".format(get_groups))
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+            for group in get_groups:
+                if "extensions" in group:
+                    extensions = group.pop("extensions")
+                    for key in extensions:
+                        group[key] = extensions[key]
+                action_result.add_data(group)
+            limit = limit - params["pageSize"]
+            if limit <= 0 or len(get_groups) == 0:
+                break
+            params["page"] += 1
+
+        return phantom.APP_SUCCESS
+
+    def _handle_list_destination_group(self, param):
+        """
+        This action is used to list IP Destination Groups
+        :param ip_group_ids: Destination groups to retrieve
+        :param exclude_type: Group types to exclude from search
+        :param category_type: Destination types to filter by
+        :param limit: Number of groups to retrieve
+        :param lite: Retrieve limited information for each group
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        ip_group_ids = param.get("ip_group_ids", "")
+        ip_ids_lst = [item.strip() for item in ip_group_ids.split(",") if item.strip()]
+        exclude_type = param.get("exclude_type", "")
+        category_type = param.get("category_type", "")
+        category_type_list = [item.strip() for item in category_type.split(",") if item.strip()]
+        limit = param.get("limit", 50)
+        lite = param.get("lite", False)
+
+        params = {}
+        endpoint = "/ipDestinationGroups"
+        params["excludeType"] = exclude_type
+        self.debug_print("ip id list {0}".format(ip_ids_lst))
+        if ip_ids_lst:
+            for ip in ip_ids_lst:
+                ret_val, response = self._get_destination_group(ip, action_result, exclude_type, category_type, lite)
+                if phantom.is_fail(ret_val):
+                    return action_result.get_status()
+                action_result.add_data(response)
+
+            summary = action_result.update_summary({})
+            summary["message"] = "Destination groups retrieved"
+            return action_result.set_status(phantom.APP_SUCCESS)
+
+        elif lite:
+            endpoint = "/ipDestinationGroups/lite"
+            params["type"] = category_type_list
+
+        params["page"] = 1
+        params["pageSize"] = limit
+        ret_val = self._get_batched_groups(endpoint, params, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        # action_result.add_data(destination_groups)
+        summary = action_result.update_summary({})
+        summary["message"] = "Destination groups retrieved"
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_edit_destination_group(self, param):
+        """
+        This action is used to edit an IP Destination Group
+        :param ip_group_id: Id of destination group to edit
+        :param name: IP destination group name
+        :param addresses: Destination IP addresses, FQDNs, or wildcard FQDNs
+        :param description: Additional information about the destination IP group
+        :param ip_categories: Destination IP address URL categories
+        :param countries: Destination IP address countries
+        :param is_non_editable: If set to true, the destination IP address group is non-editable
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        group_id = param["ip_group_id"]
+
+        ret_val, group_resp = self._get_destination_group(group_id, action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+        group_resp["name"] = param.get("name", group_resp["name"])
+        if param.get("addresses"):
+            new_addresses = [item.strip() for item in param.get("addresses", "").split(",") if item.strip()]
+            group_resp["addresses"] = new_addresses
+        group_resp["description"] = param.get("description", group_resp["description"])
+        if param.get("ip_categories"):
+            new_ip_categories = [item.strip() for item in param.get("ip_categories", "").split(",") if item.strip()]
+            group_resp["ipCategories"] = new_ip_categories
+        if param.get("countries"):
+            new_countries = [item.strip() for item in param.get("countries", "").split(",") if item.strip()]
+            group_resp["countries"] = new_countries
+        group_resp["isNonEditable"] = param.get("is_non_editable", False)
+
+        ret_val, response = self._make_rest_call_helper(f"/api/v1/ipDestinationGroups/{group_id}", action_result, data=group_resp, method="put")
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary["message"] = "Destination Group Edited"
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_delete_destination_group(self, param):
+        """
+        This action is used to delete IP Destination Groups
+        :param ip_group_ids: Ids of destination group to delete
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        group_ids = param.get("ip_group_ids", "")
+        list_group_ids = [item.strip() for item in group_ids.split(",") if item.strip()]
+
+        for group_id in list_group_ids:
+            ret_val, response = self._make_rest_call_helper(f"/api/v1/ipDestinationGroups/{group_id}", action_result, method="delete")
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+            action_result.add_data({"ip_group_id": group_id})
+
+        summary = action_result.update_summary({})
+        summary["message"] = "Destination groups deleted"
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_get_category_details(self, param):
+        """
+        This action is used to get category details of specfic categories
+        :param category_ids: Ids of category's to query
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        group_ids = param.get("category_ids", "")
+        list_category_ids = [item.strip() for item in group_ids.split(",") if item.strip()]
+
+        for category_id in list_category_ids:
+            ret_val, category_details = self._get_category_details(category_id, action_result)
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+            action_result.add_data(category_details)
+
+        summary = action_result.update_summary({})
+        summary["message"] = "Category details recieved"
+        summary["total_categories"] = action_result.get_data_size()
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_get_departments(self, param):
+        """
+        This action is used to get departments
+        :param name: Filter by department name
+        :param page: Specifies the page offset
+        :param pageSize: Specifies the page size. Defaul is 100
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        name = param.get("name")
+        page_size = param.get("pageSize")
+        page_num = param.get("page", 1)
+
+        endpoint = f"/api/v1/departments?page={page_num}&pageSize={page_size}"
+
+        if name:
+            endpoint = f"/api/v1/departments?page={page_num}&pageSize={page_size}&search={name}&limitSearch=true"
+
+        ret_val, response = self._make_rest_call_helper(endpoint, action_result)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        for department in response:
+            action_result.add_data(department)
+
+        summary = action_result.update_summary({})
+        summary["message"] = "Departments retrieved"
+        summary["total_deparments"] = action_result.get_data_size()
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_additional_actions(self, action_id, param):
+        ret_val = phantom.APP_SUCCESS
+
+        if action_id == "create_destination_group":
+            ret_val = self._handle_create_destination_group(param)
+
+        elif action_id == "list_destination_group":
+            ret_val = self._handle_list_destination_group(param)
+
+        elif action_id == "edit_destination_group":
+            ret_val = self._handle_edit_destination_group(param)
+
+        elif action_id == "delete_destination_group":
+            ret_val = self._handle_delete_destination_group(param)
+
+        elif action_id == "get_departments":
+            ret_val = self._handle_get_departments(param)
+
+        elif action_id == "get_category_details":
+            ret_val = self._handle_get_category_details(param)
+
+        return ret_val
 
     def handle_action(self, param):
 
@@ -999,62 +1462,87 @@ class ZscalerConnector(BaseConnector):
 
         self.debug_print("action_id", self.get_action_identifier())
 
-        if action_id == 'test_connectivity':
+        if action_id == "test_connectivity":
             ret_val = self._handle_test_connectivity(param)
 
-        elif action_id == 'list_url_categories':
+        elif action_id == "list_url_categories":
             ret_val = self._handle_list_url_categories(param)
 
-        elif action_id == 'get_report':
+        elif action_id == "get_report":
             ret_val = self._handle_get_report(param)
 
-        elif action_id == 'block_ip':
+        elif action_id == "block_ip":
             ret_val = self._handle_block_ip(param)
 
-        elif action_id == 'block_url':
+        elif action_id == "block_url":
             ret_val = self._handle_block_url(param)
 
-        elif action_id == 'unblock_ip':
+        elif action_id == "unblock_ip":
             ret_val = self._handle_unblock_ip(param)
 
-        elif action_id == 'unblock_url':
+        elif action_id == "unblock_url":
             ret_val = self._handle_unblock_url(param)
 
-        elif action_id == 'allow_ip':
+        elif action_id == "allow_ip":
             ret_val = self._handle_allow_ip(param)
 
-        elif action_id == 'allow_url':
+        elif action_id == "allow_url":
             ret_val = self._handle_allow_url(param)
 
-        elif action_id == 'unallow_ip':
+        elif action_id == "unallow_ip":
             ret_val = self._handle_unallow_ip(param)
 
-        elif action_id == 'unallow_url':
+        elif action_id == "unallow_url":
             ret_val = self._handle_unallow_url(param)
 
-        elif action_id == 'lookup_ip':
+        elif action_id == "lookup_ip":
             ret_val = self._handle_lookup_ip(param)
 
-        elif action_id == 'lookup_url':
+        elif action_id == "lookup_url":
             ret_val = self._handle_lookup_url(param)
 
-        elif action_id == 'submit_file':
+        elif action_id == "submit_file":
             ret_val = self._handle_submit_file(param)
 
-        elif action_id == 'get_admin_users':
+        elif action_id == "get_admin_users":
             ret_val = self._handle_get_admin_users(param)
 
-        elif action_id == 'get_users':
+        elif action_id == "get_users":
             ret_val = self._handle_get_users(param)
 
-        elif action_id == 'get_groups':
+        elif action_id == "get_groups":
             ret_val = self._handle_get_groups(param)
 
-        elif action_id == 'add_group_user':
+        elif action_id == "add_group_user":
             ret_val = self._handle_add_group_user(param)
 
-        elif action_id == 'remove_group_user':
+        elif action_id == "remove_group_user":
             ret_val = self._handle_remove_group_user(param)
+
+        elif action_id == "get_allowlist":
+            ret_val = self._handle_get_allowlist(param)
+
+        elif action_id == "get_denylist":
+            ret_val = self._handle_get_denylist(param)
+
+        elif action_id == "update_user":
+            ret_val = self._handle_update_user(param)
+
+        elif action_id == "add_category_url":
+            ret_val = self._handle_add_category_url(param)
+
+        elif action_id == "add_category_ip":
+            ret_val = self._handle_add_category_ip(param)
+
+        elif action_id == "remove_category_url":
+            ret_val = self._handle_remove_category_url(param)
+
+        elif action_id == "remove_category_ip":
+            ret_val = self._handle_remove_category_ip(param)
+
+        else:
+            # passing the action handling to another function to decrease FLAKE_8 complexity
+            ret_val = self._handle_additional_actions(action_id, param)
 
         return ret_val
 
@@ -1068,17 +1556,17 @@ class ZscalerConnector(BaseConnector):
             self._state = {"app_version": self.get_app_json().get("app_version")}
 
         config = self.get_config()
-        self._base_url = config['base_url'].rstrip('/')
-        self._username = config['username']
-        self._password = config['password']
-        self._api_key = config['api_key']
-        self._sandbox_base_url = config.get('sandbox_base_url', None)
+        self._base_url = config["base_url"].rstrip("/")
+        self._username = config["username"]
+        self._password = config["password"]
+        self._api_key = config["api_key"]
+        self._sandbox_base_url = config.get("sandbox_base_url", None)
         if self._sandbox_base_url:
-            self._sandbox_base_url = self._sandbox_base_url.rstrip('/')
-        self._sandbox_api_token = config.get('sandbox_api_token', None)
+            self._sandbox_base_url = self._sandbox_base_url.rstrip("/")
+        self._sandbox_api_token = config.get("sandbox_api_token", None)
         self._headers = {}
-        self._retry_rest_call = True
-        self.set_validator('ipv6', self._is_ip)
+        self._retry_rest_call = 5
+        self.set_validator("ipv6", self._is_ip)
 
         return self._init_session()
 
@@ -1088,7 +1576,7 @@ class ZscalerConnector(BaseConnector):
         return self._deinit_session()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     import argparse
     import sys
@@ -1099,35 +1587,33 @@ if __name__ == '__main__':
 
     argparser = argparse.ArgumentParser()
 
-    argparser.add_argument('input_test_json', help='Input Test JSON file')
-    argparser.add_argument('-u', '--username', help='username', required=False)
-    argparser.add_argument('-p', '--password', help='password', required=False)
-    argparser.add_argument('-v', '--verify', action='store_true', help='verify', required=False, default=False)
+    argparser.add_argument("input_test_json", help="Input Test JSON file")
+    argparser.add_argument("-u", "--username", help="username", required=False)
+    argparser.add_argument("-p", "--password", help="password", required=False)
+    argparser.add_argument("-v", "--verify", action="store_true", help="verify", required=False, default=False)
 
     args = argparser.parse_args()
     verify = args.verify
     session_id = None
 
-    if (args.username and args.password):
+    if args.username and args.password:
         login_url = BaseConnector._get_phantom_base_url() + "login"
         try:
             print("Accessing the Login page")
-            r = requests.get(
-                login_url, verify=verify, timeout=ZSCALER_DEFAULT_TIMEOUT)
-            csrftoken = r.cookies['csrftoken']
-            data = {'username': args.username, 'password': args.password, 'csrfmiddlewaretoken': csrftoken}
-            headers = {'Cookie': 'csrftoken={0}'.format(csrftoken), 'Referer': login_url}
+            r = requests.get(login_url, verify=verify, timeout=ZSCALER_DEFAULT_TIMEOUT)
+            csrftoken = r.cookies["csrftoken"]
+            data = {"username": args.username, "password": args.password, "csrfmiddlewaretoken": csrftoken}
+            headers = {"Cookie": "csrftoken={0}".format(csrftoken), "Referer": login_url}
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(
-                login_url, verify=verify, data=data, headers=headers, timeout=ZSCALER_DEFAULT_TIMEOUT)
-            session_id = r2.cookies['sessionid']
+            r2 = requests.post(login_url, verify=verify, data=data, headers=headers, timeout=ZSCALER_DEFAULT_TIMEOUT)
+            session_id = r2.cookies["sessionid"]
 
         except Exception as e:
             print(("Unable to get session id from the platform. Error: {0}".format(str(e))))
             sys.exit(1)
 
-    if (len(sys.argv) < 2):
+    if len(sys.argv) < 2:
         print("No test json specified as input")
         sys.exit(0)
 
@@ -1139,8 +1625,8 @@ if __name__ == '__main__':
         connector = ZscalerConnector()
         connector.print_progress_message = True
 
-        if (session_id is not None):
-            in_json['user_session_token'] = session_id
+        if session_id is not None:
+            in_json["user_session_token"] = session_id
 
         ret_val = connector._handle_action(json.dumps(in_json), None)
         print(json.dumps(json.loads(ret_val), indent=4))
