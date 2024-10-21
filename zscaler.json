@@ -4288,6 +4288,16 @@
                     "default": 50,
                     "order": 3
                 },
+                "include_ipv6": {
+                    "description": "Retrieve IPv6 destination groups",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true, 
+                        false
+                    ],
+                    "default": false, 
+                    "order": 4
+                },
                 "lite": {
                     "description": "Whether to retrieve only limited information of IP destination groups. Includes ID, name and type of the IP destination groups",
                     "data_type": "boolean",
@@ -4296,7 +4306,7 @@
                         false
                     ],
                     "default": false,
-                    "order": 4
+                    "order": 5
                 }
             },
             "output": [
@@ -4313,6 +4323,11 @@
                     "data_path": "action_result.parameter.lite",
                     "data_type": "boolean",
                     "column_name": "Lite"
+                },
+                {
+                    "data_path": "action_result.parameter.include_ipv6",
+                    "data_type": "boolean",
+                    "column_name": "Include Ipv6"
                 },
                 {
                     "data_path": "action_result.parameter.limit",

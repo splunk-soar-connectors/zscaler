@@ -1264,6 +1264,7 @@ class ZscalerConnector(BaseConnector):
         :param ip_group_ids: Destination groups to retrieve
         :param exclude_type: Group types to exclude from search
         :param category_type: Destination types to filter by
+        :param include_ipv6: Retrieve IPv6 groups
         :param limit: Number of groups to retrieve
         :param lite: Retrieve limited information for each group
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
@@ -1276,6 +1277,7 @@ class ZscalerConnector(BaseConnector):
         exclude_type = param.get("exclude_type", "")
         category_type = param.get("category_type", "")
         category_type_list = [item.strip() for item in category_type.split(",") if item.strip()]
+        include_ipv6 = param.get("include_ipv6", False)
         limit = param.get("limit", 50)
         lite = param.get("lite", False)
 
@@ -1304,7 +1306,15 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        # action_result.add_data(destination_groups)
+        if include_ipv6:
+            self.save_progress("Retrieving ipv6 destination groups")
+            params['page'] = 1
+            params['pageSize'] = limit
+            endpoint = '/ipDestinationGroups/ipv6DestinationGroups/lite' if lite else '/ipDestinationGroups/ipv6DestinationGroups'
+            ret_val = self._get_batched_groups(endpoint, params, action_result)
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+
         summary = action_result.update_summary({})
         summary["message"] = "Destination groups retrieved"
         return action_result.set_status(phantom.APP_SUCCESS)
