@@ -9,7 +9,7 @@
     "product_name": "Zscaler",
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2017-2024 Splunk Inc.",
+    "license": "Copyright (c) 2017-2025 Splunk Inc.",
     "app_version": "3.0.0",
     "utctime_updated": "2022-01-24T06:29:48.000000Z",
     "package_name": "phantom_zscaler",
@@ -342,7 +342,7 @@
                     "data_path": "action_result.parameter.get_ids_and_names_only",
                     "data_type": "string",
                     "example_values": [
-                       "RADIO_STATIONS"
+                        "RADIO_STATIONS"
                     ]
                 },
                 {
@@ -3124,7 +3124,7 @@
                     "data_path": "action_result.parameter.query",
                     "data_type": "string",
                     "column_name": "Query",
-                   "example_values": [
+                    "example_values": [
                         "8...8"
                     ]
                 },
@@ -3424,7 +3424,7 @@
                     "data_path": "action_result.parameter.category_id",
                     "data_type": "string",
                     "example_values": [
-                       "RADIO_STATIONS"
+                        "RADIO_STATIONS"
                     ]
                 },
                 {
@@ -3557,7 +3557,7 @@
                     ]
                 }
             ],
-           "render": {
+            "render": {
                 "type": "table"
             },
             "versions": "EQ(*)"
@@ -3605,7 +3605,7 @@
                     "data_path": "action_result.parameter.category_id",
                     "data_type": "string",
                     "example_values": [
-                       "RADIO_STATIONS"
+                        "RADIO_STATIONS"
                     ]
                 },
                 {
@@ -3738,7 +3738,7 @@
                     ]
                 }
             ],
-           "render": {
+            "render": {
                 "type": "table"
             },
             "versions": "EQ(*)"
@@ -3788,7 +3788,7 @@
                     "data_path": "action_result.parameter.category_id",
                     "data_type": "string",
                     "example_values": [
-                       "RADIO_STATIONS"
+                        "RADIO_STATIONS"
                     ]
                 },
                 {
@@ -3889,7 +3889,7 @@
                     ]
                 }
             ],
-           "render": {
+            "render": {
                 "type": "table"
             },
             "versions": "EQ(*)"
@@ -3939,7 +3939,7 @@
                     "data_path": "action_result.parameter.category_id",
                     "data_type": "string",
                     "example_values": [
-                       "RADIO_STATIONS"
+                        "RADIO_STATIONS"
                     ]
                 },
                 {
@@ -4040,7 +4040,7 @@
                     ]
                 }
             ],
-           "render": {
+            "render": {
                 "type": "table"
             },
             "versions": "EQ(*)"
@@ -4292,7 +4292,7 @@
                     "description": "Whether to retrieve only limited information of IP destination groups. Includes ID, name and type of the IP destination groups",
                     "data_type": "boolean",
                     "example_values": [
-                        true, 
+                        true,
                         false
                     ],
                     "default": false,
@@ -4419,7 +4419,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                         "Retreived Destination Groups"
+                        "Retreived Destination Groups"
                     ]
                 },
                 {
@@ -4542,7 +4542,6 @@
                     "data_path": "action_result.parameter.ip_group_id",
                     "data_type": "numeric",
                     "column_name": "IP Group Id"
-                    
                 },
                 {
                     "data_path": "action_result.data.*.id",
@@ -4789,7 +4788,6 @@
                     "data_type": "numeric",
                     "column_name": "Department Id",
                     "column_order": 0
-
                 },
                 {
                     "data_path": "action_result.data.*.name",
@@ -5034,7 +5032,7 @@
                     ]
                 }
             ],
-           "render": {
+            "render": {
                 "type": "table"
             },
             "versions": "EQ(*)"
