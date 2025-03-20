@@ -1,6 +1,6 @@
 # File: zscaler_connector.py
 #
-# Copyright (c) 2017-2024 Splunk Inc.
+# Copyright (c) 2017-2025 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,11 +36,9 @@ class RetVal(tuple):
 
 
 class ZscalerConnector(BaseConnector):
-
     def __init__(self):
-
         # Call the BaseConnectors init first
-        super(ZscalerConnector, self).__init__()
+        super().__init__()
         self._state = None
         self._base_url = None
         self._response = None  # The most recent response object
@@ -67,12 +65,12 @@ class ZscalerConnector(BaseConnector):
                 elif len(e.args) == 1:
                     err_msg = e.args[0]
         except Exception as e:
-            self.debug_print("Error occurred while getting message from response. Error : {}".format(e))
+            self.debug_print(f"Error occurred while getting message from response. Error : {e}")
 
         if not err_code:
-            err_text = "Error Message: {}".format(err_msg)
+            err_text = f"Error Message: {err_msg}"
         else:
-            err_text = "Error Code: {}. Error Message: {}".format(err_code, err_msg)
+            err_text = f"Error Code: {err_code}. Error Message: {err_msg}"
 
         return err_text
 
@@ -107,13 +105,12 @@ class ZscalerConnector(BaseConnector):
             return RetVal(phantom.APP_SUCCESS, {})
         return RetVal(
             action_result.set_status(
-                phantom.APP_ERROR, "Status code : {}. Empty response and no information in the header".format(response.status_code)
+                phantom.APP_ERROR, f"Status code : {response.status_code}. Empty response and no information in the header"
             ),
             None,
         )
 
     def _process_html_response(self, response, action_result):
-
         # An html response, treat it like an error
         status_code = response.status_code
 
@@ -128,31 +125,27 @@ class ZscalerConnector(BaseConnector):
             err_text = "\n".join(split_lines)
         except Exception as e:
             err_text = "Cannot parse err details"
-            self.debug_print("{}. Error: {}".format(err_text, e))
+            self.debug_print(f"{err_text}. Error: {e}")
 
         err_text = err_text
 
         msg = (
-            "Please check the asset configuration parameters (the base_url should not end with "
-            "/api/v1 e.g. https://admin.zscaler_instance.net)."
+            "Please check the asset configuration parameters (the base_url should not end with /api/v1 e.g. https://admin.zscaler_instance.net)."
         )
 
         if len(err_text) <= 500:
-            msg += "Status Code: {0}. Data from server:\n{1}\n".format(status_code, err_text)
+            msg += f"Status Code: {status_code}. Data from server:\n{err_text}\n"
 
         msg = msg.replace("{", "{{").replace("}", "}}")
         return RetVal(action_result.set_status(phantom.APP_ERROR, msg), None)
 
     def _process_json_response(self, r, action_result):
-
         # Try a json parse
         try:
             resp_json = r.json()
         except Exception as e:
             return RetVal(
-                action_result.set_status(
-                    phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}".format(self._get_err_msg_from_exception(e))
-                ),
+                action_result.set_status(phantom.APP_ERROR, f"Unable to parse JSON response. Error: {self._get_err_msg_from_exception(e)}"),
                 None,
             )
 
@@ -164,11 +157,10 @@ class ZscalerConnector(BaseConnector):
         try:
             msg = resp_json["message"]
         except Exception:
-            msg = "Error from server. Status Code: {0} Data from server: {1}".format(r.status_code, r.text.replace("{", "{{").replace("}", "}}"))
+            msg = "Error from server. Status Code: {} Data from server: {}".format(r.status_code, r.text.replace("{", "{{").replace("}", "}}"))
         return RetVal(action_result.set_status(phantom.APP_ERROR, msg), None)
 
     def _process_response(self, r, action_result):
-
         # store the r_text in debug data, it will get dumped in the logs if the action fails
         if hasattr(action_result, "add_debug_data"):
             action_result.add_debug_data({"r_status_code": r.status_code})
@@ -193,7 +185,7 @@ class ZscalerConnector(BaseConnector):
             return self._process_empty_response(r, action_result)
 
         # everything else is actually an error at this point
-        msg = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
+        msg = "Can't process response from server. Status Code: {} Data from server: {}".format(
             r.status_code, r.text.replace("{", "{{").replace("}", "}}")
         )
 
@@ -221,7 +213,6 @@ class ZscalerConnector(BaseConnector):
     def _make_rest_call(
         self, endpoint, action_result, headers=None, params=None, data=None, method="get", use_json=True, timeout=ZSCALER_DEFAULT_TIMEOUT
     ):
-
         resp_json = None
 
         if headers is None:
@@ -233,10 +224,10 @@ class ZscalerConnector(BaseConnector):
         try:
             request_func = getattr(requests, method)
         except AttributeError:
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid method: {0}".format(method)), resp_json)
+            return RetVal(action_result.set_status(phantom.APP_ERROR, f"Invalid method: {method}"), resp_json)
 
         # Create a URL to connect to
-        url = "{}{}".format(self._base_url, endpoint)
+        url = f"{self._base_url}{endpoint}"
         try:
             if use_json:
                 r = request_func(url, json=data, headers=headers, params=params, timeout=timeout)
@@ -245,7 +236,7 @@ class ZscalerConnector(BaseConnector):
         except Exception as e:
             error_message = self._get_err_msg_from_exception(e)
             error_message = re.sub(ZSCALER_MATCH_REGEX, ZSCALER_REPLACE_REGEX, error_message)
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to Zscaler server. {}".format(error_message)), resp_json)
+            return RetVal(action_result.set_status(phantom.APP_ERROR, f"Error Connecting to Zscaler server. {error_message}"), resp_json)
 
         self._response = r
 
@@ -284,11 +275,11 @@ class ZscalerConnector(BaseConnector):
                 except KeyError:
                     self.debug_print("KeyError")
                     return ret_val, response
-                self.debug_print("Retry Time: {}".format(retry_time))
+                self.debug_print(f"Retry Time: {retry_time}")
                 seconds_to_wait = self._parse_retry_time(retry_time)
                 if seconds_to_wait is None or seconds_to_wait < 0:
                     return retry_time, response
-                self.send_progress("Exceeded rate limit: Retrying after {}".format(retry_time))
+                self.send_progress(f"Exceeded rate limit: Retrying after {retry_time}")
                 time.sleep(seconds_to_wait)
                 self._retry_rest_call -= 1  # reduce the number of retries
                 return self._make_rest_call_helper(*args, **kwargs)
@@ -320,8 +311,8 @@ class ZscalerConnector(BaseConnector):
         action_result = ActionResult()
         ret_val, _ = self._make_rest_call_helper("/api/v1/authenticatedSession", action_result, data=body, method="post")
         if phantom.is_fail(ret_val):
-            self.debug_print("Error starting Zscaler session: {}".format(action_result.get_message()))
-            return self.set_status(phantom.APP_ERROR, "Error starting Zscaler session: {}".format(action_result.get_message()))
+            self.debug_print(f"Error starting Zscaler session: {action_result.get_message()}")
+            return self.set_status(phantom.APP_ERROR, f"Error starting Zscaler session: {action_result.get_message()}")
         else:
             self.save_progress("Successfully started Zscaler session")
             self._headers = {"cookie": self._response.headers["Set-Cookie"].split(";")[0].strip()}
@@ -347,10 +338,10 @@ class ZscalerConnector(BaseConnector):
 
     def _filter_endpoints(self, action_result, to_add, existing, action, name):
         if action == "REMOVE_FROM_LIST":
-            msg = "{} contains none of these endpoints".format(name)
+            msg = f"{name} contains none of these endpoints"
             endpoints = list(set(existing) - (set(existing) - set(to_add)))
         else:
-            msg = "{} contains all of these endpoints".format(name)
+            msg = f"{name} contains all of these endpoints"
             endpoints = list(set(to_add) - set(existing))
 
         if not endpoints:
@@ -579,7 +570,6 @@ class ZscalerConnector(BaseConnector):
         return self._unallow_endpoint(action_result, param["url"], param.get("url_category"))
 
     def _lookup_endpoint(self, action_result, endpoints):
-
         if not endpoints:
             action_result.set_status(phantom.APP_ERROR, "Please provide valid list of URL(s)")
 
@@ -613,7 +603,7 @@ class ZscalerConnector(BaseConnector):
 
         file_hash = param["file_hash"]
 
-        ret_val, sandbox_report = self._make_rest_call_helper("/api/v1/sandbox/report/{0}?details=full".format(file_hash), action_result)
+        ret_val, sandbox_report = self._make_rest_call_helper(f"/api/v1/sandbox/report/{file_hash}?details=full", action_result)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -643,12 +633,12 @@ class ZscalerConnector(BaseConnector):
         try:
             file_id = param["vault_id"]
             success, msg, file_info = phantom_rules.vault_info(vault_id=file_id)
-            file_info = list(file_info)[0]
+            file_info = next(iter(file_info))
         except IndexError:
             return action_result.set_status(phantom.APP_ERROR, "Vault file could not be found with supplied Vault ID")
         except Exception as e:
             err_msg = self._get_err_msg_from_exception(e)
-            self.debug_print("Vault ID not valid. Error: {}".format(err_msg))
+            self.debug_print(f"Vault ID not valid. Error: {err_msg}")
             return action_result.set_status(phantom.APP_ERROR, "Vault ID not valid")
 
         params = {"force": 1 if param.get("force", False) else 0, "api_token": self._sandbox_api_token}
@@ -723,7 +713,6 @@ class ZscalerConnector(BaseConnector):
         return self._lookup_endpoint(action_result, endpoints)
 
     def _handle_lookup_url(self, param):
-
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         list_endpoints = list()
@@ -746,9 +735,9 @@ class ZscalerConnector(BaseConnector):
         """
         for i in range(len(endpoints)):
             if endpoints[i].startswith("http://"):
-                endpoints[i] = endpoints[i][(len("http://")) :]  # noqa
+                endpoints[i] = endpoints[i][(len("http://")) :]
             elif endpoints[i].startswith("https://"):
-                endpoints[i] = endpoints[i][(len("https://")) :]  # noqa
+                endpoints[i] = endpoints[i][(len("https://")) :]
 
         return endpoints
 
@@ -810,7 +799,7 @@ class ZscalerConnector(BaseConnector):
         :param limit: Max number of users to retrieve
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
         # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -851,7 +840,7 @@ class ZscalerConnector(BaseConnector):
         :param search: Search string to match
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
         action_result = self.add_action_result(ActionResult(dict(param)))
         ret_val, limit = self._validate_integer(action_result, param.get("limit", ZSCALER_MAX_PAGESIZE), ZSCALER_LIMIT_KEY)
@@ -887,7 +876,7 @@ class ZscalerConnector(BaseConnector):
         :param group_id: Group to add user tio
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
         action_result = self.add_action_result(ActionResult(dict(param)))
 
@@ -923,7 +912,7 @@ class ZscalerConnector(BaseConnector):
         :param group_id: Group to remove user from
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         user_id = param["user_id"]
@@ -958,7 +947,7 @@ class ZscalerConnector(BaseConnector):
         This action is used to get the default allowlist in zscaler
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         ret_val, response = self._get_allowlist(action_result)
@@ -986,7 +975,7 @@ class ZscalerConnector(BaseConnector):
         This action is used to get the denylist in zscaler
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         ret_val, response = self._get_blocklist(action_result)
@@ -1014,14 +1003,14 @@ class ZscalerConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_update_user(self, param):
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
         user_id = param["user_id"]
 
         try:
             data = json.loads(param.get("user", "{}"))
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, "User object needs to be valid json: {}".format(e))
+            return action_result.set_status(phantom.APP_ERROR, f"User object needs to be valid json: {e}")
 
         ret_val, response = self._make_rest_call_helper(f"/api/v1/users/{user_id}", action_result, data=data, method="put")
 
@@ -1055,7 +1044,7 @@ class ZscalerConnector(BaseConnector):
         return ret_val, response
 
     def _handle_add_category_url(self, param):
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
         category_id = param["category_id"]
 
@@ -1066,7 +1055,7 @@ class ZscalerConnector(BaseConnector):
         is_custom_category = category_details.get("customCategory", False)
 
         if not is_custom_category:
-            action_result.set_status(phantom.APP_ERROR, "Category with {0} is a default category, which cannot be modified".format(category_id))
+            action_result.set_status(phantom.APP_ERROR, f"Category with {category_id} is a default category, which cannot be modified")
             return action_result.get_status()
 
         urls = param.get("urls", "")
@@ -1085,7 +1074,7 @@ class ZscalerConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_add_category_ip(self, param):
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
         category_id = param["category_id"]
 
@@ -1109,7 +1098,7 @@ class ZscalerConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_remove_category_ip(self, param):
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
         category_id = param["category_id"]
 
@@ -1153,7 +1142,7 @@ class ZscalerConnector(BaseConnector):
         return ret_val, response
 
     def _handle_remove_category_url(self, param):
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
         category_id = param["category_id"]
 
@@ -1188,7 +1177,7 @@ class ZscalerConnector(BaseConnector):
         :param countries: Destination IP address countries
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         addresses = param.get("addresses", "")
@@ -1217,7 +1206,6 @@ class ZscalerConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_destination_group(self, id, action_result, exclude_type=None, category_type=None, lite=False):
-
         ret_val, response = self._make_rest_call_helper(f"/api/v1/ipDestinationGroups/{id}", action_result)
         if phantom.is_fail(ret_val):
             return action_result.get_status(), None
@@ -1242,7 +1230,7 @@ class ZscalerConnector(BaseConnector):
         while True:
             params["pageSize"] = min(limit, ZSCALER_MAX_PAGESIZE)
             ret_val, get_groups = self._make_rest_call_helper("/api/v1" + endpoint, action_result, params=params)
-            self.debug_print("get groups is {0}".format(get_groups))
+            self.debug_print(f"get groups is {get_groups}")
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
             for group in get_groups:
@@ -1268,7 +1256,7 @@ class ZscalerConnector(BaseConnector):
         :param lite: Retrieve limited information for each group
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         ip_group_ids = param.get("ip_group_ids", "")
@@ -1282,7 +1270,7 @@ class ZscalerConnector(BaseConnector):
         params = {}
         endpoint = "/ipDestinationGroups"
         params["excludeType"] = exclude_type
-        self.debug_print("ip id list {0}".format(ip_ids_lst))
+        self.debug_print(f"ip id list {ip_ids_lst}")
         if ip_ids_lst:
             for ip in ip_ids_lst:
                 ret_val, response = self._get_destination_group(ip, action_result, exclude_type, category_type, lite)
@@ -1321,7 +1309,7 @@ class ZscalerConnector(BaseConnector):
         :param is_non_editable: If set to true, the destination IP address group is non-editable
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         group_id = param["ip_group_id"]
@@ -1358,7 +1346,7 @@ class ZscalerConnector(BaseConnector):
         :param ip_group_ids: Ids of destination group to delete
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         group_ids = param.get("ip_group_ids", "")
@@ -1380,7 +1368,7 @@ class ZscalerConnector(BaseConnector):
         :param category_ids: Ids of category's to query
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         group_ids = param.get("category_ids", "")
@@ -1405,7 +1393,7 @@ class ZscalerConnector(BaseConnector):
         :param pageSize: Specifies the page size. Defaul is 100
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         name = param.get("name")
@@ -1454,7 +1442,6 @@ class ZscalerConnector(BaseConnector):
         return ret_val
 
     def handle_action(self, param):
-
         ret_val = phantom.APP_SUCCESS
 
         # Get the action that we are supposed to execute for this App Run
@@ -1547,7 +1534,6 @@ class ZscalerConnector(BaseConnector):
         return ret_val
 
     def initialize(self):
-
         # Load the state in initialize, use it to store data
         # that needs to be accessed across actions
         self._state = self.load_state()
@@ -1571,13 +1557,11 @@ class ZscalerConnector(BaseConnector):
         return self._init_session()
 
     def finalize(self):
-
         self.save_state(self._state)
         return self._deinit_session()
 
 
 if __name__ == "__main__":
-
     import argparse
     import sys
 
@@ -1603,14 +1587,14 @@ if __name__ == "__main__":
             r = requests.get(login_url, verify=verify, timeout=ZSCALER_DEFAULT_TIMEOUT)
             csrftoken = r.cookies["csrftoken"]
             data = {"username": args.username, "password": args.password, "csrfmiddlewaretoken": csrftoken}
-            headers = {"Cookie": "csrftoken={0}".format(csrftoken), "Referer": login_url}
+            headers = {"Cookie": f"csrftoken={csrftoken}", "Referer": login_url}
 
             print("Logging into Platform to get the session id")
             r2 = requests.post(login_url, verify=verify, data=data, headers=headers, timeout=ZSCALER_DEFAULT_TIMEOUT)
             session_id = r2.cookies["sessionid"]
 
         except Exception as e:
-            print(("Unable to get session id from the platform. Error: {0}".format(str(e))))
+            print(f"Unable to get session id from the platform. Error: {e!s}")
             sys.exit(1)
 
     if len(sys.argv) < 2:
