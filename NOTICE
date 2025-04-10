@@ -1,16 +1,2 @@
-Splunk SOAR Zscaler
-Copyright (c) 2017-2023 Splunk Inc.
-
-Third-party Software Attributions:
-
-Library: beautifulsoup4
-Version: 4.9.1
-License: MIT
-Copyright 2004-2017 Leonard Richardson
-Copyright 2004-2019 Leonard Richardson
-Copyright 2018 Isaac Muse
-
-Library: requests
-Version: 2.25.0
-License: Apache 2.0
-Kenneth Reitz
+Splunk SOAR App: Zscaler
+Copyright (c) 2017-2025 Splunk Inc.
