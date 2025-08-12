@@ -16,15 +16,15 @@ def get_ctx_result(result, submit_file=False):
     ctx_result = {}
     param = result.get_param()
     summary = result.get_summary()
-    data = result.get_data()
+    result_data = result.get_data()
 
     ctx_result["param"] = param
 
-    if data:
+    if result_data:
         if submit_file:
-            ctx_result["data"] = data[0]
+            ctx_result["data"] = result_data[0]
         else:
-            ctx_result["data"] = data
+            ctx_result["data"] = result_data
 
     if summary:
         ctx_result["summary"] = summary
