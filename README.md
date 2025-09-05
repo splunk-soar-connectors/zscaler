@@ -1,9 +1,9 @@
 # Zscaler
 
-Publisher: Splunk \
-Connector Version: 3.0.0 \
-Product Vendor: Zscaler \
-Product Name: Zscaler \
+Publisher: Splunk <br>
+Connector Version: 3.0.0 <br>
+Product Vendor: Zscaler <br>
+Product Name: Zscaler <br>
 Minimum Product Version: 6.2.2
 
 This app implements containment and investigative actions on Zscaler
@@ -84,44 +84,44 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration \
-[get report](#action-get-report) - Fetch sandbox report for provided md5 file hash \
-[list url categories](#action-list-url-categories) - List all URL categories \
-[block ip](#action-block-ip) - Block an IP \
-[block url](#action-block-url) - Block a URL \
-[unblock ip](#action-unblock-ip) - Unblock an IP \
-[unblock url](#action-unblock-url) - Unblock a URL \
-[allow ip](#action-allow-ip) - Add an IP address to the allowlist \
-[allow url](#action-allow-url) - Add a URL to the allowed list \
-[unallow ip](#action-unallow-ip) - Remove an IP address from the allowlist \
-[unallow url](#action-unallow-url) - Remove a URL from the allowed list \
-[lookup ip](#action-lookup-ip) - Lookup the categories related to an IP \
-[lookup url](#action-lookup-url) - Lookup the categories related to a URL \
-[submit file](#action-submit-file) - Submit a file to Zscaler Sandbox \
-[get admin users](#action-get-admin-users) - Get a list of admin users \
-[get users](#action-get-users) - Gets a list of all users and allows user filtering by name, department, or group \
-[get groups](#action-get-groups) - Gets a list of groups \
-[add group user](#action-add-group-user) - Add user to group \
-[remove group user](#action-remove-group-user) - Remove user from group \
-[get allowlist](#action-get-allowlist) - Get urls on the allow list \
-[get denylist](#action-get-denylist) - Get urls on the deny list \
-[update user](#action-update-user) - Update user with given id \
-[add category url](#action-add-category-url) - Add urls to a cetgory \
-[add category ip](#action-add-category-ip) - Add IPs to a cetgory \
-[remove category url](#action-remove-category-url) - Add urls to a cetgory \
-[remove category ip](#action-remove-category-ip) - Remove IPs to a cetgory \
-[create destination group](#action-create-destination-group) - Create destination group \
-[list destination group](#action-list-destination-group) - List destination group \
-[edit destination group](#action-edit-destination-group) - Edit destination group \
-[delete destination group](#action-delete-destination-group) - Delete destination group \
-[get departments](#action-get-departments) - Get a list of departments \
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration <br>
+[get report](#action-get-report) - Fetch sandbox report for provided md5 file hash <br>
+[list url categories](#action-list-url-categories) - List all URL categories <br>
+[block ip](#action-block-ip) - Block an IP <br>
+[block url](#action-block-url) - Block a URL <br>
+[unblock ip](#action-unblock-ip) - Unblock an IP <br>
+[unblock url](#action-unblock-url) - Unblock a URL <br>
+[allow ip](#action-allow-ip) - Add an IP address to the allowlist <br>
+[allow url](#action-allow-url) - Add a URL to the allowed list <br>
+[unallow ip](#action-unallow-ip) - Remove an IP address from the allowlist <br>
+[unallow url](#action-unallow-url) - Remove a URL from the allowed list <br>
+[lookup ip](#action-lookup-ip) - Lookup the categories related to an IP <br>
+[lookup url](#action-lookup-url) - Lookup the categories related to a URL <br>
+[submit file](#action-submit-file) - Submit a file to Zscaler Sandbox <br>
+[get admin users](#action-get-admin-users) - Get a list of admin users <br>
+[get users](#action-get-users) - Gets a list of all users and allows user filtering by name, department, or group <br>
+[get groups](#action-get-groups) - Gets a list of groups <br>
+[add group user](#action-add-group-user) - Add user to group <br>
+[remove group user](#action-remove-group-user) - Remove user from group <br>
+[get allowlist](#action-get-allowlist) - Get urls on the allow list <br>
+[get denylist](#action-get-denylist) - Get urls on the deny list <br>
+[update user](#action-update-user) - Update user with given id <br>
+[add category url](#action-add-category-url) - Add urls to a cetgory <br>
+[add category ip](#action-add-category-ip) - Add IPs to a cetgory <br>
+[remove category url](#action-remove-category-url) - Add urls to a cetgory <br>
+[remove category ip](#action-remove-category-ip) - Remove IPs to a cetgory <br>
+[create destination group](#action-create-destination-group) - Create destination group <br>
+[list destination group](#action-list-destination-group) - List destination group <br>
+[edit destination group](#action-edit-destination-group) - Edit destination group <br>
+[delete destination group](#action-delete-destination-group) - Delete destination group <br>
+[get departments](#action-get-departments) - Get a list of departments <br>
 [get category details](#action-get-category-details) - Get the urls and keywords of a category
 
 ## action: 'test connectivity'
 
 Validate the asset configuration for connectivity using supplied configuration
 
-Type: **test** \
+Type: **test** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -136,7 +136,7 @@ No Output
 
 Fetch sandbox report for provided md5 file hash
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -184,7 +184,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 List all URL categories
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -221,7 +221,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Block an IP
 
-Type: **contain** \
+Type: **contain** <br>
 Read only: **False**
 
 If a <b>url_category</b> is specified, it will add the IP(s) as a rule to that category. If it is left blank, it will instead add the IP(s) to the global blocklist.
@@ -256,7 +256,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Block a URL
 
-Type: **contain** \
+Type: **contain** <br>
 Read only: **False**
 
 If a <b>url_category</b> is specified, it will add the URL(s) as a rule to that category. If it is left blank, it will instead add the URL(s) to the global blocklist.
@@ -295,7 +295,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Unblock an IP
 
-Type: **correct** \
+Type: **correct** <br>
 Read only: **False**
 
 If a <b>url_category</b> is specified, it will remove the IP(s) from that category. If it is left blank, it will instead remove the IP(s) from the global blocklist.
@@ -330,7 +330,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Unblock a URL
 
-Type: **correct** \
+Type: **correct** <br>
 Read only: **False**
 
 If a <b>url_category</b> is specified, it will remove the URL(s) from that category. If it is left blank, it will instead remove the URL(s) from the global blocklist.
@@ -369,7 +369,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Add an IP address to the allowlist
 
-Type: **contain** \
+Type: **contain** <br>
 Read only: **False**
 
 If a <b>url_category</b> is specified, it will add the IP(s) as a rule to that category. If it is left blank, it will instead add this IP(s) to the global allowlist.
@@ -404,7 +404,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Add a URL to the allowed list
 
-Type: **contain** \
+Type: **contain** <br>
 Read only: **False**
 
 If a <b>url_category</b> is specified, it will add the URL(s) as a rule to that category. If it is left blank, it will instead add the URL(s) to the global allowed list.
@@ -443,7 +443,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Remove an IP address from the allowlist
 
-Type: **correct** \
+Type: **correct** <br>
 Read only: **False**
 
 If a <b>url_category</b> is specified, it will remove the IP(s) from that category. If it is left blank, it will instead remove the IP(s) from the global allowlist.
@@ -478,7 +478,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Remove a URL from the allowed list
 
-Type: **correct** \
+Type: **correct** <br>
 Read only: **False**
 
 If a <b>url_category</b> is specified, it will remove the URL(s) from that category. If it is left blank, it will instead remove the URL(s) from the global allowed list.
@@ -513,7 +513,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Lookup the categories related to an IP
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -541,7 +541,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Lookup the categories related to a URL
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -569,7 +569,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Submit a file to Zscaler Sandbox
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 This action requires a Sandbox Submission API token. By default, files are scanned by Zscaler antivirus (AV) and submitted directly to the sandbox in order to obtain a verdict. However, if a verdict already exists for the file, you can use the 'force' parameter to make the sandbox to reanalyze it. You can submit up to 100 files per day.
@@ -604,7 +604,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get a list of admin users
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -653,7 +653,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Gets a list of all users and allows user filtering by name, department, or group
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 Gets a list of all users and allows user filtering by name, department, or group. The name search parameter performs a partial match. The dept and group parameters perform a 'starts with' match.
@@ -697,7 +697,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Gets a list of groups
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 Gets a list of groups. The search parameters find matching values in the name or comments attributes.
@@ -729,7 +729,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Add user to group
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 Add a group to the user's profile.
@@ -768,7 +768,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Remove user from group
 
-Type: **correct** \
+Type: **correct** <br>
 Read only: **False**
 
 Remove a group from the user's profile.
@@ -807,7 +807,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get urls on the allow list
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -830,7 +830,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get urls on the deny list
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -858,7 +858,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Update user with given id
 
-Type: **correct** \
+Type: **correct** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -896,7 +896,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Add urls to a cetgory
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -940,7 +940,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Add IPs to a cetgory
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -984,7 +984,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Add urls to a cetgory
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -1028,7 +1028,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Remove IPs to a cetgory
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -1072,7 +1072,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Create destination group
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -1117,7 +1117,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 List destination group
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -1160,7 +1160,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Edit destination group
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -1207,7 +1207,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Delete destination group
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -1234,7 +1234,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get a list of departments
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -1268,7 +1268,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get the urls and keywords of a category
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters

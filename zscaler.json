@@ -14,7 +14,7 @@
     "utctime_updated": "2022-01-24T06:29:48.000000Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.py",
-    "python_version": "3",
+    "python_version": "3.9, 3.13",
     "min_phantom_version": "6.2.2",
     "fips_compliant": true,
     "latest_tested_versions": [
@@ -5037,5 +5037,11 @@
             },
             "versions": "EQ(*)"
         }
-    ]
+    ],
+    "pip39_dependencies": {
+        "wheel": []
+    },
+    "pip313_dependencies": {
+        "wheel": []
+    }
 }
