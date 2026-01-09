@@ -1034,13 +1034,15 @@ class ZscalerConnector(BaseConnector):
         new_data.extend(data)
         if new_data:
             cat_details["urls"] = new_data
+        ret_val, response = self._make_rest_call_helper(f"/api/v1/urlCategories/{category_id}?action=ADD_TO_LIST", action_result,
+            data={
+                "superCategory": "USER_DEFINED",
+                "configuredName": cat_details.get("configuredName"),
+                "urls": data
+                },
+            method="put"
+        )
 
-        new_parent_data = cat_details.get("dbCategorizedUrls", [])
-        new_parent_data.extend(parent_data)
-        if new_parent_data:
-            cat_details["dbCategorizedUrls"] = new_parent_data
-
-        ret_val, response = self._make_rest_call_helper(f"/api/v1/urlCategories/{category_id}", action_result, data=cat_details, method="put")
         return ret_val, response
 
     def _handle_add_category_url(self, param):
