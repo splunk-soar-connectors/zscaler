@@ -1,3 +1,10 @@
+This app supports either authentication method below (one complete method is required):
+
+- **API session authentication:** `username`, `password`, and `api_key`
+- **OAuth client credentials:** `oauth_token_url`, `oauth_client_id`, and `oauth_client_secret`
+
+If neither method is fully configured, the app returns an authentication error.
+
 Below points are considered for providing the **URL Category** parameter value.
 
 - Entire URL category string has to be mentioned in block letters

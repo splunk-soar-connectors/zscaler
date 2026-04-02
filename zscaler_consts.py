@@ -23,6 +23,16 @@ ZSCALER_STATE_FILE_CORRUPT_ERR = (
 )
 ZSCALER_MAX_PAGESIZE = 1000
 ZSCALER_DEFAULT_TIMEOUT = 30
+ZSCALER_ENCRYPTION_ERROR_MSG = "Error occurred while encrypting access token: {}"
+ZSCALER_DECRYPTION_ERROR_MSG = "Error occurred while decrypting access token: {}"
+
+# Constants relating to OAuth
+ZSCALER_OAUTH_TOKEN_URL_KEY = "oauth_token_url"
+ZSCALER_OAUTH_CLIENT_ID_KEY = "oauth_client_id"
+ZSCALER_OAUTH_CLIENT_SECRET_KEY = "oauth_client_secret"  # pragma: allowlist secret
+ZSCALER_OAUTH_ACCESS_TOKEN_KEY = "access_token"
+ZSCALER_OAUTH_TOKEN_ENCRYPTED_KEY = "is_encrypted"
+ZSCALER_OAUTH_TOKEN_EXPIRY_TIME_KEY = "expiry_time"
 
 # Constants relating to "_validate_integer"
 ZSCALER_VALID_INTEGER_MSG = "Please provide a valid integer value in the {param}"

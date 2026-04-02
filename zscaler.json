@@ -9,7 +9,13 @@
     "product_name": "Zscaler",
     "product_version_regex": ".*",
     "publisher": "Splunk",
+    "contributors": [
+        {
+            "name": "Andrei Irimia"
+        }
+    ],
     "license": "Copyright (c) 2017-2026 Splunk Inc.",
+    "app_version": "3.1.0",
     "utctime_updated": "2025-09-05T16:54:04.402050Z",
     "package_name": "phantom_zscaler",
     "main_module": "zscaler_connector.py",
@@ -30,30 +36,45 @@
         "api_key": {
             "description": "API Key",
             "data_type": "password",
-            "required": true,
             "order": 1
         },
         "username": {
             "description": "Username",
             "data_type": "string",
-            "required": true,
             "order": 2
         },
         "password": {
             "description": "Password",
             "data_type": "password",
-            "required": true,
             "order": 3
+        },
+        "oauth_token_url": {
+            "description": "OAuth Token URL",
+            "data_type": "string",
+            "required": false,
+            "order": 4
+        },
+        "oauth_client_id": {
+            "description": "OAuth Client ID",
+            "data_type": "string",
+            "required": false,
+            "order": 5
+        },
+        "oauth_client_secret": {
+            "description": "OAuth Client Secret",
+            "data_type": "password",
+            "required": false,
+            "order": 6
         },
         "sandbox_base_url": {
             "data_type": "string",
             "description": "Sandbox Base URL",
-            "order": 4
+            "order": 7
         },
         "sandbox_api_token": {
             "data_type": "password",
             "description": "Sandbox API Token",
-            "order": 5
+            "order": 8
         }
     },
     "actions": [

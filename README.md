@@ -1,12 +1,19 @@
 # Zscaler
 
 Publisher: Splunk <br>
-Connector Version: 3.0.1 <br>
+Connector Version: 3.1.0 <br>
 Product Vendor: Zscaler <br>
 Product Name: Zscaler <br>
 Minimum Product Version: 6.2.2
 
 This app implements containment and investigative actions on Zscaler
+
+This app supports either authentication method below (one complete method is required):
+
+- **API session authentication:** `username`, `password`, and `api_key`
+- **OAuth client credentials:** `oauth_token_url`, `oauth_client_id`, and `oauth_client_secret`
+
+If neither method is fully configured, the app returns an authentication error.
 
 Below points are considered for providing the **URL Category** parameter value.
 
@@ -76,9 +83,12 @@ This table lists the configuration variables required to operate Zscaler. These 
 VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
 **base_url** | required | string | Base URL (e.g. https://admin.zscaler_instance.net) |
-**api_key** | required | password | API Key |
-**username** | required | string | Username |
-**password** | required | password | Password |
+**api_key** | optional | password | API Key |
+**username** | optional | string | Username |
+**password** | optional | password | Password |
+**oauth_token_url** | optional | string | OAuth Token URL |
+**oauth_client_id** | optional | string | OAuth Client ID |
+**oauth_client_secret** | optional | password | OAuth Client Secret |
 **sandbox_base_url** | optional | string | Sandbox Base URL |
 **sandbox_api_token** | optional | password | Sandbox API Token |
 
