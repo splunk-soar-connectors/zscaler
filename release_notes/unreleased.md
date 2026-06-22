@@ -1,1 +1,2 @@
 **Unreleased**
+* Added OAuth support

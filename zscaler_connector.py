@@ -1,6 +1,6 @@
 # File: zscaler_connector.py
 #
-# Copyright (c) 2017-2025 Splunk Inc.
+# Copyright (c) 2017-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,13 +19,16 @@ import ipaddress
 import json
 import re
 import time
+from datetime import datetime, timedelta
 
+import encryption_helper
 import phantom.app as phantom
 import phantom.rules as phantom_rules
 import requests
 from bs4 import BeautifulSoup
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
+from requests.auth import HTTPBasicAuth
 
 from zscaler_consts import *
 
@@ -45,6 +48,12 @@ class ZscalerConnector(BaseConnector):
         self._headers = None
         self._category = None
         self._retry_rest_call = None  # Retry rest call when get status_code 409 or 429
+        self._oauth_token_url = None
+        self._oauth_client_id = None
+        self._oauth_client_secret = None
+        self._oauth_access_token = None
+        self._oauth_token_expiry_time = None
+        self._use_oauth = False
 
     def _get_err_msg_from_exception(self, e):
         """
@@ -298,27 +307,121 @@ class ZscalerConnector(BaseConnector):
         return now, key
 
     def _init_session(self):
-        username = self._username
-        password = self._password
-        api_key = self._api_key
-        try:
-            timestamp, obf_api_key = self._obfuscate_api_key(api_key)
-        except Exception:
-            return self.set_status(phantom.APP_ERROR, "Error obfuscating API key")
-
-        body = {"apiKey": obf_api_key, "username": username, "password": password, "timestamp": timestamp}
-
+        """Attempts to authenticate with Zscaler using either OAuth or API key authentication based on the asset configuration parameters"""
         action_result = ActionResult()
-        ret_val, _ = self._make_rest_call_helper("/api/v1/authenticatedSession", action_result, data=body, method="post")
-        if phantom.is_fail(ret_val):
-            self.debug_print(f"Error starting Zscaler session: {action_result.get_message()}")
-            return self.set_status(phantom.APP_ERROR, f"Error starting Zscaler session: {action_result.get_message()}")
-        else:
-            self.save_progress("Successfully started Zscaler session")
-            self._headers = {"cookie": self._response.headers["Set-Cookie"].split(";")[0].strip()}
+
+        # Use OAuth if OAuth credentials are provided
+        if self._use_oauth:
+            self.save_progress("Using OAuth for authentication")
+            access_token = self._generate_oauth_access_token(action_result)
+            if not access_token:
+                return self.set_status(phantom.APP_ERROR, "Error generating OAuth access token")
+
+            self._headers = {"Authorization": f"Bearer {access_token}"}
             return phantom.APP_SUCCESS
+        else:  # Fallback to API key authentication
+            try:
+                timestamp, obf_api_key = self._obfuscate_api_key(self._api_key)
+            except Exception:
+                return self.set_status(phantom.APP_ERROR, "Error obfuscating API key")
+
+            body = {
+                "apiKey": obf_api_key,
+                "username": self._username,
+                "password": self._password,
+                "timestamp": timestamp,
+            }
+
+            ret_val, _ = self._make_rest_call_helper("/api/v1/authenticatedSession", action_result, data=body, method="post")
+            if phantom.is_fail(ret_val):
+                self.debug_print(f"Error starting Zscaler session: {action_result.get_message()}")
+                return self.set_status(
+                    phantom.APP_ERROR,
+                    f"Error starting Zscaler session: {action_result.get_message()}",
+                )
+            else:
+                self.save_progress("Successfully started Zscaler session")
+                self._headers = {"cookie": self._response.headers["Set-Cookie"].split(";")[0].strip()}
+                return phantom.APP_SUCCESS
+
+    def _generate_oauth_access_token(self, action_result: ActionResult) -> str | None:
+        """Generates OAuth access token using asset configuration parameters
+
+        :param action_result: ActionResult object to set status and debug data
+        :return: access token if successful, None otherwise
+        """
+        # Use existing token if valid
+        if self._oauth_access_token and self._oauth_token_expiry_time and datetime.now() < self._oauth_token_expiry_time:
+            self.save_progress("OAuth access token is still valid, using existing token")
+            return self._oauth_access_token
+
+        self.save_progress("Generating OAuth access token")
+
+        # Generate new token by making a request to the token URL
+        self.save_progress("Generating new OAuth access token")
+        payload = {"grant_type": "client_credentials"}
+        try:
+            response = requests.post(
+                self._oauth_token_url,
+                data=payload,
+                auth=HTTPBasicAuth(self._oauth_client_id, self._oauth_client_secret),
+                timeout=ZSCALER_DEFAULT_TIMEOUT,
+            )
+        except Exception as e:
+            action_result.set_status(
+                phantom.APP_ERROR,
+                f"Error generating OAuth access token: {self._get_err_msg_from_exception(e)}",
+            )
+            return None
+
+        # Cache the token using the expires_in value returned by the OAuth token endpoint
+        try:
+            response_json = response.json()
+            self._oauth_access_token = response_json.get(ZSCALER_OAUTH_ACCESS_TOKEN_KEY)
+            expires_in = response_json.get("expires_in")
+            if self._oauth_access_token and isinstance(expires_in, (int, float)) and expires_in > 0:
+                self._oauth_token_expiry_time = datetime.now() + timedelta(seconds=int(expires_in))
+            else:
+                self._oauth_token_expiry_time = None
+        except Exception as e:
+            action_result.set_status(
+                phantom.APP_ERROR,
+                f"Error parsing OAuth access token from response: {self._get_err_msg_from_exception(e)}",
+            )
+            return None
+
+        # If we don't have an access token at this point, something went wrong
+        if not self._oauth_access_token:
+            action_result.set_status(phantom.APP_ERROR, "OAuth access token not found in response")
+            return None
+
+        self.save_progress("Successfully generated OAuth access token")
+        return self._oauth_access_token
+
+    def encrypt(self, encrypt_var, token_name):
+        """Handle encryption of token
+
+        :param encrypt_var: Variable that needs to be encrypted
+        :param token_name: Name of the token to be encrypted, used for logging purposes
+        :return: encrypted variable
+        """
+        self.debug_print(f"Encrypting the {token_name} token")
+        return encryption_helper.encrypt(encrypt_var, self.get_asset_id())
+
+    def decrypt(self, decrypt_var, token_name):
+        """Handle decryption of token
+
+        :param decrypt_var: Variable needs to be decrypted
+        :param token_name: Name of the token to be decrypted, used for logging purposes
+        :return: decrypted variable
+        """
+        self.debug_print(f"Decrypting the {token_name} token")
+        return encryption_helper.decrypt(decrypt_var, self.get_asset_id())
 
     def _deinit_session(self):
+        if self._use_oauth:
+            return phantom.APP_SUCCESS
+
         action_result = ActionResult()
         config = self.get_config()
         self._base_url = config["base_url"].rstrip("/")
@@ -1541,11 +1644,36 @@ class ZscalerConnector(BaseConnector):
             self.debug_print("Resetting the state file with the default format")
             self._state = {"app_version": self.get_app_json().get("app_version")}
 
+        # API authentication
         config = self.get_config()
         self._base_url = config["base_url"].rstrip("/")
-        self._username = config["username"]
-        self._password = config["password"]
-        self._api_key = config["api_key"]
+        self._username = config.get("username", None)
+        self._password = config.get("password", None)
+        self._api_key = config.get("api_key", None)
+
+        # OAuth
+        self._oauth_token_url = config.get(ZSCALER_OAUTH_TOKEN_URL_KEY, "").rstrip("/") or None
+        self._oauth_client_id = config.get(ZSCALER_OAUTH_CLIENT_ID_KEY, None)
+        self._oauth_client_secret = config.get(ZSCALER_OAUTH_CLIENT_SECRET_KEY, None)
+        self._oauth_access_token = self._state.get(ZSCALER_OAUTH_ACCESS_TOKEN_KEY, None)
+        oauth_token_expiry_time = self._state.get(ZSCALER_OAUTH_TOKEN_EXPIRY_TIME_KEY)
+        if oauth_token_expiry_time:
+            try:
+                self._oauth_token_expiry_time = datetime.fromisoformat(oauth_token_expiry_time)
+            except Exception as e:
+                self.debug_print(f"Failed to parse saved OAuth token expiry time: {e}")
+                self._oauth_token_expiry_time = None
+        self._use_oauth = self._oauth_token_url is not None and self._oauth_client_id is not None and self._oauth_client_secret is not None
+
+        # Decrypt the access token if it exists in the state and is encrypted
+        if self._use_oauth and self._oauth_access_token and self._state.get(ZSCALER_OAUTH_TOKEN_ENCRYPTED_KEY, False):
+            try:
+                self._oauth_access_token = self.decrypt(self._oauth_access_token, ZSCALER_OAUTH_ACCESS_TOKEN_KEY)
+                self._state[ZSCALER_OAUTH_TOKEN_ENCRYPTED_KEY] = False
+            except Exception as e:
+                self.debug_print(ZSCALER_DECRYPTION_ERROR_MSG.format(e))
+                return self.set_status(phantom.APP_ERROR, ZSCALER_DECRYPTION_ERROR_MSG.format(e))
+
         self._sandbox_base_url = config.get("sandbox_base_url", None)
         if self._sandbox_base_url:
             self._sandbox_base_url = self._sandbox_base_url.rstrip("/")
@@ -1557,6 +1685,18 @@ class ZscalerConnector(BaseConnector):
         return self._init_session()
 
     def finalize(self):
+        try:
+            # Encrypt the access token before saving it to the state
+            if self._use_oauth and self._oauth_access_token:
+                self._state[ZSCALER_OAUTH_ACCESS_TOKEN_KEY] = self.encrypt(self._oauth_access_token, ZSCALER_OAUTH_ACCESS_TOKEN_KEY)
+                self._state[ZSCALER_OAUTH_TOKEN_ENCRYPTED_KEY] = True
+                self._state[ZSCALER_OAUTH_TOKEN_EXPIRY_TIME_KEY] = (
+                    self._oauth_token_expiry_time.isoformat() if self._oauth_token_expiry_time else None
+                )
+        except Exception as e:
+            self.debug_print(ZSCALER_ENCRYPTION_ERROR_MSG.format(e))
+            return self.set_status(phantom.APP_ERROR, ZSCALER_ENCRYPTION_ERROR_MSG.format(e))
+
         self.save_state(self._state)
         return self._deinit_session()
 
