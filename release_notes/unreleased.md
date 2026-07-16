@@ -5,3 +5,4 @@
 * Activate staged ZIA policy and destination-group changes before reporting success.
 * Preserve destination-group non-editable state when the edit parameter is omitted.
 * Require HTTPS when transmitting sandbox API tokens to the legacy submission endpoint.
+* Cap server-directed rate-limit waits at 60 seconds and reject malformed values.

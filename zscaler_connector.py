@@ -244,15 +244,20 @@ class ZscalerConnector(BaseConnector):
         return self._process_response(r, action_result)
 
     def _parse_retry_time(self, retry_time):
-        # Instead of just giving a second value, "retry-time" will return a string like "0 seconds"
-        # I don't know if the second unit can be not seconds
-        parts = retry_time.split()
-        if parts[1].lower() == "seconds":
-            return int(parts[0])
-        if parts[1].lower() == "minutes":
-            return int(parts[0]) * 60
-        else:
+        try:
+            parts = str(retry_time).split()
+            if parts[1].lower() == "seconds":
+                seconds = int(parts[0])
+            elif parts[1].lower() == "minutes":
+                seconds = int(parts[0]) * 60
+            else:
+                return None
+        except (IndexError, TypeError, ValueError):
             return None
+
+        if seconds < 0:
+            return None
+        return min(seconds, ZSCALER_MAX_RETRY_WAIT_SECONDS)
 
     def _make_rest_call_helper(self, *args, **kwargs):
         # There are two rate limits
