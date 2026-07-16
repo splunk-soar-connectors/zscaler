@@ -1602,6 +1602,8 @@ class ZscalerConnector(BaseConnector):
         self._sandbox_base_url = config.get("sandbox_base_url", None)
         if self._sandbox_base_url:
             self._sandbox_base_url = self._sandbox_base_url.rstrip("/")
+            if not self._sandbox_base_url.lower().startswith("https://"):
+                return self.set_status(phantom.APP_ERROR, "Sandbox Base URL must use HTTPS")
         self._sandbox_api_token = config.get("sandbox_api_token", None)
         self._headers = {}
         self._retry_rest_call = 5
