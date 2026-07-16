@@ -1,6 +1,6 @@
 # File: zscaler_consts.py
 #
-# Copyright (c) 2017-2025 Splunk Inc.
+# Copyright (c) 2017-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ ZSCALER_STATE_FILE_CORRUPT_ERR = (
 )
 ZSCALER_MAX_PAGESIZE = 1000
 ZSCALER_DEFAULT_TIMEOUT = 30
+ZSCALER_MAX_RETRY_WAIT_SECONDS = 60
 
 # Constants relating to "_validate_integer"
 ZSCALER_VALID_INTEGER_MSG = "Please provide a valid integer value in the {param}"

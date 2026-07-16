@@ -1,6 +1,6 @@
 # File: zscaler_connector.py
 #
-# Copyright (c) 2017-2025 Splunk Inc.
+# Copyright (c) 2017-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import ipaddress
 import json
 import re
 import time
+from urllib.parse import quote
 
 import phantom.app as phantom
 import phantom.rules as phantom_rules
@@ -243,15 +244,20 @@ class ZscalerConnector(BaseConnector):
         return self._process_response(r, action_result)
 
     def _parse_retry_time(self, retry_time):
-        # Instead of just giving a second value, "retry-time" will return a string like "0 seconds"
-        # I don't know if the second unit can be not seconds
-        parts = retry_time.split()
-        if parts[1].lower() == "seconds":
-            return int(parts[0])
-        if parts[1].lower() == "minutes":
-            return int(parts[0]) * 60
-        else:
+        try:
+            parts = str(retry_time).split()
+            if parts[1].lower() == "seconds":
+                seconds = int(parts[0])
+            elif parts[1].lower() == "minutes":
+                seconds = int(parts[0]) * 60
+            else:
+                return None
+        except (IndexError, TypeError, ValueError):
             return None
+
+        if seconds < 0:
+            return None
+        return min(seconds, ZSCALER_MAX_RETRY_WAIT_SECONDS)
 
     def _make_rest_call_helper(self, *args, **kwargs):
         # There are two rate limits
@@ -322,7 +328,7 @@ class ZscalerConnector(BaseConnector):
         action_result = ActionResult()
         config = self.get_config()
         self._base_url = config["base_url"].rstrip("/")
-        ret_val, response = self._make_rest_call_helper("/api/v1/authenticatedSession", action_result, method="delete")
+        ret_val, _response = self._make_rest_call_helper("/api/v1/authenticatedSession", action_result, method="delete")
 
         if phantom.is_fail(ret_val):
             self.debug_print("Deleting the authenticated session failed on the ZScaler server.")
@@ -335,6 +341,15 @@ class ZscalerConnector(BaseConnector):
         self.save_progress("Test Connectivity Passed")
         self.debug_print("Test Connectivity Passed.")
         return self.set_status(phantom.APP_SUCCESS)
+
+    def _activate_config(self, action_result):
+        ret_val, _response = self._make_rest_call_helper("/api/v1/status/activate", action_result, method="post")
+        if phantom.is_fail(ret_val):
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                f"The ZIA change was saved but could not be activated and is not yet enforced. {action_result.get_message()}",
+            )
+        return phantom.APP_SUCCESS
 
     def _filter_endpoints(self, action_result, to_add, existing, action, name):
         if action == "REMOVE_FROM_LIST":
@@ -370,10 +385,13 @@ class ZscalerConnector(BaseConnector):
 
         params = {"action": action}
         data = {"blacklistUrls": filtered_endpoints}
-        ret_val, response = self._make_rest_call_helper(
+        ret_val, _response = self._make_rest_call_helper(
             "/api/v1/security/advanced/blacklistUrls", action_result, params=params, data=data, method="post"
         )
         if phantom.is_fail(ret_val) and self._response.status_code != 204:
+            return ret_val
+        ret_val = self._activate_config(action_result)
+        if phantom.is_fail(ret_val):
             return ret_val
         summary = action_result.set_summary({})
         summary["updated"] = filtered_endpoints
@@ -408,6 +426,10 @@ class ZscalerConnector(BaseConnector):
 
         data = {"whitelistUrls": to_add_endpoints}
         ret_val, response = self._make_rest_call_helper("/api/v1/security", action_result, data=data, method="put")
+        if phantom.is_fail(ret_val):
+            return ret_val
+
+        ret_val = self._activate_config(action_result)
         if phantom.is_fail(ret_val):
             return ret_val
 
@@ -462,6 +484,9 @@ class ZscalerConnector(BaseConnector):
         ret_val, response = self._make_rest_call_helper(
             "/api/v1/urlCategories/{}".format(self._category["id"]), action_result, data=data, method="put", params=params, timeout=None
         )
+        if phantom.is_fail(ret_val):
+            return ret_val
+        ret_val = self._activate_config(action_result)
         if phantom.is_fail(ret_val):
             return ret_val
         action_result.add_data(response)
@@ -632,7 +657,7 @@ class ZscalerConnector(BaseConnector):
 
         try:
             file_id = param["vault_id"]
-            success, msg, file_info = phantom_rules.vault_info(vault_id=file_id)
+            _success, msg, file_info = phantom_rules.vault_info(vault_id=file_id)
             file_info = next(iter(file_info))
         except IndexError:
             return action_result.set_status(phantom.APP_ERROR, "Vault file could not be found with supplied Vault ID")
@@ -880,8 +905,12 @@ class ZscalerConnector(BaseConnector):
 
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        user_id = param["user_id"]
-        group_id = param["group_id"]
+        ret_val, user_id = self._validate_integer(action_result, param["user_id"], "user_id")
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+        ret_val, group_id = self._validate_integer(action_result, param["group_id"], "group_id")
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
         ret_val, user_response = self._make_rest_call_helper(f"/api/v1/users/{user_id}", action_result)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -915,8 +944,12 @@ class ZscalerConnector(BaseConnector):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        user_id = param["user_id"]
-        group_id = param["group_id"]
+        ret_val, user_id = self._validate_integer(action_result, param["user_id"], "user_id")
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+        ret_val, group_id = self._validate_integer(action_result, param["group_id"], "group_id")
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
         ret_val, user_response = self._make_rest_call_helper(f"/api/v1/users/{user_id}", action_result)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -1005,7 +1038,9 @@ class ZscalerConnector(BaseConnector):
     def _handle_update_user(self, param):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
-        user_id = param["user_id"]
+        ret_val, user_id = self._validate_integer(action_result, param["user_id"], "user_id")
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
 
         try:
             data = json.loads(param.get("user", "{}"))
@@ -1024,7 +1059,7 @@ class ZscalerConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_category_details(self, id, action_result):
-        ret_val, response = self._make_rest_call_helper(f"/api/v1/urlCategories/{id}", action_result)
+        ret_val, response = self._make_rest_call_helper(f"/api/v1/urlCategories/{quote(str(id), safe='')}", action_result)
         if phantom.is_fail(ret_val):
             return action_result.get_status(), None
         return phantom.APP_SUCCESS, response
@@ -1040,7 +1075,12 @@ class ZscalerConnector(BaseConnector):
         if new_parent_data:
             cat_details["dbCategorizedUrls"] = new_parent_data
 
-        ret_val, response = self._make_rest_call_helper(f"/api/v1/urlCategories/{category_id}", action_result, data=cat_details, method="put")
+        ret_val, response = self._make_rest_call_helper(
+            f"/api/v1/urlCategories/{quote(str(category_id), safe='')}", action_result, data=cat_details, method="put"
+        )
+        if phantom.is_fail(ret_val):
+            return ret_val, response
+        ret_val = self._activate_config(action_result)
         return ret_val, response
 
     def _handle_add_category_url(self, param):
@@ -1138,7 +1178,12 @@ class ZscalerConnector(BaseConnector):
         cat_details["urls"] = new_data
         cat_details["dbCategorizedUrls"] = new_parent_data
 
-        ret_val, response = self._make_rest_call_helper(f"/api/v1/urlCategories/{category_id}", action_result, data=cat_details, method="put")
+        ret_val, response = self._make_rest_call_helper(
+            f"/api/v1/urlCategories/{quote(str(category_id), safe='')}", action_result, data=cat_details, method="put"
+        )
+        if phantom.is_fail(ret_val):
+            return ret_val, response
+        ret_val = self._activate_config(action_result)
         return ret_val, response
 
     def _handle_remove_category_url(self, param):
@@ -1198,6 +1243,9 @@ class ZscalerConnector(BaseConnector):
         ret_val, response = self._make_rest_call_helper("/api/v1/ipDestinationGroups", action_result, data=data, method="post")
         if phantom.is_fail(ret_val):
             return action_result.get_status()
+        ret_val = self._activate_config(action_result)
+        if phantom.is_fail(ret_val):
+            return ret_val
 
         action_result.add_data(response)
         summary = action_result.update_summary({})
@@ -1206,7 +1254,7 @@ class ZscalerConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_destination_group(self, id, action_result, exclude_type=None, category_type=None, lite=False):
-        ret_val, response = self._make_rest_call_helper(f"/api/v1/ipDestinationGroups/{id}", action_result)
+        ret_val, response = self._make_rest_call_helper(f"/api/v1/ipDestinationGroups/{quote(str(id), safe='')}", action_result)
         if phantom.is_fail(ret_val):
             return action_result.get_status(), None
 
@@ -1328,11 +1376,16 @@ class ZscalerConnector(BaseConnector):
         if param.get("countries"):
             new_countries = [item.strip() for item in param.get("countries", "").split(",") if item.strip()]
             group_resp["countries"] = new_countries
-        group_resp["isNonEditable"] = param.get("is_non_editable", False)
+        group_resp["isNonEditable"] = param.get("is_non_editable", group_resp.get("isNonEditable", False))
 
-        ret_val, response = self._make_rest_call_helper(f"/api/v1/ipDestinationGroups/{group_id}", action_result, data=group_resp, method="put")
+        ret_val, response = self._make_rest_call_helper(
+            f"/api/v1/ipDestinationGroups/{quote(str(group_id), safe='')}", action_result, data=group_resp, method="put"
+        )
         if phantom.is_fail(ret_val):
             return action_result.get_status()
+        ret_val = self._activate_config(action_result)
+        if phantom.is_fail(ret_val):
+            return ret_val
 
         action_result.add_data(response)
         summary = action_result.update_summary({})
@@ -1353,10 +1406,15 @@ class ZscalerConnector(BaseConnector):
         list_group_ids = [item.strip() for item in group_ids.split(",") if item.strip()]
 
         for group_id in list_group_ids:
-            ret_val, response = self._make_rest_call_helper(f"/api/v1/ipDestinationGroups/{group_id}", action_result, method="delete")
+            ret_val, _response = self._make_rest_call_helper(
+                f"/api/v1/ipDestinationGroups/{quote(str(group_id), safe='')}", action_result, method="delete"
+            )
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
             action_result.add_data({"ip_group_id": group_id})
+        ret_val = self._activate_config(action_result)
+        if phantom.is_fail(ret_val):
+            return ret_val
 
         summary = action_result.update_summary({})
         summary["message"] = "Destination groups deleted"
@@ -1549,6 +1607,8 @@ class ZscalerConnector(BaseConnector):
         self._sandbox_base_url = config.get("sandbox_base_url", None)
         if self._sandbox_base_url:
             self._sandbox_base_url = self._sandbox_base_url.rstrip("/")
+            if not self._sandbox_base_url.lower().startswith("https://"):
+                return self.set_status(phantom.APP_ERROR, "Sandbox Base URL must use HTTPS")
         self._sandbox_api_token = config.get("sandbox_api_token", None)
         self._headers = {}
         self._retry_rest_call = 5

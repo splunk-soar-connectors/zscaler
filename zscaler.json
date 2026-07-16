@@ -9,7 +9,7 @@
     "product_name": "Zscaler",
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2017-2025 Splunk Inc.",
+    "license": "Copyright (c) 2017-2026 Splunk Inc.",
     "app_version": "3.0.1",
     "utctime_updated": "2025-09-05T16:54:04.402050Z",
     "package_name": "phantom_zscaler",
@@ -1142,6 +1142,10 @@
             "verbose": "If a <b>url_category</b> is specified, it will add the IP(s) as a rule to that category. If it is left blank, it will instead add this IP(s) to the global allowlist.",
             "type": "contain",
             "read_only": false,
+            "lock": {
+                "enabled": true,
+                "concurrency": false
+            },
             "undo": "unallow ip",
             "parameters": {
                 "ip": {
@@ -1290,6 +1294,10 @@
             "verbose": "If a <b>url_category</b> is specified, it will add the URL(s) as a rule to that category. If it is left blank, it will instead add the URL(s) to the global allowed list.",
             "type": "contain",
             "read_only": false,
+            "lock": {
+                "enabled": true,
+                "concurrency": false
+            },
             "undo": "unallow url",
             "parameters": {
                 "url": {
@@ -1468,6 +1476,10 @@
             "verbose": "If a <b>url_category</b> is specified, it will remove the IP(s) from that category. If it is left blank, it will instead remove the IP(s) from the global allowlist.",
             "type": "correct",
             "read_only": false,
+            "lock": {
+                "enabled": true,
+                "concurrency": false
+            },
             "undo": "allowlist ip",
             "parameters": {
                 "ip": {
@@ -1616,6 +1628,10 @@
             "verbose": "If a <b>url_category</b> is specified, it will remove the URL(s) from that category. If it is left blank, it will instead remove the URL(s) from the global allowed list.",
             "type": "correct",
             "read_only": false,
+            "lock": {
+                "enabled": true,
+                "concurrency": false
+            },
             "undo": "allow url",
             "parameters": {
                 "url": {
