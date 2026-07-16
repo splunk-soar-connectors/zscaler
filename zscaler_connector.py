@@ -337,6 +337,15 @@ class ZscalerConnector(BaseConnector):
         self.debug_print("Test Connectivity Passed.")
         return self.set_status(phantom.APP_SUCCESS)
 
+    def _activate_config(self, action_result):
+        ret_val, _response = self._make_rest_call_helper("/api/v1/status/activate", action_result, method="post")
+        if phantom.is_fail(ret_val):
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                f"The ZIA change was saved but could not be activated and is not yet enforced. {action_result.get_message()}",
+            )
+        return phantom.APP_SUCCESS
+
     def _filter_endpoints(self, action_result, to_add, existing, action, name):
         if action == "REMOVE_FROM_LIST":
             msg = f"{name} contains none of these endpoints"
@@ -376,6 +385,9 @@ class ZscalerConnector(BaseConnector):
         )
         if phantom.is_fail(ret_val) and self._response.status_code != 204:
             return ret_val
+        ret_val = self._activate_config(action_result)
+        if phantom.is_fail(ret_val):
+            return ret_val
         summary = action_result.set_summary({})
         summary["updated"] = filtered_endpoints
         summary["ignored"] = list(set(endpoints) - set(filtered_endpoints))
@@ -409,6 +421,10 @@ class ZscalerConnector(BaseConnector):
 
         data = {"whitelistUrls": to_add_endpoints}
         ret_val, response = self._make_rest_call_helper("/api/v1/security", action_result, data=data, method="put")
+        if phantom.is_fail(ret_val):
+            return ret_val
+
+        ret_val = self._activate_config(action_result)
         if phantom.is_fail(ret_val):
             return ret_val
 
@@ -463,6 +479,9 @@ class ZscalerConnector(BaseConnector):
         ret_val, response = self._make_rest_call_helper(
             "/api/v1/urlCategories/{}".format(self._category["id"]), action_result, data=data, method="put", params=params, timeout=None
         )
+        if phantom.is_fail(ret_val):
+            return ret_val
+        ret_val = self._activate_config(action_result)
         if phantom.is_fail(ret_val):
             return ret_val
         action_result.add_data(response)
@@ -1054,6 +1073,9 @@ class ZscalerConnector(BaseConnector):
         ret_val, response = self._make_rest_call_helper(
             f"/api/v1/urlCategories/{quote(str(category_id), safe='')}", action_result, data=cat_details, method="put"
         )
+        if phantom.is_fail(ret_val):
+            return ret_val, response
+        ret_val = self._activate_config(action_result)
         return ret_val, response
 
     def _handle_add_category_url(self, param):
@@ -1154,6 +1176,9 @@ class ZscalerConnector(BaseConnector):
         ret_val, response = self._make_rest_call_helper(
             f"/api/v1/urlCategories/{quote(str(category_id), safe='')}", action_result, data=cat_details, method="put"
         )
+        if phantom.is_fail(ret_val):
+            return ret_val, response
+        ret_val = self._activate_config(action_result)
         return ret_val, response
 
     def _handle_remove_category_url(self, param):
@@ -1213,6 +1238,9 @@ class ZscalerConnector(BaseConnector):
         ret_val, response = self._make_rest_call_helper("/api/v1/ipDestinationGroups", action_result, data=data, method="post")
         if phantom.is_fail(ret_val):
             return action_result.get_status()
+        ret_val = self._activate_config(action_result)
+        if phantom.is_fail(ret_val):
+            return ret_val
 
         action_result.add_data(response)
         summary = action_result.update_summary({})
@@ -1350,6 +1378,9 @@ class ZscalerConnector(BaseConnector):
         )
         if phantom.is_fail(ret_val):
             return action_result.get_status()
+        ret_val = self._activate_config(action_result)
+        if phantom.is_fail(ret_val):
+            return ret_val
 
         action_result.add_data(response)
         summary = action_result.update_summary({})
@@ -1376,6 +1407,9 @@ class ZscalerConnector(BaseConnector):
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
             action_result.add_data({"ip_group_id": group_id})
+        ret_val = self._activate_config(action_result)
+        if phantom.is_fail(ret_val):
+            return ret_val
 
         summary = action_result.update_summary({})
         summary["message"] = "Destination groups deleted"
