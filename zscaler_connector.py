@@ -1371,7 +1371,7 @@ class ZscalerConnector(BaseConnector):
         if param.get("countries"):
             new_countries = [item.strip() for item in param.get("countries", "").split(",") if item.strip()]
             group_resp["countries"] = new_countries
-        group_resp["isNonEditable"] = param.get("is_non_editable", False)
+        group_resp["isNonEditable"] = param.get("is_non_editable", group_resp.get("isNonEditable", False))
 
         ret_val, response = self._make_rest_call_helper(
             f"/api/v1/ipDestinationGroups/{quote(str(group_id), safe='')}", action_result, data=group_resp, method="put"
