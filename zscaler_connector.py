@@ -1,6 +1,6 @@
 # File: zscaler_connector.py
 #
-# Copyright (c) 2017-2025 Splunk Inc.
+# Copyright (c) 2017-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -322,7 +322,7 @@ class ZscalerConnector(BaseConnector):
         action_result = ActionResult()
         config = self.get_config()
         self._base_url = config["base_url"].rstrip("/")
-        ret_val, response = self._make_rest_call_helper("/api/v1/authenticatedSession", action_result, method="delete")
+        ret_val, _response = self._make_rest_call_helper("/api/v1/authenticatedSession", action_result, method="delete")
 
         if phantom.is_fail(ret_val):
             self.debug_print("Deleting the authenticated session failed on the ZScaler server.")
@@ -370,7 +370,7 @@ class ZscalerConnector(BaseConnector):
 
         params = {"action": action}
         data = {"blacklistUrls": filtered_endpoints}
-        ret_val, response = self._make_rest_call_helper(
+        ret_val, _response = self._make_rest_call_helper(
             "/api/v1/security/advanced/blacklistUrls", action_result, params=params, data=data, method="post"
         )
         if phantom.is_fail(ret_val) and self._response.status_code != 204:
@@ -632,7 +632,7 @@ class ZscalerConnector(BaseConnector):
 
         try:
             file_id = param["vault_id"]
-            success, msg, file_info = phantom_rules.vault_info(vault_id=file_id)
+            _success, msg, file_info = phantom_rules.vault_info(vault_id=file_id)
             file_info = next(iter(file_info))
         except IndexError:
             return action_result.set_status(phantom.APP_ERROR, "Vault file could not be found with supplied Vault ID")
@@ -1353,7 +1353,7 @@ class ZscalerConnector(BaseConnector):
         list_group_ids = [item.strip() for item in group_ids.split(",") if item.strip()]
 
         for group_id in list_group_ids:
-            ret_val, response = self._make_rest_call_helper(f"/api/v1/ipDestinationGroups/{group_id}", action_result, method="delete")
+            ret_val, _response = self._make_rest_call_helper(f"/api/v1/ipDestinationGroups/{group_id}", action_result, method="delete")
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
             action_result.add_data({"ip_group_id": group_id})
