@@ -759,9 +759,9 @@ class ZscalerConnector(BaseConnector):
         :return: updated list of url
         """
         for i in range(len(endpoints)):
-            if endpoints[i].startswith("http://"):
+            if endpoints[i].lower().startswith("http://"):
                 endpoints[i] = endpoints[i][(len("http://")) :]
-            elif endpoints[i].startswith("https://"):
+            elif endpoints[i].lower().startswith("https://"):
                 endpoints[i] = endpoints[i][(len("https://")) :]
 
         return endpoints
