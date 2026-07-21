@@ -18,6 +18,8 @@
 import ipaddress
 import json
 import re
+import subprocess
+import sys
 import time
 from urllib.parse import quote
 
@@ -29,6 +31,42 @@ from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 
 from zscaler_consts import *
+
+
+def _filter_denylist_by_query(query, blocklist):
+    """Evaluate a denylist query outside the action worker with a fixed timeout."""
+    worker_code = """
+import json
+import re
+import sys
+
+payload = json.load(sys.stdin)
+try:
+    pattern = re.compile(payload["query"])
+    print(json.dumps({"matches": [entry for entry in payload["blocklist"] if pattern.fullmatch(entry)]}))
+except re.error:
+    print(json.dumps({"error": "invalid regular expression"}))
+"""
+    try:
+        completed = subprocess.run(
+            [sys.executable, "-c", worker_code],
+            capture_output=True,
+            check=True,
+            input=json.dumps({"query": query, "blocklist": blocklist}),
+            text=True,
+            timeout=5,
+        )
+        response = json.loads(completed.stdout)
+    except subprocess.TimeoutExpired:
+        return None, "Regular expression query timed out after 5 seconds."
+    except (OSError, subprocess.CalledProcessError, ValueError):
+        return None, "Unable to evaluate the regular expression query."
+
+    if "error" in response:
+        return None, "Invalid regular expression query."
+    if not isinstance(response.get("matches"), list):
+        return None, "Unable to evaluate the regular expression query."
+    return response["matches"], None
 
 
 class RetVal(tuple):
@@ -759,9 +797,9 @@ class ZscalerConnector(BaseConnector):
         :return: updated list of url
         """
         for i in range(len(endpoints)):
-            if endpoints[i].startswith("http://"):
+            if endpoints[i].lower().startswith("http://"):
                 endpoints[i] = endpoints[i][(len("http://")) :]
-            elif endpoints[i].startswith("https://"):
+            elif endpoints[i].lower().startswith("https://"):
                 endpoints[i] = endpoints[i][(len("https://")) :]
 
         return endpoints
@@ -803,7 +841,7 @@ class ZscalerConnector(BaseConnector):
                 return action_result.get_status()
             for admin_user in get_admin_users:
                 admin_users.append(admin_user)
-            limit = limit - params["pageSize"]
+            limit = limit - len(get_admin_users)
             if limit <= 0 or len(get_admin_users) == 0:
                 break
             params["page"] += 1
@@ -844,7 +882,7 @@ class ZscalerConnector(BaseConnector):
                 return action_result.get_status()
             for user in get_users:
                 users.append(user)
-            limit = limit - params["pageSize"]
+            limit = limit - len(get_users)
             if limit <= 0 or len(get_users) == 0:
                 break
             params["page"] += 1
@@ -881,7 +919,7 @@ class ZscalerConnector(BaseConnector):
                 return action_result.get_status()
             for group in get_groups:
                 groups.append(group)
-            limit = limit - params["pageSize"]
+            limit = limit - len(get_groups)
             if limit <= 0 or len(get_groups) == 0:
                 break
             params["page"] += 1
@@ -1021,15 +1059,21 @@ class ZscalerConnector(BaseConnector):
         summary = action_result.update_summary({})
         summary["message"] = "Denylist retrieved"
 
-        blocklist = response.get("blacklistUrls", [])
-        for blocked in blocklist:
+        blocklist = []
+        for blocked in response.get("blacklistUrls", []):
             is_ip = self._is_ip_address(blocked)
             if filter == "ip" and not is_ip:
                 continue
             if filter == "url" and is_ip:
                 continue
-            if query and not re.fullmatch(query, blocked):
-                continue
+            blocklist.append(blocked)
+
+        if query:
+            blocklist, error_message = _filter_denylist_by_query(query, blocklist)
+            if error_message:
+                return action_result.set_status(phantom.APP_ERROR, error_message)
+
+        for blocked in blocklist:
             action_result.add_data({"url": blocked})
 
         summary["total_denylist_items"] = action_result.get_data_size()
@@ -1287,7 +1331,7 @@ class ZscalerConnector(BaseConnector):
                     for key in extensions:
                         group[key] = extensions[key]
                 action_result.add_data(group)
-            limit = limit - params["pageSize"]
+            limit = limit - len(get_groups)
             if limit <= 0 or len(get_groups) == 0:
                 break
             params["page"] += 1
