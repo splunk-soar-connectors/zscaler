@@ -803,7 +803,7 @@ class ZscalerConnector(BaseConnector):
                 return action_result.get_status()
             for admin_user in get_admin_users:
                 admin_users.append(admin_user)
-            limit = limit - params["pageSize"]
+            limit = limit - len(get_admin_users)
             if limit <= 0 or len(get_admin_users) == 0:
                 break
             params["page"] += 1
@@ -844,7 +844,7 @@ class ZscalerConnector(BaseConnector):
                 return action_result.get_status()
             for user in get_users:
                 users.append(user)
-            limit = limit - params["pageSize"]
+            limit = limit - len(get_users)
             if limit <= 0 or len(get_users) == 0:
                 break
             params["page"] += 1
@@ -881,7 +881,7 @@ class ZscalerConnector(BaseConnector):
                 return action_result.get_status()
             for group in get_groups:
                 groups.append(group)
-            limit = limit - params["pageSize"]
+            limit = limit - len(get_groups)
             if limit <= 0 or len(get_groups) == 0:
                 break
             params["page"] += 1
@@ -1287,7 +1287,7 @@ class ZscalerConnector(BaseConnector):
                     for key in extensions:
                         group[key] = extensions[key]
                 action_result.add_data(group)
-            limit = limit - params["pageSize"]
+            limit = limit - len(get_groups)
             if limit <= 0 or len(get_groups) == 0:
                 break
             params["page"] += 1
