@@ -5,3 +5,5 @@
 * Continue Zscaler directory pagination when a response returns a short page. [PSAAS-32647]
 
 * Normalize URL schemes before applying Zscaler URL list actions. [PSAAS-32634]
+
+* Bound denylist regular-expression filtering to keep Zscaler actions responsive. [PSAAS-33137]
