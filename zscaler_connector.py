@@ -169,7 +169,7 @@ class ZscalerConnector(BaseConnector):
         err_text = err_text
 
         msg = (
-            "Please check the asset configuration parameters (the base_url should not end with /api/v1 e.g. https://admin.zscaler_instance.net)."
+            "Please check the asset configuration parameters (the base_url should not end with /api/v1 e.g. https://zsapi.zscaler_instance.net)."
         )
 
         if len(err_text) <= 500:

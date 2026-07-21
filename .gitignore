@@ -2,3 +2,4 @@
 *.swp
 *.bak*
 .DS_Store
+.venv/
