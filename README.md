@@ -1,7 +1,7 @@
 # Zscaler
 
 Publisher: Splunk <br>
-Connector Version: 3.0.2 <br>
+Connector Version: 3.0.3 <br>
 Product Vendor: Zscaler <br>
 Product Name: Zscaler <br>
 Minimum Product Version: 6.2.2
