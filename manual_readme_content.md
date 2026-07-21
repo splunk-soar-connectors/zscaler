@@ -1,3 +1,5 @@
+**NOTE:** Zscaler is deprecating https://admin.<Zscaler Cloud Name> for Public API traffic in September. In the app's asset settings, update the Base URL to https://zsapi.<Zscaler Cloud Name> to ensure the app continues working.
+
 Below points are considered for providing the **URL Category** parameter value.
 
 - Entire URL category string has to be mentioned in block letters
