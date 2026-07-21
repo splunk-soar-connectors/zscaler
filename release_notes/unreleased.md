@@ -1,2 +1,2 @@
 **Unreleased**
-* Updated documentation to note admin → zsapi Base URL migration for the Public API deprecation [PAPP-37951]
+* Updated documentation with Zscaler's new Public API Base URL guidance, replacing admin.<Zscaler Cloud Name> with zsapi.<Zscaler Cloud Name> ahead of the September deprecation.
