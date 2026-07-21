@@ -6,6 +6,8 @@ Product Vendor: Zscaler <br>
 Product Name: Zscaler <br>
 Minimum Product Version: 6.2.2
 
+**NOTE:** "Zscaler is deprecating https://admin.<Zscaler Cloud Name> for Public API traffic in September. In the app's asset settings, update the Base URL to https://zsapi.<Zscaler Cloud Name> to ensure the app continues working. Learn more: https://trust.zscaler.com/zscaler.net/posts/29096".
+
 This app implements containment and investigative actions on Zscaler
 
 Below points are considered for providing the **URL Category** parameter value.
@@ -75,7 +77,7 @@ This table lists the configuration variables required to operate Zscaler. These 
 
 VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
-**base_url** | required | string | Base URL (e.g. https://admin.zscaler_instance.net) |
+**base_url** | required | string | Base URL (e.g. https://zsapi.zscaler_instance.net) |
 **api_key** | required | password | API Key |
 **username** | required | string | Username |
 **password** | required | password | Password |
