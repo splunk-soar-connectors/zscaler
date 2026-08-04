@@ -23,6 +23,7 @@ import sys
 import time
 from urllib.parse import quote
 
+import idna
 import phantom.app as phantom
 import phantom.rules as phantom_rules
 import requests
@@ -190,6 +191,14 @@ class ZscalerConnector(BaseConnector):
 
         # Please specify the status codes here
         if 200 <= r.status_code < 399:
+            if not isinstance(resp_json, (dict, list)):
+                return RetVal(
+                    action_result.set_status(
+                        phantom.APP_ERROR,
+                        f"Unexpected JSON response type from server: {type(resp_json).__name__}. Status Code: {r.status_code}",
+                    ),
+                    None,
+                )
             return RetVal(phantom.APP_SUCCESS, resp_json)
 
         # You should process the error returned in the json
@@ -316,13 +325,14 @@ class ZscalerConnector(BaseConnector):
             if self._response.status_code == 429 and self._retry_rest_call != 0:  # Rate limit exceeded
                 try:
                     retry_time = self._response.json()["Retry-After"]
-                except KeyError:
-                    self.debug_print("KeyError")
+                except (KeyError, TypeError, ValueError):
+                    self.debug_print("Missing or malformed Retry-After in rate-limit response")
                     return ret_val, response
                 self.debug_print(f"Retry Time: {retry_time}")
                 seconds_to_wait = self._parse_retry_time(retry_time)
                 if seconds_to_wait is None or seconds_to_wait < 0:
-                    return retry_time, response
+                    self.debug_print(f"Unparseable Retry-After value: {retry_time}")
+                    return ret_val, response
                 self.send_progress(f"Exceeded rate limit: Retrying after {retry_time}")
                 time.sleep(seconds_to_wait)
                 self._retry_rest_call -= 1  # reduce the number of retries
@@ -359,7 +369,13 @@ class ZscalerConnector(BaseConnector):
             return self.set_status(phantom.APP_ERROR, f"Error starting Zscaler session: {action_result.get_message()}")
         else:
             self.save_progress("Successfully started Zscaler session")
-            self._headers = {"cookie": self._response.headers["Set-Cookie"].split(";")[0].strip()}
+            set_cookie = self._response.headers.get("Set-Cookie")
+            if not set_cookie:
+                return self.set_status(
+                    phantom.APP_ERROR,
+                    "Error starting Zscaler session: authentication response did not include a Set-Cookie header",
+                )
+            self._headers = {"cookie": set_cookie.split(";")[0].strip()}
             return phantom.APP_SUCCESS
 
     def _deinit_session(self):
@@ -404,6 +420,49 @@ class ZscalerConnector(BaseConnector):
             return RetVal(action_result.set_status(phantom.APP_SUCCESS, msg), None)
         return RetVal(phantom.APP_SUCCESS, endpoints)
 
+    def _ownership_ledger(self):
+        ledger = self._state.get("installation_added_entries")
+        if not isinstance(ledger, dict):
+            ledger = {}
+            self._state["installation_added_entries"] = ledger
+        return ledger
+
+    def _owned_entries(self, key):
+        entries = self._ownership_ledger().get(key)
+        return entries if isinstance(entries, list) else []
+
+    def _filter_owned_removals(self, action_result, ledger_key, endpoints, action):
+        if action != "REMOVE_FROM_LIST":
+            return endpoints, []
+
+        owned_entries = set(self._owned_entries(ledger_key))
+        owned = [endpoint for endpoint in endpoints if endpoint in owned_entries]
+        foreign = [endpoint for endpoint in endpoints if endpoint not in owned_entries]
+        if not owned:
+            summary = action_result.set_summary({})
+            summary["updated"] = []
+            summary["ignored"] = endpoints
+            summary["skipped_foreign"] = foreign
+            action_result.set_status(
+                phantom.APP_ERROR,
+                "None of these endpoints were added by this connector asset; refusing to remove shared entries created elsewhere",
+            )
+            return None, foreign
+        return owned, foreign
+
+    def _update_ownership_ledger(self, key, endpoints, action):
+        entries = set(self._owned_entries(key))
+        if action == "ADD_TO_LIST":
+            entries.update(endpoints)
+        else:
+            entries.difference_update(endpoints)
+
+        ledger = self._ownership_ledger()
+        if entries:
+            ledger[key] = sorted(entries)
+        else:
+            ledger.pop(key, None)
+
     def _get_blocklist(self, action_result):
         return self._make_rest_call_helper("/api/v1/security/advanced", action_result)
 
@@ -421,6 +480,21 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val) or filtered_endpoints is None:
             return ret_val
 
+        if action == "ADD_TO_LIST":
+            ret_val, allowlist_response = self._get_allowlist(action_result)
+            if phantom.is_fail(ret_val):
+                return ret_val
+            allowlisted = sorted(set(filtered_endpoints) & set(allowlist_response.get("whitelistUrls", [])))
+            if allowlisted:
+                return action_result.set_status(
+                    phantom.APP_ERROR,
+                    f"Endpoint(s) {allowlisted} are on the ZIA allowlist, which overrides the denylist. Remove them from the allowlist first.",
+                )
+
+        filtered_endpoints, skipped_foreign = self._filter_owned_removals(action_result, "blocklist", filtered_endpoints, action)
+        if filtered_endpoints is None:
+            return action_result.get_status()
+
         params = {"action": action}
         data = {"blacklistUrls": filtered_endpoints}
         ret_val, _response = self._make_rest_call_helper(
@@ -428,12 +502,14 @@ class ZscalerConnector(BaseConnector):
         )
         if phantom.is_fail(ret_val) and self._response.status_code != 204:
             return ret_val
+        self._update_ownership_ledger("blocklist", filtered_endpoints, action)
         ret_val = self._activate_config(action_result)
         if phantom.is_fail(ret_val):
             return ret_val
         summary = action_result.set_summary({})
         summary["updated"] = filtered_endpoints
         summary["ignored"] = list(set(endpoints) - set(filtered_endpoints))
+        summary["skipped_foreign"] = skipped_foreign
         # Encode the unicode IP or URL strings
         summary["updated"] = [element for element in summary["updated"]]
         summary["ignored"] = [element for element in summary["ignored"]]
@@ -457,6 +533,10 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val) or filtered_endpoints is None:
             return ret_val
 
+        filtered_endpoints, skipped_foreign = self._filter_owned_removals(action_result, "allowlist", filtered_endpoints, action)
+        if filtered_endpoints is None:
+            return action_result.get_status()
+
         if action == "ADD_TO_LIST":
             to_add_endpoints = list(set(self._allowlist + filtered_endpoints))
         else:
@@ -467,6 +547,7 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return ret_val
 
+        self._update_ownership_ledger("allowlist", filtered_endpoints, action)
         ret_val = self._activate_config(action_result)
         if phantom.is_fail(ret_val):
             return ret_val
@@ -475,6 +556,7 @@ class ZscalerConnector(BaseConnector):
         summary = action_result.set_summary({})
         summary["updated"] = filtered_endpoints
         summary["ignored"] = list(set(endpoints) - set(filtered_endpoints))
+        summary["skipped_foreign"] = skipped_foreign
         # Encode the unicode IP or URL strings
         summary["updated"] = [element for element in summary["updated"]]
         summary["ignored"] = [element for element in summary["ignored"]]
@@ -505,25 +587,33 @@ class ZscalerConnector(BaseConnector):
 
         return self._filter_endpoints(action_result, endpoints, urls, action, "Category")
 
+    def _category_delta_payload(self, category, urls, db_categorized_urls):
+        payload = {"urls": urls, "dbCategorizedUrls": db_categorized_urls}
+        for field in ("configuredName", "superCategory", "keywords", "keywordsRetainingParentCategory"):
+            if field in category:
+                payload[field] = category[field]
+        return payload
+
     def _amend_category(self, action_result, endpoints, category, action):
         ret_val, filtered_endpoints = self._check_category(action_result, endpoints, category, action)
         if phantom.is_fail(ret_val) or filtered_endpoints is None:
             return ret_val
 
+        ledger_key = f"category:{self._category['id']}"
+        filtered_endpoints, skipped_foreign = self._filter_owned_removals(action_result, ledger_key, filtered_endpoints, action)
+        if filtered_endpoints is None:
+            return action_result.get_status()
+
         params = {"action": action}
 
-        data = {
-            "configuredName": self._category.get("configuredName"),
-            "keywordsRetainingParentCategory": self._category.get("keywordsRetainingParentCategory", []),
-            "urls": [],
-            "dbCategorizedUrls": filtered_endpoints,
-        }
+        data = self._category_delta_payload(self._category, [], filtered_endpoints)
 
         ret_val, response = self._make_rest_call_helper(
-            "/api/v1/urlCategories/{}".format(self._category["id"]), action_result, data=data, method="put", params=params, timeout=None
+            "/api/v1/urlCategories/{}".format(self._category["id"]), action_result, data=data, method="put", params=params
         )
         if phantom.is_fail(ret_val):
             return ret_val
+        self._update_ownership_ledger(ledger_key, filtered_endpoints, action)
         ret_val = self._activate_config(action_result)
         if phantom.is_fail(ret_val):
             return ret_val
@@ -531,6 +621,7 @@ class ZscalerConnector(BaseConnector):
         summary = action_result.set_summary({})
         summary["updated"] = filtered_endpoints
         summary["ignored"] = list(set(endpoints) - set(filtered_endpoints))
+        summary["skipped_foreign"] = skipped_foreign
         # Encode the unicode IP or URL strings
         summary["updated"] = [element for element in summary["updated"]]
         summary["ignored"] = [element for element in summary["ignored"]]
@@ -645,11 +736,17 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return ret_val
 
+        ret_val, allowlist_response = self._get_allowlist(action_result)
+        if phantom.is_fail(ret_val):
+            return ret_val
+
+        blocklist = set(blocklist_response.get("blacklistUrls", []))
+        allowlist = set(allowlist_response.get("whitelistUrls", []))
         for e in endpoints:
-            if e in blocklist_response.get("blacklistUrls", []):
-                [response[i].update({"blocklisted": True}) for i, item in enumerate(response) if item["url"] == e]
-            else:
-                [response[i].update({"blocklisted": False}) for i, item in enumerate(response) if item["url"] == e]
+            effectively_blocked = e in blocklist and e not in allowlist
+            for item in response:
+                if item.get("url") == e:
+                    item["blocklisted"] = effectively_blocked
 
         action_result.update_data(response)
 
@@ -801,8 +898,33 @@ class ZscalerConnector(BaseConnector):
                 endpoints[i] = endpoints[i][(len("http://")) :]
             elif endpoints[i].lower().startswith("https://"):
                 endpoints[i] = endpoints[i][(len("https://")) :]
+            endpoints[i] = self._to_ascii_hostname(endpoints[i])
 
         return endpoints
+
+    def _to_ascii_hostname(self, endpoint):
+        host_and_port, separator, path = endpoint.partition("/")
+        if host_and_port.startswith("[") or host_and_port.count(":") > 1:
+            return endpoint
+
+        host, port_separator, port = host_and_port.partition(":")
+        labels = []
+        for label in host.split("."):
+            if not label or "*" in label or label.isascii():
+                labels.append(label)
+                continue
+            try:
+                labels.append(idna.encode(label, uts46=True).decode("ascii"))
+            except idna.IDNAError:
+                labels.append(label)
+
+        normalized_host = ".".join(labels)
+        normalized_endpoint = normalized_host
+        if port_separator:
+            normalized_endpoint += f"{port_separator}{port}"
+        if separator:
+            normalized_endpoint += f"{separator}{path}"
+        return normalized_endpoint
 
     def _check_for_overlength(self, action_result, endpoints):
         """This function checks whether the length of each url is not more
@@ -877,7 +999,7 @@ class ZscalerConnector(BaseConnector):
         users = []
         while True:
             params["pageSize"] = min(limit, ZSCALER_MAX_PAGESIZE)
-            ret_val, get_users = self._make_rest_call_helper("/api/v1/users", action_result, params=params, timeout=None)
+            ret_val, get_users = self._make_rest_call_helper("/api/v1/users", action_result, params=params)
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
             for user in get_users:
@@ -949,14 +1071,16 @@ class ZscalerConnector(BaseConnector):
         ret_val, group_id = self._validate_integer(action_result, param["group_id"], "group_id")
         if phantom.is_fail(ret_val):
             return action_result.get_status()
-        ret_val, user_response = self._make_rest_call_helper(f"/api/v1/users/{user_id}", action_result)
-        if phantom.is_fail(ret_val):
-            return action_result.get_status()
         ret_val, group_response = self._make_rest_call_helper(f"/api/v1/groups/{group_id}", action_result)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
+        # The users API only exposes a full-object PUT, so fetch the user as
+        # late as possible to narrow the lost-update window.
+        ret_val, user_response = self._make_rest_call_helper(f"/api/v1/users/{user_id}", action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
         summary = action_result.update_summary({})
-        if group_response in user_response["groups"]:
+        if group_response.get("id") in [item.get("id") for item in user_response["groups"]]:
             summary["message"] = "User already in group"
             action_result.add_data(group_response)
             return action_result.set_status(phantom.APP_SUCCESS, "User already in group")
@@ -1109,18 +1233,13 @@ class ZscalerConnector(BaseConnector):
         return phantom.APP_SUCCESS, response
 
     def _add_to_category(self, data, parent_data, cat_details, category_id, action_result):
-        new_data = cat_details.get("urls", [])
-        new_data.extend(data)
-        if new_data:
-            cat_details["urls"] = new_data
-
-        new_parent_data = cat_details.get("dbCategorizedUrls", [])
-        new_parent_data.extend(parent_data)
-        if new_parent_data:
-            cat_details["dbCategorizedUrls"] = new_parent_data
-
+        payload = self._category_delta_payload(cat_details, data, parent_data)
         ret_val, response = self._make_rest_call_helper(
-            f"/api/v1/urlCategories/{quote(str(category_id), safe='')}", action_result, data=cat_details, method="put"
+            f"/api/v1/urlCategories/{quote(str(category_id), safe='')}",
+            action_result,
+            data=payload,
+            method="put",
+            params={"action": "ADD_TO_LIST"},
         )
         if phantom.is_fail(ret_val):
             return ret_val, response
@@ -1208,22 +1327,16 @@ class ZscalerConnector(BaseConnector):
 
     def _remove_from_category(self, data, parent_data, cat_details, category_id, action_result):
         data_set = set(data)
-        new_data = []
-        for point in cat_details.get("urls", []):
-            if point not in data_set:
-                new_data.append(point)
-
+        urls_to_remove = [point for point in cat_details.get("urls", []) if point in data_set]
         parent_data_set = set(parent_data)
-        new_parent_data = []
-        for point in cat_details.get("dbCategorizedUrls", []):
-            if point not in parent_data_set:
-                new_parent_data.append(point)
-
-        cat_details["urls"] = new_data
-        cat_details["dbCategorizedUrls"] = new_parent_data
-
+        parent_urls_to_remove = [point for point in cat_details.get("dbCategorizedUrls", []) if point in parent_data_set]
+        payload = self._category_delta_payload(cat_details, urls_to_remove, parent_urls_to_remove)
         ret_val, response = self._make_rest_call_helper(
-            f"/api/v1/urlCategories/{quote(str(category_id), safe='')}", action_result, data=cat_details, method="put"
+            f"/api/v1/urlCategories/{quote(str(category_id), safe='')}",
+            action_result,
+            data=payload,
+            method="put",
+            params={"action": "REMOVE_FROM_LIST"},
         )
         if phantom.is_fail(ret_val):
             return ret_val, response
@@ -1499,15 +1612,12 @@ class ZscalerConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         name = param.get("name")
-        page_size = param.get("pageSize")
-        page_num = param.get("page", 1)
-
-        endpoint = f"/api/v1/departments?page={page_num}&pageSize={page_size}"
+        params = {"page": param.get("page", 1), "pageSize": param.get("pageSize", 100)}
 
         if name:
-            endpoint = f"/api/v1/departments?page={page_num}&pageSize={page_size}&search={name}&limitSearch=true"
+            params.update({"search": name, "limitSearch": True})
 
-        ret_val, response = self._make_rest_call_helper(endpoint, action_result)
+        ret_val, response = self._make_rest_call_helper("/api/v1/departments", action_result, params=params)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
