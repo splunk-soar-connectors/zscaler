@@ -411,6 +411,49 @@ class ZscalerConnector(BaseConnector):
             return RetVal(action_result.set_status(phantom.APP_SUCCESS, msg), None)
         return RetVal(phantom.APP_SUCCESS, endpoints)
 
+    def _ownership_ledger(self):
+        ledger = self._state.get("installation_added_entries")
+        if not isinstance(ledger, dict):
+            ledger = {}
+            self._state["installation_added_entries"] = ledger
+        return ledger
+
+    def _owned_entries(self, key):
+        entries = self._ownership_ledger().get(key)
+        return entries if isinstance(entries, list) else []
+
+    def _filter_owned_removals(self, action_result, ledger_key, endpoints, action):
+        if action != "REMOVE_FROM_LIST":
+            return endpoints, []
+
+        owned_entries = set(self._owned_entries(ledger_key))
+        owned = [endpoint for endpoint in endpoints if endpoint in owned_entries]
+        foreign = [endpoint for endpoint in endpoints if endpoint not in owned_entries]
+        if not owned:
+            summary = action_result.set_summary({})
+            summary["updated"] = []
+            summary["ignored"] = endpoints
+            summary["skipped_foreign"] = foreign
+            action_result.set_status(
+                phantom.APP_ERROR,
+                "None of these endpoints were added by this connector asset; refusing to remove shared entries created elsewhere",
+            )
+            return None, foreign
+        return owned, foreign
+
+    def _update_ownership_ledger(self, key, endpoints, action):
+        entries = set(self._owned_entries(key))
+        if action == "ADD_TO_LIST":
+            entries.update(endpoints)
+        else:
+            entries.difference_update(endpoints)
+
+        ledger = self._ownership_ledger()
+        if entries:
+            ledger[key] = sorted(entries)
+        else:
+            ledger.pop(key, None)
+
     def _get_blocklist(self, action_result):
         return self._make_rest_call_helper("/api/v1/security/advanced", action_result)
 
@@ -439,6 +482,10 @@ class ZscalerConnector(BaseConnector):
                     f"Endpoint(s) {allowlisted} are on the ZIA allowlist, which overrides the denylist. Remove them from the allowlist first.",
                 )
 
+        filtered_endpoints, skipped_foreign = self._filter_owned_removals(action_result, "blocklist", filtered_endpoints, action)
+        if filtered_endpoints is None:
+            return action_result.get_status()
+
         params = {"action": action}
         data = {"blacklistUrls": filtered_endpoints}
         ret_val, _response = self._make_rest_call_helper(
@@ -446,12 +493,14 @@ class ZscalerConnector(BaseConnector):
         )
         if phantom.is_fail(ret_val) and self._response.status_code != 204:
             return ret_val
+        self._update_ownership_ledger("blocklist", filtered_endpoints, action)
         ret_val = self._activate_config(action_result)
         if phantom.is_fail(ret_val):
             return ret_val
         summary = action_result.set_summary({})
         summary["updated"] = filtered_endpoints
         summary["ignored"] = list(set(endpoints) - set(filtered_endpoints))
+        summary["skipped_foreign"] = skipped_foreign
         # Encode the unicode IP or URL strings
         summary["updated"] = [element for element in summary["updated"]]
         summary["ignored"] = [element for element in summary["ignored"]]
@@ -475,6 +524,10 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val) or filtered_endpoints is None:
             return ret_val
 
+        filtered_endpoints, skipped_foreign = self._filter_owned_removals(action_result, "allowlist", filtered_endpoints, action)
+        if filtered_endpoints is None:
+            return action_result.get_status()
+
         if action == "ADD_TO_LIST":
             to_add_endpoints = list(set(self._allowlist + filtered_endpoints))
         else:
@@ -485,6 +538,7 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return ret_val
 
+        self._update_ownership_ledger("allowlist", filtered_endpoints, action)
         ret_val = self._activate_config(action_result)
         if phantom.is_fail(ret_val):
             return ret_val
@@ -493,6 +547,7 @@ class ZscalerConnector(BaseConnector):
         summary = action_result.set_summary({})
         summary["updated"] = filtered_endpoints
         summary["ignored"] = list(set(endpoints) - set(filtered_endpoints))
+        summary["skipped_foreign"] = skipped_foreign
         # Encode the unicode IP or URL strings
         summary["updated"] = [element for element in summary["updated"]]
         summary["ignored"] = [element for element in summary["ignored"]]
@@ -535,6 +590,11 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val) or filtered_endpoints is None:
             return ret_val
 
+        ledger_key = f"category:{self._category['id']}"
+        filtered_endpoints, skipped_foreign = self._filter_owned_removals(action_result, ledger_key, filtered_endpoints, action)
+        if filtered_endpoints is None:
+            return action_result.get_status()
+
         params = {"action": action}
 
         data = self._category_delta_payload(self._category, [], filtered_endpoints)
@@ -544,6 +604,7 @@ class ZscalerConnector(BaseConnector):
         )
         if phantom.is_fail(ret_val):
             return ret_val
+        self._update_ownership_ledger(ledger_key, filtered_endpoints, action)
         ret_val = self._activate_config(action_result)
         if phantom.is_fail(ret_val):
             return ret_val
@@ -551,6 +612,7 @@ class ZscalerConnector(BaseConnector):
         summary = action_result.set_summary({})
         summary["updated"] = filtered_endpoints
         summary["ignored"] = list(set(endpoints) - set(filtered_endpoints))
+        summary["skipped_foreign"] = skipped_foreign
         # Encode the unicode IP or URL strings
         summary["updated"] = [element for element in summary["updated"]]
         summary["ignored"] = [element for element in summary["ignored"]]
