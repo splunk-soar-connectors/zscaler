@@ -23,6 +23,7 @@ import sys
 import time
 from urllib.parse import quote
 
+import idna
 import phantom.app as phantom
 import phantom.rules as phantom_rules
 import requests
@@ -818,8 +819,33 @@ class ZscalerConnector(BaseConnector):
                 endpoints[i] = endpoints[i][(len("http://")) :]
             elif endpoints[i].lower().startswith("https://"):
                 endpoints[i] = endpoints[i][(len("https://")) :]
+            endpoints[i] = self._to_ascii_hostname(endpoints[i])
 
         return endpoints
+
+    def _to_ascii_hostname(self, endpoint):
+        host_and_port, separator, path = endpoint.partition("/")
+        if host_and_port.startswith("[") or host_and_port.count(":") > 1:
+            return endpoint
+
+        host, port_separator, port = host_and_port.partition(":")
+        labels = []
+        for label in host.split("."):
+            if not label or "*" in label or label.isascii():
+                labels.append(label)
+                continue
+            try:
+                labels.append(idna.encode(label, uts46=True).decode("ascii"))
+            except idna.IDNAError:
+                labels.append(label)
+
+        normalized_host = ".".join(labels)
+        normalized_endpoint = normalized_host
+        if port_separator:
+            normalized_endpoint += f"{port_separator}{port}"
+        if separator:
+            normalized_endpoint += f"{separator}{path}"
+        return normalized_endpoint
 
     def _check_for_overlength(self, action_result, endpoints):
         """This function checks whether the length of each url is not more
