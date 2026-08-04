@@ -517,6 +517,13 @@ class ZscalerConnector(BaseConnector):
 
         return self._filter_endpoints(action_result, endpoints, urls, action, "Category")
 
+    def _category_delta_payload(self, category, urls, db_categorized_urls):
+        payload = {"urls": urls, "dbCategorizedUrls": db_categorized_urls}
+        for field in ("configuredName", "superCategory", "keywords", "keywordsRetainingParentCategory"):
+            if field in category:
+                payload[field] = category[field]
+        return payload
+
     def _amend_category(self, action_result, endpoints, category, action):
         ret_val, filtered_endpoints = self._check_category(action_result, endpoints, category, action)
         if phantom.is_fail(ret_val) or filtered_endpoints is None:
@@ -524,12 +531,7 @@ class ZscalerConnector(BaseConnector):
 
         params = {"action": action}
 
-        data = {
-            "configuredName": self._category.get("configuredName"),
-            "keywordsRetainingParentCategory": self._category.get("keywordsRetainingParentCategory", []),
-            "urls": [],
-            "dbCategorizedUrls": filtered_endpoints,
-        }
+        data = self._category_delta_payload(self._category, [], filtered_endpoints)
 
         ret_val, response = self._make_rest_call_helper(
             "/api/v1/urlCategories/{}".format(self._category["id"]), action_result, data=data, method="put", params=params, timeout=None
@@ -1154,18 +1156,13 @@ class ZscalerConnector(BaseConnector):
         return phantom.APP_SUCCESS, response
 
     def _add_to_category(self, data, parent_data, cat_details, category_id, action_result):
-        new_data = cat_details.get("urls", [])
-        new_data.extend(data)
-        if new_data:
-            cat_details["urls"] = new_data
-
-        new_parent_data = cat_details.get("dbCategorizedUrls", [])
-        new_parent_data.extend(parent_data)
-        if new_parent_data:
-            cat_details["dbCategorizedUrls"] = new_parent_data
-
+        payload = self._category_delta_payload(cat_details, data, parent_data)
         ret_val, response = self._make_rest_call_helper(
-            f"/api/v1/urlCategories/{quote(str(category_id), safe='')}", action_result, data=cat_details, method="put"
+            f"/api/v1/urlCategories/{quote(str(category_id), safe='')}",
+            action_result,
+            data=payload,
+            method="put",
+            params={"action": "ADD_TO_LIST"},
         )
         if phantom.is_fail(ret_val):
             return ret_val, response
@@ -1253,22 +1250,16 @@ class ZscalerConnector(BaseConnector):
 
     def _remove_from_category(self, data, parent_data, cat_details, category_id, action_result):
         data_set = set(data)
-        new_data = []
-        for point in cat_details.get("urls", []):
-            if point not in data_set:
-                new_data.append(point)
-
+        urls_to_remove = [point for point in cat_details.get("urls", []) if point in data_set]
         parent_data_set = set(parent_data)
-        new_parent_data = []
-        for point in cat_details.get("dbCategorizedUrls", []):
-            if point not in parent_data_set:
-                new_parent_data.append(point)
-
-        cat_details["urls"] = new_data
-        cat_details["dbCategorizedUrls"] = new_parent_data
-
+        parent_urls_to_remove = [point for point in cat_details.get("dbCategorizedUrls", []) if point in parent_data_set]
+        payload = self._category_delta_payload(cat_details, urls_to_remove, parent_urls_to_remove)
         ret_val, response = self._make_rest_call_helper(
-            f"/api/v1/urlCategories/{quote(str(category_id), safe='')}", action_result, data=cat_details, method="put"
+            f"/api/v1/urlCategories/{quote(str(category_id), safe='')}",
+            action_result,
+            data=payload,
+            method="put",
+            params={"action": "REMOVE_FROM_LIST"},
         )
         if phantom.is_fail(ret_val):
             return ret_val, response
