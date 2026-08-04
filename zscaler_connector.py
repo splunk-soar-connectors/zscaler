@@ -1535,15 +1535,12 @@ class ZscalerConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         name = param.get("name")
-        page_size = param.get("pageSize")
-        page_num = param.get("page", 1)
-
-        endpoint = f"/api/v1/departments?page={page_num}&pageSize={page_size}"
+        params = {"page": param.get("page", 1), "pageSize": param.get("pageSize", 100)}
 
         if name:
-            endpoint = f"/api/v1/departments?page={page_num}&pageSize={page_size}&search={name}&limitSearch=true"
+            params.update({"search": name, "limitSearch": True})
 
-        ret_val, response = self._make_rest_call_helper(endpoint, action_result)
+        ret_val, response = self._make_rest_call_helper("/api/v1/departments", action_result, params=params)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
