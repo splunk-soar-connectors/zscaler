@@ -966,14 +966,16 @@ class ZscalerConnector(BaseConnector):
         ret_val, group_id = self._validate_integer(action_result, param["group_id"], "group_id")
         if phantom.is_fail(ret_val):
             return action_result.get_status()
-        ret_val, user_response = self._make_rest_call_helper(f"/api/v1/users/{user_id}", action_result)
-        if phantom.is_fail(ret_val):
-            return action_result.get_status()
         ret_val, group_response = self._make_rest_call_helper(f"/api/v1/groups/{group_id}", action_result)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
+        # The users API only exposes a full-object PUT, so fetch the user as
+        # late as possible to narrow the lost-update window.
+        ret_val, user_response = self._make_rest_call_helper(f"/api/v1/users/{user_id}", action_result)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
         summary = action_result.update_summary({})
-        if group_response in user_response["groups"]:
+        if group_response.get("id") in [item.get("id") for item in user_response["groups"]]:
             summary["message"] = "User already in group"
             action_result.add_data(group_response)
             return action_result.set_status(phantom.APP_SUCCESS, "User already in group")
