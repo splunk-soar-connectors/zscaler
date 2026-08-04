@@ -360,7 +360,13 @@ class ZscalerConnector(BaseConnector):
             return self.set_status(phantom.APP_ERROR, f"Error starting Zscaler session: {action_result.get_message()}")
         else:
             self.save_progress("Successfully started Zscaler session")
-            self._headers = {"cookie": self._response.headers["Set-Cookie"].split(";")[0].strip()}
+            set_cookie = self._response.headers.get("Set-Cookie")
+            if not set_cookie:
+                return self.set_status(
+                    phantom.APP_ERROR,
+                    "Error starting Zscaler session: authentication response did not include a Set-Cookie header",
+                )
+            self._headers = {"cookie": set_cookie.split(";")[0].strip()}
             return phantom.APP_SUCCESS
 
     def _deinit_session(self):
