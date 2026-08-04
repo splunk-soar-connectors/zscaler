@@ -421,6 +421,17 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val) or filtered_endpoints is None:
             return ret_val
 
+        if action == "ADD_TO_LIST":
+            ret_val, allowlist_response = self._get_allowlist(action_result)
+            if phantom.is_fail(ret_val):
+                return ret_val
+            allowlisted = sorted(set(filtered_endpoints) & set(allowlist_response.get("whitelistUrls", [])))
+            if allowlisted:
+                return action_result.set_status(
+                    phantom.APP_ERROR,
+                    f"Endpoint(s) {allowlisted} are on the ZIA allowlist, which overrides the denylist. Remove them from the allowlist first.",
+                )
+
         params = {"action": action}
         data = {"blacklistUrls": filtered_endpoints}
         ret_val, _response = self._make_rest_call_helper(
@@ -645,11 +656,17 @@ class ZscalerConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return ret_val
 
+        ret_val, allowlist_response = self._get_allowlist(action_result)
+        if phantom.is_fail(ret_val):
+            return ret_val
+
+        blocklist = set(blocklist_response.get("blacklistUrls", []))
+        allowlist = set(allowlist_response.get("whitelistUrls", []))
         for e in endpoints:
-            if e in blocklist_response.get("blacklistUrls", []):
-                [response[i].update({"blocklisted": True}) for i, item in enumerate(response) if item["url"] == e]
-            else:
-                [response[i].update({"blocklisted": False}) for i, item in enumerate(response) if item["url"] == e]
+            effectively_blocked = e in blocklist and e not in allowlist
+            for item in response:
+                if item.get("url") == e:
+                    item["blocklisted"] = effectively_blocked
 
         action_result.update_data(response)
 
