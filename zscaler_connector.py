@@ -609,7 +609,7 @@ class ZscalerConnector(BaseConnector):
         data = self._category_delta_payload(self._category, [], filtered_endpoints)
 
         ret_val, response = self._make_rest_call_helper(
-            "/api/v1/urlCategories/{}".format(self._category["id"]), action_result, data=data, method="put", params=params, timeout=None
+            "/api/v1/urlCategories/{}".format(self._category["id"]), action_result, data=data, method="put", params=params
         )
         if phantom.is_fail(ret_val):
             return ret_val
@@ -999,7 +999,7 @@ class ZscalerConnector(BaseConnector):
         users = []
         while True:
             params["pageSize"] = min(limit, ZSCALER_MAX_PAGESIZE)
-            ret_val, get_users = self._make_rest_call_helper("/api/v1/users", action_result, params=params, timeout=None)
+            ret_val, get_users = self._make_rest_call_helper("/api/v1/users", action_result, params=params)
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
             for user in get_users:

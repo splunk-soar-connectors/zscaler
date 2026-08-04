@@ -8,3 +8,4 @@
 * Unblock and unallow actions now remove only shared-list entries recorded as added by the current connector asset.
 * Unexpected scalar JSON and malformed rate-limit response bodies now return controlled action errors.
 * Unparseable Retry-After values now preserve the original rate-limit failure instead of being treated as success.
+* URL category updates and user listing now inherit the connector's finite request timeout.
