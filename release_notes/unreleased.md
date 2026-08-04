@@ -6,3 +6,4 @@
 * The get departments action now encodes its search and pagination query parameters through the HTTP client.
 * Authentication now returns a controlled error when the ZIA response omits its required session cookie.
 * Unblock and unallow actions now remove only shared-list entries recorded as added by the current connector asset.
+* Unexpected scalar JSON and malformed rate-limit response bodies now return controlled action errors.

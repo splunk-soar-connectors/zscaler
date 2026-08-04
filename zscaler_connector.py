@@ -191,6 +191,14 @@ class ZscalerConnector(BaseConnector):
 
         # Please specify the status codes here
         if 200 <= r.status_code < 399:
+            if not isinstance(resp_json, (dict, list)):
+                return RetVal(
+                    action_result.set_status(
+                        phantom.APP_ERROR,
+                        f"Unexpected JSON response type from server: {type(resp_json).__name__}. Status Code: {r.status_code}",
+                    ),
+                    None,
+                )
             return RetVal(phantom.APP_SUCCESS, resp_json)
 
         # You should process the error returned in the json
@@ -317,8 +325,8 @@ class ZscalerConnector(BaseConnector):
             if self._response.status_code == 429 and self._retry_rest_call != 0:  # Rate limit exceeded
                 try:
                     retry_time = self._response.json()["Retry-After"]
-                except KeyError:
-                    self.debug_print("KeyError")
+                except (KeyError, TypeError, ValueError):
+                    self.debug_print("Missing or malformed Retry-After in rate-limit response")
                     return ret_val, response
                 self.debug_print(f"Retry Time: {retry_time}")
                 seconds_to_wait = self._parse_retry_time(retry_time)
