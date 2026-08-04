@@ -331,7 +331,8 @@ class ZscalerConnector(BaseConnector):
                 self.debug_print(f"Retry Time: {retry_time}")
                 seconds_to_wait = self._parse_retry_time(retry_time)
                 if seconds_to_wait is None or seconds_to_wait < 0:
-                    return retry_time, response
+                    self.debug_print(f"Unparseable Retry-After value: {retry_time}")
+                    return ret_val, response
                 self.send_progress(f"Exceeded rate limit: Retrying after {retry_time}")
                 time.sleep(seconds_to_wait)
                 self._retry_rest_call -= 1  # reduce the number of retries
