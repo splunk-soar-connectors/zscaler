@@ -1,0 +1,641 @@
+name: Reusable Push + Agentic PR Review
+
+on:
+  push:
+    branches:
+      - "sanchaga/bottest*"
+      - "sanchaga/bottest/**"
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Open PR number for this branch. Leave empty to auto-detect by branch name.
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: reusable-push-agentic-pr-review-${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  resolve-pr-context:
+    runs-on: ubuntu-latest
+    if: github.repository != 'splunk-soar-connectors/.github'
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      pr_found: ${{ steps.resolve.outputs.pr_found }}
+      pr_number: ${{ steps.resolve.outputs.pr_number }}
+      is_draft: ${{ steps.resolve.outputs.is_draft }}
+      head_ref: ${{ steps.resolve.outputs.head_ref }}
+      head_sha: ${{ steps.resolve.outputs.head_sha }}
+      head_repo_full_name: ${{ steps.resolve.outputs.head_repo_full_name }}
+    steps:
+      - name: Resolve open PR for this branch
+        id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          INPUT_PR_NUMBER: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pr_number || '' }}
+          BRANCH_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          if [[ -n "${INPUT_PR_NUMBER}" ]]; then
+            pr_json=$(gh pr view "${INPUT_PR_NUMBER}" \
+              --repo "${GH_REPO}" \
+              --json number,isDraft,headRefName,headRefOid,headRepository \
+              --jq '{number,is_draft:.isDraft,head_ref:.headRefName,head_sha:.headRefOid,head_repo_full_name:.headRepository.nameWithOwner}')
+          else
+            pr_json=""
+            max_attempts=25
+            for attempt in $(seq 1 "${max_attempts}"); do
+              pr_json=$(gh pr list \
+                --repo "${GH_REPO}" \
+                --state open \
+                --head "${BRANCH_NAME}" \
+                --json number,isDraft,headRefName,headRefOid,headRepository \
+                --jq '.[0] | if . == null then empty else {number,is_draft:.isDraft,head_ref:.headRefName,head_sha:.headRefOid,head_repo_full_name:.headRepository.nameWithOwner} end')
+
+              if [[ -n "${pr_json}" ]]; then
+                break
+              fi
+
+              echo "No open PR found yet for ${GH_REPO}@${BRANCH_NAME} on attempt ${attempt}/${max_attempts}."
+              if [[ "${attempt}" -lt "${max_attempts}" ]]; then
+                sleep 5
+              fi
+            done
+          fi
+
+          if [[ -z "${pr_json}" ]]; then
+            echo "No open PR found for ${GH_REPO}@${BRANCH_NAME}; skipping branch-only PR workflow jobs."
+            echo "pr_found=false" >> "${GITHUB_OUTPUT}"
+            echo "pr_number=" >> "${GITHUB_OUTPUT}"
+            echo "is_draft=true" >> "${GITHUB_OUTPUT}"
+            echo "head_ref=${BRANCH_NAME}" >> "${GITHUB_OUTPUT}"
+            echo "head_sha=${GITHUB_SHA}" >> "${GITHUB_OUTPUT}"
+            echo "head_repo_full_name=${GH_REPO}" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          echo "Resolved PR context: ${pr_json}"
+          echo "pr_found=true" >> "${GITHUB_OUTPUT}"
+          echo "pr_number=$(jq -r '.number' <<< "${pr_json}")" >> "${GITHUB_OUTPUT}"
+          echo "is_draft=$(jq -r '.is_draft' <<< "${pr_json}")" >> "${GITHUB_OUTPUT}"
+          echo "head_ref=$(jq -r '.head_ref' <<< "${pr_json}")" >> "${GITHUB_OUTPUT}"
+          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+            echo "head_sha=${GITHUB_SHA}" >> "${GITHUB_OUTPUT}"
+          else
+            echo "head_sha=$(jq -r '.head_sha' <<< "${pr_json}")" >> "${GITHUB_OUTPUT}"
+          fi
+          echo "head_repo_full_name=$(jq -r '.head_repo_full_name' <<< "${pr_json}")" >> "${GITHUB_OUTPUT}"
+
+  pr-labeling:
+    runs-on: ubuntu-latest
+    needs: resolve-pr-context
+    if: needs.resolve-pr-context.outputs.pr_found == 'true'
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: read
+    steps:
+      - name: Assign PR Labels
+        uses: splunk-soar-connectors/.github/.github/actions/pr-labeling@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          jira-user: ${{ secrets.JIRA_USER }}
+          jira-api-key: ${{ secrets.JIRA_API_KEY }}
+          repo-name: ${{ github.repository }}
+          pr-number: ${{ needs.resolve-pr-context.outputs.pr_number }}
+
+  detect-app-type:
+    runs-on: ubuntu-latest
+    needs: resolve-pr-context
+    if: needs.resolve-pr-context.outputs.pr_found == 'true'
+    outputs:
+      is_sdkfied: ${{ steps.detect.outputs.is_sdkfied }}
+      uv_lock_directory: ${{ steps.detect.outputs.uv_lock_directory }}
+    steps:
+      - name: Check out app repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ needs.resolve-pr-context.outputs.head_repo_full_name }}
+          ref: ${{ needs.resolve-pr-context.outputs.head_ref }}
+          allow-unsafe-pr-checkout: true
+
+      - name: Detect App Type
+        id: detect
+        run: |
+          echo "Detecting app type..."
+
+          # Find uv.lock file and get its parent directory
+          UV_LOCK_PATH=$(find . -name "uv.lock" -type f | head -1)
+
+          if [ -n "$UV_LOCK_PATH" ]; then
+            UV_LOCK_DIR=$(dirname "$UV_LOCK_PATH")
+            echo "Found uv.lock in directory: $UV_LOCK_DIR"
+            echo "This is an SDKfied app"
+            echo "is_sdkfied=true" >> $GITHUB_OUTPUT
+            echo "uv_lock_directory=$UV_LOCK_DIR" >> $GITHUB_OUTPUT
+          else
+            echo "No uv.lock found"
+            echo "This is a traditional app"
+            echo "is_sdkfied=false" >> $GITHUB_OUTPUT
+            echo "uv_lock_directory=" >> $GITHUB_OUTPUT
+          fi
+
+          echo "App detection completed"
+        shell: bash
+
+  pytest:
+    runs-on: ubuntu-latest
+    needs: [resolve-pr-context, detect-app-type]
+    if: needs.resolve-pr-context.outputs.pr_found == 'true' && needs.detect-app-type.outputs.is_sdkfied == 'true'
+    permissions:
+      contents: read
+    env:
+      UV_LOCK_DIRECTORY: ${{ needs.detect-app-type.outputs.uv_lock_directory }}
+    steps:
+      - name: Check out app repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ needs.resolve-pr-context.outputs.head_repo_full_name }}
+          ref: ${{ needs.resolve-pr-context.outputs.head_sha }}
+          persist-credentials: false
+          allow-unsafe-pr-checkout: true
+
+      - name: Set up SDKfied app environment
+        uses: splunk-soar-connectors/.github/.github/actions/sdkfied-app-setup@main
+        with:
+          uv_lock_directory: ${{ env.UV_LOCK_DIRECTORY }}
+
+      - name: Run pytest
+        run: uv run --project "$UV_LOCK_DIRECTORY" python -m pytest
+
+  pre-commit:
+    runs-on: ubuntu-latest
+    needs: resolve-pr-context
+    if: needs.resolve-pr-context.outputs.pr_found == 'true'
+    steps:
+      - name: Setup Environment
+        uses: splunk-soar-connectors/.github/.github/actions/env-setup@main
+
+      - name: Pre-commit
+        uses: splunk-soar-connectors/.github/.github/actions/pre-commit@main
+
+  semantic-release-preview:
+    runs-on: ubuntu-latest
+    needs: resolve-pr-context
+    if: needs.resolve-pr-context.outputs.pr_found == 'true'
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Check out app repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ needs.resolve-pr-context.outputs.head_repo_full_name }}
+          ref: ${{ needs.resolve-pr-context.outputs.head_sha }}
+          fetch-depth: 0
+          persist-credentials: false
+          allow-unsafe-pr-checkout: true
+
+      - name: Check out shared workflow files
+        uses: actions/checkout@v4
+        with:
+          repository: splunk-soar-connectors/.github
+          ref: main
+          path: dotgithub
+
+      - name: Set up NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install semantic-release dependencies
+        run: npm install --global semantic-release @semantic-release/exec @semantic-release/git conventional-changelog-conventionalcommits
+
+      - name: Prepare release configuration
+        run: |
+          cp dotgithub/.releaserc.json .releaserc.json
+
+      - name: Run Semantic Release as a dry run
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_HEAD_REF: ${{ needs.resolve-pr-context.outputs.head_ref }}
+        run: |
+          unset GITHUB_ACTIONS GITHUB_REF GITHUB_EVENT_NAME
+          semantic-release --dry-run --no-ci --branches "$PR_HEAD_REF" --tag-format '${version}'
+
+      - name: Comment release notes on the PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ needs.resolve-pr-context.outputs.pr_number }}
+        run: |
+          breadcrumb='<!-- semantic-release-breadcrumb -->'
+          message='Merging this PR will not result in a release.'
+
+          if [[ -s release_version.txt ]]; then
+            version_number=$(<release_version.txt)
+            release_notes=$(<release_notes.txt)
+            printf -v message 'Merging this PR will release `%s` with the following release notes:\n\n%s' "$version_number" "$release_notes"
+
+            if [[ -s release_notes/unreleased.md ]]; then
+              connector_changes=$(sed '/^\*\*Unreleased\*\*$/d' release_notes/unreleased.md)
+              printf -v message '%s\n\n### Connector release changes\n\n%s' "$message" "$connector_changes"
+            fi
+          fi
+
+          printf -v comment_body '%s\n%s' "$breadcrumb" "$message"
+          comment_id=$(gh api --paginate "repos/$GH_REPO/issues/$PR_NUMBER/comments?per_page=100" \
+            --jq '.[] | select(.body | startswith("<!-- semantic-release-breadcrumb -->")) | .id' \
+            | head -1)
+
+          if [[ -n "$comment_id" ]]; then
+            gh api --method PATCH "repos/$GH_REPO/issues/comments/$comment_id" -f body="$comment_body"
+          else
+            gh api --method POST "repos/$GH_REPO/issues/$PR_NUMBER/comments" -f body="$comment_body"
+          fi
+
+  compile:
+    runs-on:
+      - codebuild-integration-tests-${{ github.run_id }}-${{ github.run_attempt }}
+      - image:custom-linux-875003031410.dkr.ecr.us-west-2.amazonaws.com/soar-connectors/pytest:f7150dbb7f347d35f8f4bb285d36985ecd4cf231
+    needs: [resolve-pr-context, detect-app-type]
+    if: needs.resolve-pr-context.outputs.pr_found == 'true'
+    env:
+      IS_SDKFIED: ${{ needs.detect-app-type.outputs.is_sdkfied }}
+      UV_LOCK_DIRECTORY: ${{ needs.detect-app-type.outputs.uv_lock_directory }}
+    steps:
+      - name: Check out app repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ needs.resolve-pr-context.outputs.head_repo_full_name }}
+          ref: ${{ needs.resolve-pr-context.outputs.head_ref }}
+          allow-unsafe-pr-checkout: true
+
+      - name: Setup SDKfied App Environment
+        if: env.IS_SDKFIED == 'true'
+        uses: splunk-soar-connectors/.github/.github/actions/sdkfied-app-setup@main
+        with:
+          uv_lock_directory: ${{ env.UV_LOCK_DIRECTORY }}
+
+      - name: Compile Application
+        uses: splunk-soar-connectors/.github/.github/actions/compile-app@main
+        with:
+          current_phantom_ip: ${{ vars.PHANTOM_INSTANCE_CURRENT_VERSION_IP }}
+          next_phantom_ip: ${{ vars.PHANTOM_INSTANCE_NEXT_OL8_VERSION_IP }}
+          previous_phantom_ip: ${{ vars.PHANTOM_INSTANCE_PREVIOUS_VERSION_IP }}
+          phantom_username: ${{ vars.PHANTOM_USERNAME }}
+          phantom_password: password
+          is_sdkfied: ${{ needs.detect-app-type.outputs.is_sdkfied }}
+          uv_lock_directory: ${{ needs.detect-app-type.outputs.uv_lock_directory }}
+
+  build:
+    # connector-template intentionally uses a sentinel app ID and is not a publishable app.
+    if: needs.resolve-pr-context.outputs.pr_found == 'true' && github.event.repository.name != 'connector-template'
+    runs-on:
+      - codebuild-integration-tests-${{ github.run_id }}-${{ github.run_attempt }}
+      - image:custom-linux-875003031410.dkr.ecr.us-west-2.amazonaws.com/soar-connectors/pytest:f7150dbb7f347d35f8f4bb285d36985ecd4cf231
+    needs: [resolve-pr-context, compile, detect-app-type]
+    env:
+      IS_SDKFIED: ${{ needs.detect-app-type.outputs.is_sdkfied }}
+      UV_LOCK_DIRECTORY: ${{ needs.detect-app-type.outputs.uv_lock_directory }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ needs.resolve-pr-context.outputs.head_repo_full_name }}
+          ref: ${{ needs.resolve-pr-context.outputs.head_ref }}
+          allow-unsafe-pr-checkout: true
+
+      - name: Build Application
+        if: env.IS_SDKFIED == 'false'
+        uses: splunk-soar-connectors/.github/.github/actions/build-app@main
+
+      - name: Setup SDKfied App Environment
+        if: env.IS_SDKFIED == 'true'
+        uses: splunk-soar-connectors/.github/.github/actions/sdkfied-app-setup@main
+        with:
+          uv_lock_directory: ${{ env.UV_LOCK_DIRECTORY }}
+
+      - name: Build SDK app
+        if: env.IS_SDKFIED == 'true'
+        run: |
+          cd "${{ env.UV_LOCK_DIRECTORY }}"
+          echo "Building SDKfied app using soarapps CLI"
+          uv run soarapps package build . --output-file /tmp/${{ github.event.repository.name }}.tgz
+          echo "SDKfied app build completed successfully"
+
+      - name: Upload app tar file as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-tar
+          path: /tmp/${{ github.event.repository.name }}.tgz
+
+  test-setup:
+    runs-on: ubuntu-latest
+    needs: [resolve-pr-context, build, detect-app-type]
+    if: needs.resolve-pr-context.outputs.pr_found == 'true'
+    env:
+      IS_SDKFIED: ${{ needs.detect-app-type.outputs.is_sdkfied }}
+      UV_LOCK_DIRECTORY: ${{ needs.detect-app-type.outputs.uv_lock_directory }}
+    outputs:
+      fips_compliant: ${{ steps.set-outputs.outputs.fips_compliant }}
+      publisher: ${{ steps.set-outputs.outputs.publisher }}
+    steps:
+      - name: Check out actions repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ needs.resolve-pr-context.outputs.head_repo_full_name }}
+          ref: ${{ needs.resolve-pr-context.outputs.head_ref }}
+          allow-unsafe-pr-checkout: true
+
+      - name: Setup Python 3.13 for SDKfied apps
+        if: env.IS_SDKFIED == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Setup SDKfied App Environment
+        if: env.IS_SDKFIED == 'true'
+        uses: splunk-soar-connectors/.github/.github/actions/sdkfied-app-setup@main
+        with:
+          uv_lock_directory: ${{ env.UV_LOCK_DIRECTORY }}
+
+      - name: Create temporary manifest for SDKfied app
+        if: env.IS_SDKFIED == 'true'
+        run: |
+          uv run --project "${{ env.UV_LOCK_DIRECTORY }}" soarapps manifests create temp_app.json "${{ env.UV_LOCK_DIRECTORY }}"
+          echo "Created temporary manifest: temp_app.json"
+        shell: bash
+
+      - name: Set sanity tests environment variables
+        uses: splunk-soar-connectors/.github/.github/actions/test-setup@main
+
+      - name: Clean up temporary manifest for SDKfied app
+        if: env.IS_SDKFIED == 'true'
+        run: |
+          rm -f temp_app.json
+          echo "Deleted temporary manifest: temp_app.json"
+        shell: bash
+
+      - name: Set outputs
+        id: set-outputs
+        run: |
+          echo "${{ env.publisher }}"
+          echo publisher="${{ env.publisher }}" >> $GITHUB_OUTPUT
+          echo "fips_compliant=${{ env.fips_compliant }}" >> $GITHUB_OUTPUT
+
+  test-coverage:
+    runs-on:
+      - codebuild-integration-tests-${{ github.run_id }}-${{ github.run_attempt }}
+      - image:custom-linux-875003031410.dkr.ecr.us-west-2.amazonaws.com/soar-connectors/pytest:f7150dbb7f347d35f8f4bb285d36985ecd4cf231
+    needs: [resolve-pr-context, test-setup, detect-app-type]
+    env:
+      IS_SDKFIED: ${{ needs.detect-app-type.outputs.is_sdkfied }}
+      UV_LOCK_DIRECTORY: ${{ needs.detect-app-type.outputs.uv_lock_directory }}
+    if: ${{ needs.resolve-pr-context.outputs.pr_found == 'true' && needs.test-setup.outputs.publisher == 'Splunk' }}
+    continue-on-error: true
+    steps:
+      - name: Check out actions repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ needs.resolve-pr-context.outputs.head_repo_full_name }}
+          ref: ${{ needs.resolve-pr-context.outputs.head_ref }}
+          allow-unsafe-pr-checkout: true
+
+      - name: Setup SDKfied App Environment
+        if: env.IS_SDKFIED == 'true'
+        uses: splunk-soar-connectors/.github/.github/actions/sdkfied-app-setup@main
+        with:
+          uv_lock_directory: ${{ env.UV_LOCK_DIRECTORY }}
+
+      - name: Create temporary manifest for SDKfied app
+        if: env.IS_SDKFIED == 'true'
+        run: |
+          uv run --project "${{ env.UV_LOCK_DIRECTORY }}" soarapps manifests create temp_app.json "${{ env.UV_LOCK_DIRECTORY }}"
+          echo "Created temporary manifest: temp_app.json"
+        shell: bash
+
+      - name: Run Test Coverage
+        uses: splunk-soar-connectors/.github/.github/actions/test-coverage@main
+        with:
+          app_repo: ${{ github.event.repository.name }}
+
+      - name: Clean up temporary manifest for SDKfied app
+        if: env.IS_SDKFIED == 'true'
+        run: |
+          rm -f temp_app.json
+          echo "Deleted temporary manifest: temp_app.json"
+        shell: bash
+
+  sanity-test:
+    runs-on:
+      - codebuild-integration-tests-${{ github.run_id }}-${{ github.run_attempt }}
+      - image:custom-linux-875003031410.dkr.ecr.us-west-2.amazonaws.com/soar-connectors/pytest:f7150dbb7f347d35f8f4bb285d36985ecd4cf231
+    needs: test-setup
+    if: ${{ needs.test-setup.outputs.publisher == 'Splunk' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - version: "next_ol8"
+            ip: ${{ vars.PHANTOM_INSTANCE_NEXT_OL8_VERSION_IP }}
+          - version: "next_ol9"
+            ip: ${{ vars.PHANTOM_INSTANCE_NEXT_OL9_VERSION_IP }}
+          - version: "next_amzn2023"
+            ip: ${{ vars.PHANTOM_INSTANCE_NEXT_AMZN2023_VERSION_IP }}
+          - version: "previous"
+            ip: ${{ vars.PHANTOM_INSTANCE_PREVIOUS_VERSION_IP }}
+          - version: "cloud"
+            ip: ${{ vars.PHANTOM_INSTANCE_CLOUD_HOST }}
+          - version: "cloud_next"
+            ip: ${{ vars.PHANTOM_INSTANCE_CLOUD_NEXT_HOST }}
+    env:
+      NUM_TEST_RETRIES: ${{ vars.NUM_TEST_RETRIES }}
+      VAULT_ROLE: ${{ vars.VAULT_ROLE }}
+      PHANTOM_INSTANCE_CURRENT_FIPS_VERSION_IP: ${{ vars.PHANTOM_INSTANCE_CURRENT_FIPS_VERSION_IP }}
+      PLAYBOOK_EXCLUDE_REGEX: ${{ vars.PLAYBOOK_EXCLUDE_REGEX }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download app tar file
+        uses: actions/download-artifact@v4
+        with:
+          name: app-tar
+
+      - name: Check version compatibility
+        id: version-check
+        uses: splunk-soar-connectors/.github/.github/actions/version-check@main
+        with:
+          tarball_name: ${{ github.event.repository.name }}.tgz
+          phantom_ip: ${{ matrix.ip }}
+
+      - name: Run Sanity Tests
+        if: steps.version-check.outputs.compatible == 'true'
+        uses: splunk-soar-connectors/.github/.github/actions/sanity-tests@main
+        with:
+          phantom_ip: ${{ matrix.ip }}
+          version: ${{ matrix.version }}
+          app_repo: ${{ github.event.repository.name }}
+          automation_broker: ${{ vars.AUTOMATION_BROKER_NAME }}
+          automation_broker_next: ${{ vars.AUTOMATION_BROKER_NEXT_NAME }}
+
+      - name: Upload Sanity Test Results
+        uses: actions/upload-artifact@v4
+        if: always() && steps.version-check.outputs.compatible == 'true'
+        with:
+          name: sanity-test-results-${{ matrix.version }}
+          path: ${{ github.workspace }}/test-results/
+          retention-days: 1
+
+  aws-sanity-test:
+    runs-on:
+      - codebuild-integration-tests-${{ github.run_id }}-${{ github.run_attempt }}
+      - image:custom-linux-875003031410.dkr.ecr.us-west-2.amazonaws.com/soar-connectors/pytest:f7150dbb7f347d35f8f4bb285d36985ecd4cf231
+    needs: test-setup
+    if: ${{ needs.test-setup.outputs.publisher == 'Splunk' && contains(github.event.repository.name, 'aws') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - version: "aws_current"
+          - version: "aws_previous"
+          - version: "aws_next"
+    env:
+      AWS_PHANTOM_INSTANCE_CURRENT_VERSION_IP: ${{ secrets.AWS_PHANTOM_INSTANCE_CURRENT_VERSION_IP }}
+      AWS_PHANTOM_INSTANCE_PREVIOUS_VERSION_IP: ${{ secrets.AWS_PHANTOM_INSTANCE_PREVIOUS_VERSION_IP }}
+      AWS_PHANTOM_INSTANCE_NEXT_VERSION_IP: ${{ secrets.AWS_PHANTOM_INSTANCE_NEXT_VERSION_IP }}
+      AWS_PHANTOM_USERNAME: ${{ vars.AWS_PHANTOM_USERNAME }}
+      AWS_PHANTOM_PASSWORD: ${{ secrets.AWS_PHANTOM_PASSWORD }}
+      NUM_TEST_RETRIES: ${{ vars.NUM_TEST_RETRIES }}
+      VAULT_ROLE: ${{ vars.VAULT_ROLE }}
+
+    steps:
+      - name: Resolve AWS Phantom IP
+        id: resolve-ip
+        shell: bash
+        run: |
+          case "${{ matrix.version }}" in
+            aws_current)  ip="$AWS_PHANTOM_INSTANCE_CURRENT_VERSION_IP" ;;
+            aws_previous) ip="$AWS_PHANTOM_INSTANCE_PREVIOUS_VERSION_IP" ;;
+            aws_next)     ip="$AWS_PHANTOM_INSTANCE_NEXT_VERSION_IP" ;;
+          esac
+          if [[ -z "$ip" ]]; then
+            echo "::error::AWS Phantom instance IP is not set for version '${{ matrix.version }}'. Set the corresponding repository secret."
+            exit 1
+          fi
+          echo "ip=$ip" >> "$GITHUB_OUTPUT"
+          echo "AWS_PHANTOM_URL=https://$ip" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+
+      - name: Download app tar file
+        uses: actions/download-artifact@v4
+        with:
+          name: app-tar
+
+      - name: Run Sanity Tests
+        uses: splunk-soar-connectors/.github/.github/actions/sanity-tests@main
+        with:
+          phantom_ip: ${{ steps.resolve-ip.outputs.ip }}
+          version: ${{ matrix.version }}
+          app_repo: ${{ github.event.repository.name }}
+
+      - name: Upload Sanity Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sanity-test-results-${{ matrix.version }}
+          path: ${{ github.workspace }}/test-results/
+          retention-days: 1
+
+  aggregate-sanity-results:
+    runs-on: ubuntu-latest
+    needs: [sanity-test, aws-sanity-test, test-setup]
+    if: always() && needs.test-setup.outputs.publisher == 'Splunk'
+    steps:
+      - name: Download All Sanity Test Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: sanity-test-results-*
+          path: downloaded-artifacts/
+          merge-multiple: false
+
+      - name: Aggregate Test Results
+        uses: splunk-soar-connectors/.github/.github/actions/aggregate-sanity-results@main
+        with:
+          artifacts_path: downloaded-artifacts
+
+  integration-test:
+    runs-on:
+      - codebuild-integration-tests-${{ github.run_id }}-${{ github.run_attempt }}
+      - image:custom-linux-875003031410.dkr.ecr.us-west-2.amazonaws.com/soar-connectors/pytest:f7150dbb7f347d35f8f4bb285d36985ecd4cf231
+    needs: test-setup
+    if: ${{ needs.test-setup.outputs.publisher == 'Splunk' }}
+    env:
+      PHANTOM_INSTANCE_IP: ${{ vars.PHANTOM_INSTANCE_CURRENT_VERSION_IP }}
+      PHANTOM_INSTANCE_IP_FIPS: ${{ vars.PHANTOM_INSTANCE_CURRENT_FIPS_VERSION_IP }}
+      NUM_TEST_RETRIES: ${{ vars.NUM_TEST_RETRIES }}
+      VAULT_ROLE: ${{ vars.VAULT_ROLE }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download app tar file
+        uses: actions/download-artifact@v4
+        with:
+          name: app-tar
+
+      - name: Run Integration Tests
+        uses: splunk-soar-connectors/.github/.github/actions/integration-tests@main
+        with:
+          fips_compliant: ${{ needs.test-setup.outputs.fips_compliant }}
+          app_repo: ${{ github.event.repository.name }}
+
+  agentic-pr-review:
+    name: Agentic PR review
+    needs:
+      - resolve-pr-context
+      - pr-labeling
+      - detect-app-type
+      - pytest
+      - pre-commit
+      - semantic-release-preview
+      - compile
+      - build
+      - test-setup
+      - test-coverage
+      - sanity-test
+      - aws-sanity-test
+      - aggregate-sanity-results
+      - integration-test
+    if: always() && needs.resolve-pr-context.outputs.pr_found == 'true' && needs.resolve-pr-context.outputs.is_draft != 'true'
+    permissions:
+      actions: read
+      checks: read
+      contents: read
+      pull-requests: read
+      issues: read
+    uses: splunk-soar-connectors/AgenticPRReview/.github/workflows/pr-review.yml@sanchaga/agenticprreviewbot
+    with:
+      repo: ${{ github.repository }}
+      pr_number: ${{ needs.resolve-pr-context.outputs.pr_number }}
+      circuit_base_url: ${{ vars.CIRCUIT_BASE_URL }}
+      circuit_model: ${{ vars.CIRCUIT_MODEL }}
+      circuit_token_url: ${{ vars.CIRCUIT_TOKEN_URL }}
+      previous_pipeline_results_json: >-
+        {"jobs":{"pre-commit":{"result":"${{ needs['pre-commit'].result }}","url":"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"},"compile":{"result":"${{ needs.compile.result }}","url":"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"},"build":{"result":"${{ needs.build.result }}","url":"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"},"semantic-release-preview":{"result":"${{ needs['semantic-release-preview'].result }}","url":"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}}}
+      publish_comments: true
+    secrets:
+      AI_REVIEW_APP_ID: ${{ secrets.AI_REVIEW_APP_ID }}
+      AI_REVIEW_INSTALLATION_ID: ${{ secrets.AI_REVIEW_INSTALLATION_ID }}
+      AI_REVIEW_PRIVATE_KEY: ${{ secrets.AI_REVIEW_PRIVATE_KEY }}
+      CIRCUIT_CLIENT_ID: ${{ secrets.CIRCUIT_CLIENT_ID }}
+      CIRCUIT_CLIENT_SECRET: ${{ secrets.CIRCUIT_CLIENT_SECRET }}
+      CIRCUIT_APP_KEY: ${{ secrets.CIRCUIT_APP_KEY }}
