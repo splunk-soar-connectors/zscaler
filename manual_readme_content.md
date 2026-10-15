@@ -1,5 +1,9 @@
 **NOTE:** Zscaler is deprecating https://admin.<Zscaler Cloud Name> for Public API traffic in September. In the app's asset settings, update the Base URL to https://zsapi.<Zscaler Cloud Name> to ensure the app continues working.
 
+**NOTE:** New Zscaler features will be introduced in the
+[Zscaler v2](https://github.com/splunk-soar-connectors/zscaler_v2) connector rather than this
+legacy connector.
+
 Below points are considered for providing the **URL Category** parameter value.
 
 - Entire URL category string has to be mentioned in block letters
